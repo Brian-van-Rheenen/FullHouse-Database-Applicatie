@@ -15,8 +15,7 @@ public class TabbedPanel extends JPanel {
         JPanel leftMenuPanel = new JPanel(new GridBagLayout());
         leftMenuPanel.setBackground(Color.GREEN);
 
-        JPanel cardPanel = new JPanel(new CardLayout());
-        cardPanel.setBackground(Color.CYAN);
+        TablePanel tablePanel = new TablePanel();
 
         JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3,1, 20, 20));
         leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
@@ -41,6 +40,6 @@ public class TabbedPanel extends JPanel {
         leftMenuPanel.add(leftMenuButtonPanel, gbc);
 
         this.add(leftMenuPanel, BorderLayout.LINE_START);
-        this.add(cardPanel, BorderLayout.CENTER);
+        this.add(tablePanel, BorderLayout.CENTER);
     }
 }
