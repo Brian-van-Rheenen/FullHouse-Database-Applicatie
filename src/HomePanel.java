@@ -13,8 +13,7 @@ public class HomePanel extends JPanel {
         super(new GridLayout(1, 1));
         
         JTabbedPane tabbedPane = new JTabbedPane();
-        
-        //JComponent userPanel = createPanel("Panel #1");
+
         TabbedPanel userPanel = new TabbedPanel();
 
         tabbedPane.addTab("Gebruikers", null, userPanel,
