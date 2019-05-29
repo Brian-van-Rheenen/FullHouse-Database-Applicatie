@@ -1,3 +1,5 @@
+import components.TabbedPanel;
+
 import javax.swing.JTabbedPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -6,35 +8,35 @@ import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 
 public class HomePanel extends JPanel {
-    
+
     public HomePanel() {
         super(new GridLayout(1, 1));
         
         JTabbedPane tabbedPane = new JTabbedPane();
         
-        JComponent panel1 = makeTextPanel("Panel #1");
-        tabbedPane.addTab("Gebruikers", null, panel1,
+        //JComponent userPanel = createPanel("Panel #1");
+        TabbedPanel userPanel = new TabbedPanel();
+
+        tabbedPane.addTab("Gebruikers", null, userPanel,
                 "Lijst van gebruikers");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-        
-        JComponent panel2 = makeTextPanel("Panel #2");
-        tabbedPane.addTab("Toernooien", null, panel2,
+
+        JComponent tournamentPanel = createPanel("Panel #2");
+        tabbedPane.addTab("Toernooien", null, tournamentPanel,
                 "Lijst van toernooien");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
         
-        JComponent panel3 = makeTextPanel("Panel #3");
-        tabbedPane.addTab("Masterclasses", null, panel3,
+        JComponent masterclassPanel = createPanel("Panel #3");
+        tabbedPane.addTab("Masterclasses", null, masterclassPanel,
                 "Lijst van masterclasses");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-        
-        //Add the tabbed pane to this panel.
+
         add(tabbedPane);
-        
-        //The following line enables to use scrolling tabs.
+
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
     
-    protected JComponent makeTextPanel(String text) {
+    protected JComponent createPanel(String text) {
         JPanel panel = new JPanel(false);
         JLabel filler = new JLabel(text);
 
