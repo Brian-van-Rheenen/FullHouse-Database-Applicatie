@@ -1,4 +1,4 @@
-import components.TabbedPanel;
+import components.UserOverviewPanel;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JLabel;
@@ -7,6 +7,10 @@ import javax.swing.JComponent;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 
+/**
+ * This is the start panel with contains the tabbed pane (which in turn contains the different overview
+ * panels).
+ */
 public class HomePanel extends JPanel {
 
     public HomePanel() {
@@ -14,9 +18,9 @@ public class HomePanel extends JPanel {
         
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        TabbedPanel userPanel = new TabbedPanel();
+        UserOverviewPanel userOverviewPanel = new UserOverviewPanel();
 
-        tabbedPane.addTab("Gebruikers", null, userPanel,
+        tabbedPane.addTab("Gebruikers", null, userOverviewPanel,
                 "Lijst van gebruikers");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
