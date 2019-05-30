@@ -5,9 +5,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
 
-public class TabbedPanel extends JPanel {
+/**
+ * This is the general overview panel for users
+ */
+public class UserOverviewPanel extends JPanel {
 
-    public TabbedPanel() {
+    public UserOverviewPanel() {
         this.setLayout(new BorderLayout(20, 20));
         this.setBackground(Color.LIGHT_GRAY);
         this.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));
