@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="FullHouse-Database-Applicatie" target="1.5" />
+      <module name="FullHouse-Database-Applicatie" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>
