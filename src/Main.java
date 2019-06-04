@@ -1,8 +1,8 @@
-import backend.DataHandler;
+import backend.DatabaseConnection;
 
 public class Main {
     public static void main(String[] args) {
         Application application = new Application();
-        DataHandler testConnectopn = new DataHandler();
+        DatabaseConnection testConnectopn = new DatabaseConnection();
     }
 }

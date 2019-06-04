@@ -7,34 +7,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Properties;
 
-public class DataHandler {
+public class DatabaseConnection {
 
     private Connection connection;
 
-    public DataHandler() {
+    public DatabaseConnection() {
 
       initConnection();
 
-        try {
-
-            submitQuery(" select naam from `18083250`.speler;").forEach(System.out::println);
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
     }
 
-    public ArrayList<String> submitQuery(String query) throws SQLException {
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
-        ArrayList<String> res = new ArrayList<>();
 
-        while (resultSet.next()) {
-            int k = 1;
-            res.add(resultSet.getString(k));
-            k++;
-        }
-        return res;
-    }
 
     public Connection getConnection() {
         return connection;
