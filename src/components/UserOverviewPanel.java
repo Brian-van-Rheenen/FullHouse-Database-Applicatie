@@ -1,9 +1,13 @@
 package components;
 
+import models.Player;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.Vector;
 
 /**
  * This is the general overview panel for users
@@ -18,7 +22,19 @@ public class UserOverviewPanel extends JPanel {
         JPanel leftMenuPanel = new JPanel(new GridBagLayout());
         leftMenuPanel.setBackground(Color.GREEN);
 
-        TablePanel tablePanel = new TablePanel();
+        Vector<String> collumnNames = new Vector<>();
+        collumnNames.add("name");
+        collumnNames.add("sex");
+
+        // Date of Birth
+        collumnNames.add("DoB");
+
+        // TODO: Replace with data from the database
+        Vector<Player> players = new Vector<>();
+
+        DefaultTableModel model = new DefaultTableModel(players, collumnNames);
+
+        TablePanel tablePanel = new TablePanel(model);
 
         JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3,1, 20, 20));
         leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
