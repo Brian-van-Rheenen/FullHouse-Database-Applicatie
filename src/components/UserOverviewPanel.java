@@ -33,16 +33,27 @@ public class UserOverviewPanel extends JPanel {
         Vector<Player> players = new Vector<>();
 
         DefaultTableModel model = new DefaultTableModel(players, collumnNames);
+        addLeftMenuButtons(leftMenuPanel);
 
         TablePanel tablePanel = new TablePanel(model);
+        this.add(tablePanel, BorderLayout.CENTER);
+    }
 
-        JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3,1, 20, 20));
-        leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
+    private void addLeftMenuButtons(JPanel leftMenuPanel) {
+        JPanel leftMenuButtonPanel = getLeftMenuButtonsPanel();
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.weighty = 1.0;
 
+        leftMenuPanel.add(leftMenuButtonPanel, gbc);
+
+        this.add(leftMenuPanel, BorderLayout.LINE_START);
+    }
+
+    private JPanel getLeftMenuButtonsPanel() {
+        JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3,1, 20, 20));
+        leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
 
@@ -55,10 +66,6 @@ public class UserOverviewPanel extends JPanel {
         leftMenuButtonPanel.add(addButton);
         leftMenuButtonPanel.add(editButton);
         leftMenuButtonPanel.add(deleteButton);
-
-        leftMenuPanel.add(leftMenuButtonPanel, gbc);
-
-        this.add(leftMenuPanel, BorderLayout.LINE_START);
-        this.add(tablePanel, BorderLayout.CENTER);
+        return leftMenuButtonPanel;
     }
 }
