@@ -11,7 +11,7 @@ public class DatabaseConnection {
 
     private Connection connection;
 
-    public DatabaseConnection() {
+    public DatabaseConnection() throws SQLException{
 
       initConnection();
 
@@ -23,8 +23,8 @@ public class DatabaseConnection {
         return connection;
     }
 
-    private void initConnection(){
-        try (InputStream input = new FileInputStream("C:\\Users\\Davidius\\IdeaProjects\\FullHouse-Database-Applicatie\\src\\resources\\database.properties")) {
+    private void initConnection() throws SQLException{
+        try (InputStream input = new FileInputStream("src/resources/database.properties")) {
 
             Properties prop = new Properties();
 
@@ -40,8 +40,6 @@ public class DatabaseConnection {
 
         } catch (IOException ex) {
             ex.printStackTrace();
-        } catch (SQLException e) {
-            System.out.println("Connection failed");
         }
 
     }
