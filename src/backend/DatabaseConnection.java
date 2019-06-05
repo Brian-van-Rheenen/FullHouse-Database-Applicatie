@@ -36,11 +36,17 @@ public class DatabaseConnection {
             // load a properties file
             prop.load(input);
 
-            System.out.println(prop.getProperty("url"));
-            System.out.println(prop.getProperty("user"));
-            System.out.println(prop.getProperty("password"));
+            String connectionString = prop.getProperty(
+                    "url",
+                    // Did not find an URL, attempt to build one from the properties
+                    // All properties must be lowercase
+                    String.format("%s://%s/%s", prop.getProperty("driver"), prop.getProperty("ip"), prop.getProperty("db"))
+            );
 
-           connection =   DriverManager.getConnection(prop.getProperty("url"), prop);
+            System.out.println(connectionString);
+
+            // DriverManager only accepts *lowercase* password & user when passing in props directly
+            connection = DriverManager.getConnection(connectionString, prop);
 
 
         } catch (IOException ex) {
