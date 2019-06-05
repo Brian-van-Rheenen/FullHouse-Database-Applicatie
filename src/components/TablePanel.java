@@ -13,7 +13,10 @@ public class TablePanel extends JPanel {
         JTable table = new JTable(model);
         table.setAutoCreateRowSorter(true);
 
+        JScrollPane tableWithScroll = new JScrollPane(table);
+        tableWithScroll.setVisible(true);
+
         this.add(table.getTableHeader(), BorderLayout.PAGE_START);
-        this.add(table, BorderLayout.CENTER);
+        this.add(tableWithScroll, BorderLayout.CENTER);
     }
 }

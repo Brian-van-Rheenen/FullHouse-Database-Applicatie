@@ -1,5 +1,6 @@
 package components;
 
+import backend.DataGetter;
 import components.dialogs.AddInputDialog;
 import models.Player;
 
@@ -8,36 +9,62 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.Vector;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * This is the general overview panel for users
  */
 public class UserOverviewPanel extends JPanel {
 
+    DataGetter dataGetter;
+
+    {
+
+    }
+
     public UserOverviewPanel() {
-        this.setLayout(new BorderLayout(20, 20));
-        this.setBackground(Color.LIGHT_GRAY);
-        this.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));
+
 
         JPanel leftMenuPanel = new JPanel(new GridBagLayout());
         leftMenuPanel.setBackground(Color.GREEN);
 
-        Vector<String> collumnNames = new Vector<>();
-        collumnNames.add("name");
-        collumnNames.add("sex");
+        DefaultTableModel model = new DefaultTableModel();
 
-        // Date of Birth
-        collumnNames.add("DoB");
+        try {
+            dataGetter = new DataGetter();
+            fillTable(model);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        // TODO: Replace with data from the database
-        Vector<Player> players = new Vector<>();
 
-        DefaultTableModel model = new DefaultTableModel(players, collumnNames);
+        setLookAndFeel();
+
         addLeftMenuButtons(leftMenuPanel);
 
         TablePanel tablePanel = new TablePanel(model);
         this.add(tablePanel, BorderLayout.CENTER);
+    }
+
+    private void setLookAndFeel() {
+        this.setLayout(new BorderLayout(20, 20));
+        this.setBackground(Color.LIGHT_GRAY);
+        this.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));
+    }
+
+    private void fillTable(DefaultTableModel tableModel) throws SQLException {
+        Object[] columnNames = {"Naam", "Rating", "Geboortedatum", "Geslacht", "Adres","Postcode", "Email", "Telefoon"};
+        ArrayList<Player> players = dataGetter.allPlayers();
+
+        for (int i = 0; i < 8; i++) {
+            tableModel.addColumn(columnNames[i]);
+
+        }
+
+        players.stream().forEach(player -> tableModel.addRow(player.convertToTableData()));
+
+
     }
 
     private void addLeftMenuButtons(JPanel leftMenuPanel) {
@@ -53,7 +80,7 @@ public class UserOverviewPanel extends JPanel {
     }
 
     private JPanel getLeftMenuButtonsPanel() {
-        JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3,1, 20, 20));
+        JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3, 1, 20, 20));
         leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
