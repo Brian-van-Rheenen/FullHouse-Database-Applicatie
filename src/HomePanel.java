@@ -20,8 +20,8 @@ public class HomePanel extends JPanel {
 
         UserOverviewPanel userOverviewPanel = new UserOverviewPanel();
 
-        tabbedPane.addTab("Gebruikers", null, userOverviewPanel,
-                "Lijst van gebruikers");
+        tabbedPane.addTab("Spelers", null, userOverviewPanel,
+                "Lijst van spelers");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
         JComponent tournamentPanel = createPanel("Panel #2");

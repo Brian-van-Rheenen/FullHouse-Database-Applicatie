@@ -1,5 +1,6 @@
 package components;
 
+import components.dialogs.AddInputDialog;
 import models.Player;
 
 import javax.swing.*;
@@ -56,6 +57,9 @@ public class UserOverviewPanel extends JPanel {
         leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
+        addButton.addActionListener(e -> {
+            new AddInputDialog();
+        });
 
         JButton editButton = new JButton("Wijzigen");
         editButton.setPreferredSize(new Dimension(150, 200));
