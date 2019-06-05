@@ -1,3 +1,4 @@
+import components.MasterclassOverviewPanel;
 import components.UserOverviewPanel;
 
 import javax.swing.JTabbedPane;
@@ -29,7 +30,7 @@ public class HomePanel extends JPanel {
                 "Lijst van toernooien");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
         
-        JComponent masterclassPanel = createPanel("Panel #3");
+        JComponent masterclassPanel = new MasterclassOverviewPanel();
         tabbedPane.addTab("Masterclasses", null, masterclassPanel,
                 "Lijst van masterclasses");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
