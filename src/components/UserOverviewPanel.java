@@ -2,6 +2,8 @@ package components;
 
 import backend.DataGetter;
 import components.dialogs.AddInputDialog;
+import components.dialogs.DeleteDialog;
+import components.dialogs.NoSelectionDialog;
 import models.Player;
 
 import javax.swing.*;
@@ -90,6 +92,14 @@ public class UserOverviewPanel extends JPanel {
 
         JButton deleteButton = new JButton("Verwijderen");
         deleteButton.setPreferredSize(new Dimension(150, 200));
+        deleteButton.addActionListener(e -> {
+            if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
+                new NoSelectionDialog();
+            } else {
+                int id = (Integer) model.getValueAt(tablePanel.getSelectedRow(), 0);
+                new DeleteDialog(id);
+            }
+        });
 
         leftMenuButtonPanel.add(addButton);
         leftMenuButtonPanel.add(editButton);
