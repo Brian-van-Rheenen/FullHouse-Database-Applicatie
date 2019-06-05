@@ -8,7 +8,6 @@ import models.Player;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
@@ -25,7 +24,7 @@ public class UserOverviewPanel extends JPanel {
 
     public UserOverviewPanel() {
         JPanel leftMenuPanel = new JPanel(new GridBagLayout());
-        leftMenuPanel.setBackground(Color.GREEN);
+        leftMenuPanel.setBackground(Color.LIGHT_GRAY);
 
         model = new DefaultTableModel() {
             @Override
@@ -52,7 +51,7 @@ public class UserOverviewPanel extends JPanel {
     private void setLookAndFeel() {
         this.setLayout(new BorderLayout(20, 20));
         this.setBackground(Color.LIGHT_GRAY);
-        this.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));
+        this.setBorder(new EmptyBorder(10, 10, 10, 10));
     }
 
     private void fillTable(DefaultTableModel tableModel) throws SQLException {
@@ -81,6 +80,8 @@ public class UserOverviewPanel extends JPanel {
     private JPanel getLeftMenuButtonsPanel() {
         JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3, 1, 20, 20));
         leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
+        leftMenuButtonPanel.setBackground(Color.LIGHT_GRAY);
+
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
         addButton.addActionListener(e -> {
