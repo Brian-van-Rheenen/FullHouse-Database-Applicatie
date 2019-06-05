@@ -12,13 +12,27 @@ public class DatabaseConnection {
     private Connection connection;
 
     public DatabaseConnection() throws SQLException{
-
       initConnection();
     }
 
-    public ResultSet sendQuery(String query) throws SQLException {
+    /**
+     * Execute a prepared statement and return data.
+     * @param query a query to execute
+     * @return ResultSet with the data from the query
+     * @throws SQLException
+     */
+    public ResultSet executeQueryAndGetData(String query) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         return preparedStatement.executeQuery();
+    }
+
+    /**
+     * Execute a prepared statement.
+     * @param preparedStatement a prepared statement
+     * @throws SQLException
+     */
+    public void executeQuery(PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement.execute();
     }
 
     public Connection getConnection() {
@@ -39,6 +53,7 @@ public class DatabaseConnection {
                     String.format("%s://%s/%s", prop.getProperty("driver"), prop.getProperty("ip"), prop.getProperty("db"))
             );
 
+            //TODO remove this print if project is done
             System.out.println(connectionString);
 
             // DriverManager only accepts *lowercase* password & user when passing in props directly
@@ -46,6 +61,5 @@ public class DatabaseConnection {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
     }
 }

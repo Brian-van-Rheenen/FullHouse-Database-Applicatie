@@ -1,6 +1,6 @@
 package components;
 
-import backend.DataGetter;
+import backend.PlayerProvider;
 import components.dialogs.AddInputDialog;
 import components.dialogs.DeleteDialog;
 import components.dialogs.NoSelectionDialog;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class UserOverviewPanel extends JPanel {
 
     private DefaultTableModel model;
-    private DataGetter dataGetter;
+    private PlayerProvider playerProvider;
     private TablePanel tablePanel;
 
     public UserOverviewPanel() {
@@ -34,7 +34,7 @@ public class UserOverviewPanel extends JPanel {
         };
 
         try {
-            dataGetter = new DataGetter();
+            playerProvider = new PlayerProvider();
             fillTable(model);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,9 +56,9 @@ public class UserOverviewPanel extends JPanel {
 
     private void fillTable(DefaultTableModel tableModel) throws SQLException {
         Object[] columnNames = {"id", "Naam", "Geslacht", "Geboortedatum", "Adres", "Postcode", "Woonplaats", "Telefoon", "Email", "Rating"};
-        ArrayList<Player> players = dataGetter.allPlayers();
+        ArrayList<Player> players = playerProvider.allPlayers();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < columnNames.length; i++) {
             tableModel.addColumn(columnNames[i]);
         }
 
@@ -84,9 +84,7 @@ public class UserOverviewPanel extends JPanel {
 
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
-        addButton.addActionListener(e -> {
-            new AddInputDialog();
-        });
+        addButton.addActionListener(e -> new AddInputDialog());
 
         JButton editButton = new JButton("Wijzigen");
         editButton.setPreferredSize(new Dimension(150, 200));
