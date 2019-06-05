@@ -17,6 +17,11 @@ public class DatabaseConnection {
 
     }
 
+    public ResultSet sendQuery(String query) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        return preparedStatement.executeQuery();
+    }
+
 
 
     public Connection getConnection() {
