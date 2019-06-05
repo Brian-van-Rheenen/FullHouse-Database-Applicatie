@@ -11,12 +11,12 @@ import java.text.SimpleDateFormat;
 /**
  * This is the popup / dialog window for adding players.
  */
-public class AddInputDialog extends Component {
+public class AddPlayerDialog extends Component {
 
     /**
      * Create and instantiate the custom dialog window
      */
-    public AddInputDialog() {
+    public AddPlayerDialog() {
         JTextArea errors = new JTextArea();
         errors.setMinimumSize(new Dimension(250, 50));
         errors.setPreferredSize(new Dimension(250, 50));
@@ -46,7 +46,7 @@ public class AddInputDialog extends Component {
         JTextField postalcodeField = new JTextField();
 
         String[] genders = { "Man", "Vrouw" };
-        JComboBox genderList = new JComboBox(genders);
+        JComboBox <String> genderList = new JComboBox <> (genders);
         genderList.setSelectedIndex(0);
 
         JTextField dateOfBirthField = new JTextField();
