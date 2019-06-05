@@ -17,19 +17,20 @@ import java.util.ArrayList;
  */
 public class UserOverviewPanel extends JPanel {
 
-    DataGetter dataGetter;
-
-    {
-
-    }
+    private DefaultTableModel model;
+    private DataGetter dataGetter;
+    private TablePanel tablePanel;
 
     public UserOverviewPanel() {
-
-
         JPanel leftMenuPanel = new JPanel(new GridBagLayout());
         leftMenuPanel.setBackground(Color.GREEN);
 
-        DefaultTableModel model = new DefaultTableModel();
+        model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         try {
             dataGetter = new DataGetter();
@@ -38,12 +39,11 @@ public class UserOverviewPanel extends JPanel {
             e.printStackTrace();
         }
 
-
         setLookAndFeel();
 
         addLeftMenuButtons(leftMenuPanel);
 
-        TablePanel tablePanel = new TablePanel(model);
+        tablePanel = new TablePanel(model);
         this.add(tablePanel, BorderLayout.CENTER);
     }
 
@@ -54,17 +54,14 @@ public class UserOverviewPanel extends JPanel {
     }
 
     private void fillTable(DefaultTableModel tableModel) throws SQLException {
-        Object[] columnNames = {"Naam", "Rating", "Geboortedatum", "Geslacht", "Adres","Postcode", "Email", "Telefoon"};
+        Object[] columnNames = {"id", "Naam", "Geslacht", "Geboortedatum", "Adres", "Postcode", "Woonplaats", "Telefoon", "Email", "Rating"};
         ArrayList<Player> players = dataGetter.allPlayers();
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 10; i++) {
             tableModel.addColumn(columnNames[i]);
-
         }
 
         players.stream().forEach(player -> tableModel.addRow(player.convertToTableData()));
-
-
     }
 
     private void addLeftMenuButtons(JPanel leftMenuPanel) {

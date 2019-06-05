@@ -7,45 +7,47 @@ import java.util.Objects;
 
 public class Player {
 
+    private int id;
     private String name;
-    private String address;
     private String gender;
     private Date dob;
+    private String address;
+    private String zip;
+    private String city;
     private String telephoneNR;
     private String email;
     private int rating;
-    private String zip;
-    private String woonplaats;
 
-    public Player(String name, int rating, String address,String zip, String woonplaats, String gender, String telephoneNR, String email,Date dob) {
-        this.zip = zip;
+    public Player(int id, String name, String gender, Date dob, String address, String zip, String city, String telephoneNR, String email, int rating) {
+        this.id = id;
         this.name = name;
-        this.address = address;
         this.gender = gender;
-        this.woonplaats = woonplaats;
         this.dob = dob;
-        System.out.println(dob);
-        this.rating = rating;
+        this.address = address;
+        this.zip = zip;
+        this.city = city;
         this.telephoneNR = telephoneNR;
         this.email = email;
+        this.rating = rating;
     }
 
     public static Player readPlayerData(ResultSet rs) throws SQLException {
-        String name = rs.getString(1);
-        int rating = rs.getInt(2);
-        Date dob = rs.getDate(3);
-        String adres = rs.getString(4);
-        String zip = rs.getString(5);
-        String city = rs.getString(6);
-        String tele = rs.getString(7);
-        String mail = rs.getString(8);
-        String geslacht = rs.getString(9);
+        int id = rs.getInt(1);
+        String name = rs.getString(2);
+        String gender = rs.getString(3);
+        Date dob = rs.getDate(4);
+        String adres = rs.getString(5);
+        String zip = rs.getString(6);
+        String city = rs.getString(7);
+        String tele = rs.getString(8);
+        String mail = rs.getString(9);
+        int rating = rs.getInt(10);
 
-        return new Player(name, rating, adres, zip,city, geslacht, tele, mail, dob);
+        return new Player(id, name, gender, dob, adres, zip, city, tele, mail, rating);
     }
 
     public Object[] convertToTableData(){
-        Object[] res = {name, rating,  dob, gender, address, zip, telephoneNR, email};
+        Object[] res = {id, name, gender, dob, address, zip, city, telephoneNR, email, rating};
         return res;
     }
 

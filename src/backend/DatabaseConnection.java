@@ -14,7 +14,6 @@ public class DatabaseConnection {
     public DatabaseConnection() throws SQLException{
 
       initConnection();
-
     }
 
     public ResultSet sendQuery(String query) throws SQLException {
@@ -28,7 +27,6 @@ public class DatabaseConnection {
 
     private void initConnection() throws SQLException{
         try (InputStream input = new FileInputStream("src/resources/database.properties")) {
-
             Properties prop = new Properties();
 
             // load a properties file
@@ -45,8 +43,6 @@ public class DatabaseConnection {
 
             // DriverManager only accepts *lowercase* password & user when passing in props directly
             connection = DriverManager.getConnection(connectionString, prop);
-
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }
