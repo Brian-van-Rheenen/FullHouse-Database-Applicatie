@@ -12,10 +12,18 @@ public class PlayerProvider {
     private DatabaseConnection databaseConnection;
 
     private final String Q_ALLPLAYERS =
-            "SELECT speler_id, naam, geslacht, gebdatum, CONCAT(a.straatnaam, ' ', a.huisnummer), a.postcode, a.woonplaats, telefoon, email, rating\n" +
+            "SELECT speler_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
             "FROM speler\n" +
             "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
             "ORDER BY speler.speler_id;";
+
+    private final String Q_ADDPLAYER = "START TRANSACTION;\n" +
+            "INSERT INTO adres (woonplaats, straatnaam, huisnummer, postcode)\n" +
+            "SELECT ?, ?, ?, ? FROM adres WHERE NOT EXISTS(SELECT * FROM adres WHERE woonplaats = 'stad' AND straatnaam = 'straat' AND huisnummer = 1 AND postcode = '1234AB')\n" +
+            "LIMIT 1;\n" +
+            "INSERT INTO speler (adres_id, naam, gebdatum, geslacht, telefoon, email)\n" +
+            "VALUES (LAST_INSERT_ID(), ?, ?, ?, ?, ?);\n" +
+            "COMMIT;";
 
     private final String Q_DELETEPLAYER = "START TRANSACTION; UPDATE speler SET adres_id = 0, naam = 'VERWIJDERD', gebdatum = '1970-01-01', geslacht = 'O', telefoon = 'VERWIJDERD', email = 'VERWIJDERD', rating = 0 WHERE speler_id = ?; DELETE FROM adres WHERE adres_id NOT IN (SELECT adres_id FROM speler) AND adres_id != 0; COMMIT;";
 
@@ -40,12 +48,31 @@ public class PlayerProvider {
     }
 
     /**
+     * Add a new player to the database.
+     * @param player the player object to add.
+     * @throws SQLException
+     */
+    public void addPlayer(Player player) throws SQLException {
+        PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_ADDPLAYER);
+        pst.setString(1, player.getCity());
+        pst.setString(2, player.getStreet());
+        pst.setInt(3, player.getHouseNr());
+        pst.setString(4, player.getZip());
+        pst.setString(5, player.getName());
+        pst.setDate(6, player.getDob());
+        pst.setString(7, player.getGender());
+        pst.setString(8, player.getTelephoneNR());
+        pst.setString(9, player.getEmail());
+
+        databaseConnection.executeQuery(pst);
+    }
+
+    /**
      * Delete a player from the database.
      * @param id the player's id.
      * @throws SQLException
      */
     public void deletePlayer(int id) throws SQLException {
-        System.out.println(Q_DELETEPLAYER);
         try {
             PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_DELETEPLAYER);
             pst.setString(1, Integer.toString(id));

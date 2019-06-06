@@ -1,17 +1,23 @@
 package components.dialogs;
 
+import backend.PlayerProvider;
+import models.Player;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This is the popup / dialog window for adding players.
  */
 public class AddInputDialog extends InputDialog {
+    PlayerProvider playerProvider = new PlayerProvider();
 
     /**
      * Create and instantiate the custom dialog window
@@ -45,7 +51,7 @@ public class AddInputDialog extends InputDialog {
         JTextField houseNrField = new JTextField();
         JTextField postalcodeField = new JTextField();
 
-        String[] genders = { "Man", "Vrouw" };
+        String[] genders = { "Man", "Vrouw", "Onbekend" };
         JComboBox genderList = new JComboBox(genders);
         genderList.setSelectedIndex(0);
 
@@ -101,7 +107,43 @@ public class AddInputDialog extends InputDialog {
         int option = JOptionPane.showOptionDialog(this, inputFields, "Speler toevoegen", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{add, cancel}, add);
 
         if (option == JOptionPane.OK_OPTION) {
-            // toevoegen
+            String name = nameField.getText();
+            String city = cityField.getText();
+            String street = streetField.getText();
+            int houseNr = Integer.parseInt(houseNrField.getText());
+            String postalcode = postalcodeField.getText();
+            String gender = new String();
+            switch (genderList.getSelectedItem().toString()) {
+                case "Man":
+                    gender = "M";
+                    break;
+                case "Vrouw":
+                    gender = "V";
+                    break;
+                case "Onbekend":
+                    gender = "O";
+                    break;
+            }
+
+            Date dateOfBirth = new Date();
+
+            try {
+                dateOfBirth = new SimpleDateFormat("dd-MM-yyyy").parse(dateOfBirthField.getText());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            String phoneNr = phoneNrField.getText();
+            String email = emailField.getText();
+
+            Player player = new Player(0, name, gender, dateOfBirth, street, houseNr, postalcode, city, phoneNr, email, 0);
+
+            try {
+                playerProvider.addPlayer(player);
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Er is iets fout gegaan met het toevoegen van de speler. Probeer het opnieuw.", "Foutmelding", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
         }
     }
 }
