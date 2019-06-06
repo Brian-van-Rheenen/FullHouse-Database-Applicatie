@@ -1,6 +1,7 @@
 package backend;
 
 import models.Player;
+import models.Toernooi;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,6 +26,8 @@ public class DataGetter {
             "         INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
             "ORDER BY speler.speler_id;";
 
+    private final String Q_TOURNAMENTS="select toernooiCode, thema, begintijd from toernooi join event on toernooi.idToernooi = event.idEvent;";
+
     public DataGetter() throws SQLException {
         getDBconnection();
     }
@@ -36,6 +39,15 @@ public class DataGetter {
             sqle.printStackTrace();
         }
 
+    }
+
+    public ArrayList <Toernooi> getAllTournaments() throws SQLException{
+        ResultSet rs= databaseConnection.sendQuery(Q_TOURNAMENTS);
+        ArrayList<Toernooi> res = new ArrayList<>();
+        while (rs.next()) {
+            res.add(null);
+        }
+        return res;
     }
 
     public ArrayList<Player> allPlayers() throws SQLException {

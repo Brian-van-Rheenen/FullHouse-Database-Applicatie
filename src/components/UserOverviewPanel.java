@@ -22,20 +22,15 @@ public class UserOverviewPanel extends JPanel {
     private ArrayList<Player> playerTableData = new ArrayList<>();
 
 
-    public UserOverviewPanel() {
-
+    public UserOverviewPanel(DataGetter dataGetter) throws SQLException {
+        this.dataGetter = dataGetter;
 
         JPanel leftMenuPanel = new JPanel(new GridBagLayout());
         leftMenuPanel.setBackground(Color.GREEN);
 
         DefaultTableModel model = new DefaultTableModel();
 
-        try {
-            dataGetter = new DataGetter();
-            fillTable(model);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        fillTable(model);
 
 
         setLookAndFeel();
@@ -53,7 +48,7 @@ public class UserOverviewPanel extends JPanel {
     }
 
     private void fillTable(DefaultTableModel tableModel) throws SQLException {
-        Object[] columnNames = {"Naam", "Rating", "Adres","Postcode", "Stad", "Geboortedatum", "Email", "Telefoon", "Geslacht"};
+        Object[] columnNames = {"Naam", "Rating", "Adres", "Postcode", "Stad", "Geboortedatum", "Email", "Telefoon", "Geslacht"};
         playerTableData.addAll(dataGetter.allPlayers());
 
         for (int i = 0; i < 8; i++) {

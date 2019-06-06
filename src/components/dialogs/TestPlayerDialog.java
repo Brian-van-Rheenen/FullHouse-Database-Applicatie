@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
-public class TestPlayerDialog extends JDialog {
+public class TestPlayerDialog extends BasicDialog {
 
     private ArrayList<Player> playerlist;
 
@@ -39,31 +39,26 @@ public class TestPlayerDialog extends JDialog {
 
 
     public TestPlayerDialog(ArrayList<Player> playerlist) {
-
+        super(false);
         this.playerlist = playerlist;
-        setLayoutAndBorder();
-        this.setResizable(false);
+        initChildDialog();
+    }
+
+    private void initChildDialog() {
+
+
 
         this.setSize(new Dimension(500, 800));
 
-        initCombobox();
         addAllFields();
-        addButtons(false);
+        addButtons();
         this.setVisible(true);
-
     }
 
     public TestPlayerDialog(Player toChange) {
+        super(true);
         this.toChange = toChange;
-        setLayoutAndBorder();
-        this.setResizable(false);
 
-        this.setSize(new Dimension(500, 800));
-
-        initCombobox();
-        addAllFields();
-        addButtons(true);
-        this.setVisible(true);
 
         telephoneNR.setText(toChange.getTelephoneNR());
 
@@ -76,6 +71,7 @@ public class TestPlayerDialog extends JDialog {
         emailTextField.setText(toChange.getEmail());
         this.dob.setText(toChange.getDobString());
         this.cityField.setText(toChange.getWoonplaats());
+        initChildDialog();
     }
 
 
@@ -83,6 +79,22 @@ public class TestPlayerDialog extends JDialog {
 
 
         this.playerlist.add(createNewPlayer());
+    }
+
+    @Override
+    public void doSomething() {
+        boolean check = checkAllFields();
+        System.out.println(check);
+        if (!checkAllFields()) {
+            JOptionPane.showMessageDialog(this, "Iets ging niet helemaal goed");
+        } else {
+            if (this.isForChange()) {
+                toChange = createNewPlayer();
+            } else {
+                addPlayerToList();
+            }
+            JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
+        }
     }
 
     private Player createNewPlayer() {
@@ -106,13 +118,17 @@ public class TestPlayerDialog extends JDialog {
 
         for (int i = 0; i < playerDatatypes.length; i++) {
             JTextField textField = textFields[i];
-            String input = textField.toString();
-            boolean isMarked = playerDatatypes[i].isGoodInput(input);
-            if (isMarked) {
-                mark(textField);
-                res = false;
-            } else {
+            String input = textField.getText();
+            boolean goodInput = playerDatatypes[i].isGoodInput(input);
+
+
+            if (goodInput) {
                 unmark(textField);
+
+            } else {
+                mark(textField);
+
+                res = false;
             }
         }
 
@@ -121,20 +137,9 @@ public class TestPlayerDialog extends JDialog {
     }
 
 
-
-    private void setLayoutAndBorder() {
-        JPanel contentPane = new JPanel();
-        this.setContentPane(contentPane);
-        BoxLayout boxLayout = new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS);
-        EmptyBorder emptyBorder = new EmptyBorder(10, 5, 10, 5);
-        contentPane.setBorder(emptyBorder);
-
-
-        this.getContentPane().setLayout(boxLayout);
-    }
-
-
-    private void addAllFields() {
+    @Override
+    public void addAllFields() {
+        initCombobox();
 
         String[] fieldnames = {"Naam", "Straat", "Huisnummer", "Postcode", "Woonplaats", "Geslacht",
                 "Geboortedatum",
@@ -162,58 +167,6 @@ public class TestPlayerDialog extends JDialog {
         }
     }
 
-    private void addButtons(boolean wijzigen) {
-        String action = "";
-        if (wijzigen) {
-
-            action = "Toevoegen";
-
-        } else {
-            action = "Wijzigen";
-        }
-
-
-        JButton submit = new JButton(action);
-        JButton cancel = new JButton("Annuleer");
-
-        Font buttonFont = new Font("Helvetica", Font.PLAIN, 20);
-
-        submit.setFont(buttonFont);
-        cancel.setFont(buttonFont);
-
-        submit.addActionListener(event -> {
-            if (!checkAllFields()) {
-                JOptionPane.showMessageDialog(this, "Iets ging niet helemaal goed");
-
-
-            } else {
-                JOptionPane.showMessageDialog(this, "Alles ging goed");
-
-                if (wijzigen) {
-                    toChange = createNewPlayer();
-                } else {
-                    addPlayerToList();
-                }
-            }
-        });
-
-
-        cancel.addActionListener(e -> this.dispose());
-
-        JPanel buttonPanel = new JPanel();
-        GridLayout gridLayout = new GridLayout(1, 2);
-        gridLayout.setVgap(10);
-        gridLayout.setHgap(10);
-
-        buttonPanel.setLayout(gridLayout);
-        buttonPanel.add(submit);
-        buttonPanel.add(cancel);
-
-        this.getContentPane().add(buttonPanel);
-
-
-    }
-
 
     private void initCombobox() {
         String[] genders = {"M", "V", "O"};
@@ -227,18 +180,6 @@ public class TestPlayerDialog extends JDialog {
     private JTextField[] getAllTextFields() {
         JTextField[] res = {nameField, streetField, houseNrField, postcodeField, cityField, dob, telephoneNR, emailTextField};
         return res;
-    }
-
-    private void unmark(JTextField toUnmark) {
-        toUnmark.setForeground(Color.BLACK);
-
-        toUnmark.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-    }
-
-    private void mark(JTextField toMark) {
-
-        toMark.setForeground(Color.RED);
-        toMark.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
     }
 
 

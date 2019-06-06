@@ -66,24 +66,6 @@ public class Player {
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Player)) return false;
-        Player player = (Player) o;
-        return houseNr == player.houseNr &&
-                name.equals(player.name) &&
-                telephoneNR.equals(player.telephoneNR) &&
-                email.equals(player.email) &&
-                street.equals(player.street) &&
-                dobString.equals(player.dobString);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, telephoneNR, email, street, houseNr, dobString);
-    }
-
     public String getTelephoneNR() {
         return telephoneNR;
     }
@@ -106,6 +88,20 @@ public class Player {
 
     public String getStreet() {
         return street;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Player)) return false;
+        Player player = (Player) o;
+        return name.equals(player.name) &&
+                zip.equals(player.zip);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, zip);
     }
 
     public int getHouseNr() {

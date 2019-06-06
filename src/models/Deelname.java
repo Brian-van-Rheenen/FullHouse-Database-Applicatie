@@ -10,5 +10,11 @@ public class Deelname {
         this.betaald = betaald;
     }
 
+    public Player getPlayer() {
+        return player;
+    }
 
+    public boolean isBetaald() {
+        return betaald;
+    }
 }

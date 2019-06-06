@@ -1,11 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class Application {
 
     private JFrame window = new JFrame();
 
-    public Application() {
+    public Application()  {
         //Schedule a job for the event dispatch thread:
         //creating and showing this application's GUI.
         SwingUtilities.invokeLater(() -> {
@@ -18,7 +19,11 @@ public class Application {
             window.setTitle("FullHouse Database Applicatie");
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            window.add(new HomePanel(), BorderLayout.CENTER);
+            try {
+                window.add(new HomePanel(), BorderLayout.CENTER);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             window.setVisible(true);
         });
     }
