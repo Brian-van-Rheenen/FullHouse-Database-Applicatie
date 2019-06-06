@@ -53,7 +53,7 @@ public class UserOverviewPanel extends JPanel {
     }
 
     private void fillTable(DefaultTableModel tableModel) throws SQLException {
-        Object[] columnNames = {"Naam", "Rating", "Geboortedatum", "Geslacht", "Adres", "Postcode", "Email", "Telefoon"};
+        Object[] columnNames = {"Naam", "Rating", "Adres","Postcode", "Stad", "Geboortedatum", "Email", "Telefoon", "Geslacht"};
         playerTableData.addAll(dataGetter.allPlayers());
 
         for (int i = 0; i < 8; i++) {
@@ -95,6 +95,7 @@ public class UserOverviewPanel extends JPanel {
 
 
         JButton editButton = new JButton("Wijzigen");
+        editButton.addActionListener(e -> new TestPlayerDialog(this.playerTableData.get(5)));
         editButton.setPreferredSize(buttonDimension);
 
         JButton deleteButton = new JButton("Verwijderen");

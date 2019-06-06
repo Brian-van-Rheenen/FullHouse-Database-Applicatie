@@ -8,9 +8,9 @@ import java.util.Objects;
 public class Player {
 
     private String name;
-    private String address;
+
     private String gender;
-    private Date dob;
+
     private String telephoneNR;
     private String email;
     private int rating;
@@ -20,22 +20,12 @@ public class Player {
     private int houseNr;
     private String dobString;
 
-    public Player(String name, int rating, String address,String zip, String woonplaats, String gender, String telephoneNR, String email,Date dob) {
-        this.zip = zip;
-        this.name = name;
-        this.address = address;
-        this.gender = gender;
-        this.woonplaats = woonplaats;
-        this.dob = dob;
-        System.out.println(dob);
+
+    public Player(String name, int rating, String street,
+                  int houseNr, String zip, String woonplaats,
+                  String dob, String email, String telephoneNR, String gender) {
+        this.street = street;
         this.rating = rating;
-        this.telephoneNR = telephoneNR;
-        this.email = email;
-
-    }
-
-    public Player(String name, String street,int houseNr, String zip, String woonplaats, String gender, String telephoneNR, String email,String dob) {
-        this.street =street;
         this.houseNr = houseNr;
         this.zip = zip;
         this.name = name;
@@ -46,25 +36,34 @@ public class Player {
         this.email = email;
     }
 
-    public static Player readPlayerData(ResultSet rs) throws SQLException {
-        String name = rs.getString(1);
-        int rating = rs.getInt(2);
-        Date dob = rs.getDate(3);
-        String adres = rs.getString(4);
-        String zip = rs.getString(5);
-        String city = rs.getString(6);
-        String tele = rs.getString(7);
-        String mail = rs.getString(8);
-        String geslacht = rs.getString(9);
-
-        return new Player(name, rating, adres, zip,city, geslacht, tele, mail, dob);
+    public String getName() {
+        return name;
     }
 
-    public Object[] convertToTableData(){
-        Object[] res = {name, rating,  dob, gender, address, zip, telephoneNR, email};
+    public String getGender() {
+        return gender;
+    }
+
+    public Object[] convertToTableData() {
+        Object[] res = {name, rating, street+" "+houseNr , zip, woonplaats, dobString, email, telephoneNR, gender};
         return res;
     }
 
+    public static Player readPlayerData(ResultSet rs) throws SQLException {
+        String name = rs.getString(1);
+        int rating = rs.getInt(2);
+        String street = rs.getString(3);
+        int housenr = rs.getInt(4);
+        String zip = rs.getString(5);
+        String city = rs.getString(6);
+        String dob = rs.getDate(7).toString();
+        String mail = rs.getString(8);
+        String tele = rs.getString(9);
+        String geslacht = rs.getString(10);
+
+
+        return new Player(name, rating, street, housenr, zip, city, dob, mail, tele, geslacht);
+    }
 
 
     @Override
@@ -72,32 +71,17 @@ public class Player {
         if (this == o) return true;
         if (!(o instanceof Player)) return false;
         Player player = (Player) o;
-        return name.equals(player.name) &&
-                address.equals(player.address) &&
-                gender.equals(player.gender) &&
-                dob.equals(player.dob) &&
-                email.equals(player.email);
+        return houseNr == player.houseNr &&
+                name.equals(player.name) &&
+                telephoneNR.equals(player.telephoneNR) &&
+                email.equals(player.email) &&
+                street.equals(player.street) &&
+                dobString.equals(player.dobString);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, address, gender, dob, email);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public Date getDob() {
-        return dob;
+        return Objects.hash(name, telephoneNR, email, street, houseNr, dobString);
     }
 
     public String getTelephoneNR() {
@@ -110,5 +94,25 @@ public class Player {
 
     public int getRating() {
         return rating;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public String getWoonplaats() {
+        return woonplaats;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public int getHouseNr() {
+        return houseNr;
+    }
+
+    public String getDobString() {
+        return dobString;
     }
 }

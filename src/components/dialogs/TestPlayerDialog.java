@@ -33,11 +33,13 @@ public class TestPlayerDialog extends JDialog {
 
     private JTextField telephoneNR = new JTextField();
     private JTextField emailTextField = new JTextField();
+    private Player toChange;
 
     private JComponent[] fields = {nameField, streetField, houseNrField, postcodeField, cityField, genderBox, dob, telephoneNR, emailTextField};
 
 
     public TestPlayerDialog(ArrayList<Player> playerlist) {
+
         this.playerlist = playerlist;
         setLayoutAndBorder();
         this.setResizable(false);
@@ -46,12 +48,44 @@ public class TestPlayerDialog extends JDialog {
 
         initCombobox();
         addAllFields();
-        addButtons();
+        addButtons(false);
         this.setVisible(true);
 
     }
 
-    private void addPlayerToList(){
+    public TestPlayerDialog(Player toChange) {
+        this.toChange = toChange;
+        setLayoutAndBorder();
+        this.setResizable(false);
+
+        this.setSize(new Dimension(500, 800));
+
+        initCombobox();
+        addAllFields();
+        addButtons(true);
+        this.setVisible(true);
+
+        telephoneNR.setText(toChange.getTelephoneNR());
+
+
+        streetField.setText(toChange.getStreet());
+        nameField.setText(toChange.getName());
+        houseNrField.setText(String.valueOf(toChange.getHouseNr()));
+        postcodeField.setText(toChange.getZip());
+        genderBox.setSelectedItem(toChange.getGender());
+        emailTextField.setText(toChange.getEmail());
+        this.dob.setText(toChange.getDobString());
+        this.cityField.setText(toChange.getWoonplaats());
+    }
+
+
+    private void addPlayerToList() {
+
+
+        this.playerlist.add(createNewPlayer());
+    }
+
+    private Player createNewPlayer() {
         String telephone = telephoneNR.getText();
         String street = streetField.getText();
         String name = nameField.getText();
@@ -61,8 +95,7 @@ public class TestPlayerDialog extends JDialog {
         String email = emailTextField.getText();
         String data = this.dob.getText();
         String city = this.cityField.getText();
-
-        this.playerlist.add(new Player(name, street, houseNr, zip, city, gender, telephone, email, data));
+        return new Player(name, 0, street, houseNr, zip, city, data, email, telephone, gender);
     }
 
     private boolean checkAllFields() {
@@ -87,6 +120,8 @@ public class TestPlayerDialog extends JDialog {
         return res;
     }
 
+
+
     private void setLayoutAndBorder() {
         JPanel contentPane = new JPanel();
         this.setContentPane(contentPane);
@@ -110,10 +145,15 @@ public class TestPlayerDialog extends JDialog {
 
         for (int i = 0; i < nrOfFields; i++) {
 
-            Label label = new Label(fieldnames[i]);
+            JLabel label = new JLabel(fieldnames[i]);
+
             label.setFont(new Font("Helvetica", Font.BOLD, 12));
 
-            this.add(label);
+
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(label);
+
+            this.add(panel);
 
             JComponent field = fields[i];
             field.setFont(new Font("Helvetica", Font.PLAIN, 20));
@@ -122,8 +162,18 @@ public class TestPlayerDialog extends JDialog {
         }
     }
 
-    private void addButtons() {
-        JButton submit = new JButton("Toevoegen");
+    private void addButtons(boolean wijzigen) {
+        String action = "";
+        if (wijzigen) {
+
+            action = "Toevoegen";
+
+        } else {
+            action = "Wijzigen";
+        }
+
+
+        JButton submit = new JButton(action);
         JButton cancel = new JButton("Annuleer");
 
         Font buttonFont = new Font("Helvetica", Font.PLAIN, 20);
@@ -134,9 +184,16 @@ public class TestPlayerDialog extends JDialog {
         submit.addActionListener(event -> {
             if (!checkAllFields()) {
                 JOptionPane.showMessageDialog(this, "Iets ging niet helemaal goed");
+
+
             } else {
                 JOptionPane.showMessageDialog(this, "Alles ging goed");
-                addPlayerToList();
+
+                if (wijzigen) {
+                    toChange = createNewPlayer();
+                } else {
+                    addPlayerToList();
+                }
             }
         });
 
@@ -159,7 +216,7 @@ public class TestPlayerDialog extends JDialog {
 
 
     private void initCombobox() {
-        String[] genders = {"Man", "Vrouw", "Overig"};
+        String[] genders = {"M", "V", "O"};
         Arrays.stream(genders).forEach(g -> genderBox.addItem(g));
         genderBox.setSelectedIndex(2);
 

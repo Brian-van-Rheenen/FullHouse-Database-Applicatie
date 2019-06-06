@@ -11,11 +11,13 @@ public class DataGetter {
     private DatabaseConnection databaseConnection;
 
 
-    private final String Q_ALLPLAYERS = "SELECT naam                                    AS Naam,rating,gebdatum AS geboortedatum, \n" +
-            "       CONCAT(a.straatnaam, ' ', a.huisnummer) AS Adres,\n" +
-            "       a.postcode                              AS Postcode,\n" +
+    private final String Q_ALLPLAYERS = "SELECT naam AS Naam," +
+            "rating as Rating, \n" +
+            "a.straatnaam as Straatnaam ," +
+            " a.huisnummer AS Adres,\n" +
+            "a.postcode  AS Postcode,\n" +
             "       a.woonplaats                            as Woonplaats,\n" +
-            "       \n" +
+            "      gebdatum AS geboortedatum," +
             "       email                                   AS Email,\n" +
             "      telefoon                                AS Telefoon,\n" +
             "       geslacht                                AS Geslacht\n" +
@@ -28,16 +30,16 @@ public class DataGetter {
     }
 
     private void getDBconnection() {
-        try{
-        databaseConnection = new DatabaseConnection();
-        }catch(SQLException sqle){
+        try {
+            databaseConnection = new DatabaseConnection();
+        } catch (SQLException sqle) {
             sqle.printStackTrace();
         }
 
     }
 
     public ArrayList<Player> allPlayers() throws SQLException {
-        ResultSet rs = databaseConnection.sendQuery( Q_ALLPLAYERS);
+        ResultSet rs = databaseConnection.sendQuery(Q_ALLPLAYERS);
         ArrayList<Player> res = new ArrayList<>();
         while (rs.next()) {
             res.add(Player.readPlayerData(rs));
