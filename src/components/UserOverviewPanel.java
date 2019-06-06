@@ -1,6 +1,7 @@
 package components;
 
 import backend.DataGetter;
+import components.dialogs.TestPlayerDialog;
 import models.Player;
 
 import javax.swing.*;
@@ -17,11 +18,9 @@ import java.util.Vector;
  */
 public class UserOverviewPanel extends JPanel {
 
-    DataGetter dataGetter;
+    private DataGetter dataGetter;
+    private ArrayList<Player> playerTableData = new ArrayList<>();
 
-    {
-
-    }
 
     public UserOverviewPanel() {
 
@@ -54,15 +53,15 @@ public class UserOverviewPanel extends JPanel {
     }
 
     private void fillTable(DefaultTableModel tableModel) throws SQLException {
-        Object[] columnNames = {"Naam", "Rating", "Geboortedatum", "Geslacht", "Adres","Postcode", "Email", "Telefoon"};
-        ArrayList<Player> players = dataGetter.allPlayers();
+        Object[] columnNames = {"Naam", "Rating", "Geboortedatum", "Geslacht", "Adres", "Postcode", "Email", "Telefoon"};
+        playerTableData.addAll(dataGetter.allPlayers());
 
         for (int i = 0; i < 8; i++) {
             tableModel.addColumn(columnNames[i]);
 
         }
 
-        players.stream().forEach(player -> tableModel.addRow(player.convertToTableData()));
+        playerTableData.stream().forEach(player -> tableModel.addRow(player.convertToTableData()));
 
 
     }
@@ -81,15 +80,25 @@ public class UserOverviewPanel extends JPanel {
 
     private JPanel getLeftMenuButtonsPanel() {
         JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3, 1, 20, 20));
-        leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
+
+        Dimension buttonDimension = new Dimension(150, 200);
+
+        leftMenuButtonPanel.setPreferredSize(buttonDimension);
+
+
         JButton addButton = new JButton("Toevoegen");
-        addButton.setPreferredSize(new Dimension(150, 200));
+        addButton.setPreferredSize(buttonDimension);
+
+        addButton.addActionListener(event ->
+                new TestPlayerDialog(this.playerTableData)
+        );
+
 
         JButton editButton = new JButton("Wijzigen");
-        editButton.setPreferredSize(new Dimension(150, 200));
+        editButton.setPreferredSize(buttonDimension);
 
         JButton deleteButton = new JButton("Verwijderen");
-        deleteButton.setPreferredSize(new Dimension(150, 200));
+        deleteButton.setPreferredSize(buttonDimension);
 
         leftMenuButtonPanel.add(addButton);
         leftMenuButtonPanel.add(editButton);

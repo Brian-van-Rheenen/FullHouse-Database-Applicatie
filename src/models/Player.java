@@ -16,6 +16,9 @@ public class Player {
     private int rating;
     private String zip;
     private String woonplaats;
+    private String street;
+    private int houseNr;
+    private String dobString;
 
     public Player(String name, int rating, String address,String zip, String woonplaats, String gender, String telephoneNR, String email,Date dob) {
         this.zip = zip;
@@ -26,6 +29,19 @@ public class Player {
         this.dob = dob;
         System.out.println(dob);
         this.rating = rating;
+        this.telephoneNR = telephoneNR;
+        this.email = email;
+
+    }
+
+    public Player(String name, String street,int houseNr, String zip, String woonplaats, String gender, String telephoneNR, String email,String dob) {
+        this.street =street;
+        this.houseNr = houseNr;
+        this.zip = zip;
+        this.name = name;
+        this.gender = gender;
+        this.woonplaats = woonplaats;
+        this.dobString = dob;
         this.telephoneNR = telephoneNR;
         this.email = email;
     }

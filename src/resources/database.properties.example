@@ -1,20 +1,20 @@
 # Driver for database connection. Default is jdbc:mysql
-DRIVER=jdbc:mysql
+driver=jdbc:mysql
 
 # IP address needed for database connection
-IP=IP ADDRESS
+ip=IP ADDRESS
 
 # Port for database connection. Default is 3306
-PORT=3306
+port=3306
 
 # Name of the database
-DB=DATABASE
+db=DATABASE
 
 # Additional properties for the connection string. Default is NULL
-PROPERTIES=
+properties=
 
 # Username for database connection
-USER=USERNAME
+user=USERNAME
 
 # Password for database connection
-PASSWORD=PASSWORD
+password=PASSWORD
