@@ -17,7 +17,7 @@ public class PlayerProvider {
             "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
             "ORDER BY speler.speler_id;";
 
-    private final String Q_DELETEPLAYER = "DELETE FROM speler WHERE speler_id = ?";
+    private final String Q_DELETEPLAYER = "START TRANSACTION; UPDATE speler SET adres_id = 0, naam = 'VERWIJDERD', gebdatum = '1970-01-01', geslacht = 'O', telefoon = 'VERWIJDERD', email = 'VERWIJDERD', rating = 0 WHERE speler_id = ?; DELETE FROM adres WHERE adres_id NOT IN (SELECT adres_id FROM speler) AND adres_id != 0; COMMIT;";
 
     public PlayerProvider() {
         getDBconnection();
@@ -45,9 +45,14 @@ public class PlayerProvider {
      * @throws SQLException
      */
     public void deletePlayer(int id) throws SQLException {
-        PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_DELETEPLAYER);
-        pst.setString(1, Integer.toString(id));
-        databaseConnection.executeQuery(pst);
+        System.out.println(Q_DELETEPLAYER);
+        try {
+            PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_DELETEPLAYER);
+            pst.setString(1, Integer.toString(id));
+            databaseConnection.executeQuery(pst);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void getDBconnection() {

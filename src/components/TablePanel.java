@@ -11,7 +11,6 @@ public class TablePanel extends JPanel {
         this.setLayout(new BorderLayout());
 
         table = new JTable(model);
-        table.setAutoCreateRowSorter(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane tableWithScroll = new JScrollPane(table);

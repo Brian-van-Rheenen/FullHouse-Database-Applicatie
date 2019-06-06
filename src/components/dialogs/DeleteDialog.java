@@ -27,7 +27,7 @@ public class DeleteDialog extends InputDialog {
             pane.setValue(cancel);
         });
 
-        Object[] inputFields = {"Weet u zeker dat u de persoon met id: " + id + " wilt verwijderen?",
+        Object[] inputFields = {"Weet u zeker dat u de persoongegevens van de persoon met id: " + id + " wilt verwijderen?",
                                 "Dit kan NIET ongedaan gemaakt worden."};
 
         int option = JOptionPane.showOptionDialog(this, inputFields, "Speler verwijderen", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{delete, cancel}, delete);
