@@ -1,3 +1,4 @@
+import backend.PlayerProvider;
 import components.UserOverviewPanel;
 
 import javax.swing.JTabbedPane;
@@ -6,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JComponent;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 
 /**
  * This is the start panel with contains the tabbed pane (which in turn contains the different overview
@@ -13,9 +15,9 @@ import java.awt.event.KeyEvent;
  */
 public class HomePanel extends JPanel {
 
-    public HomePanel() {
+    public HomePanel() throws SQLException {
         super(new GridLayout(1, 1));
-        
+
         JTabbedPane tabbedPane = new JTabbedPane();
 
         UserOverviewPanel userOverviewPanel = new UserOverviewPanel();

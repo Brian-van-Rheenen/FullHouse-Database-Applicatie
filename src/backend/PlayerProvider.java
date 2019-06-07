@@ -12,10 +12,10 @@ public class PlayerProvider {
     private DatabaseConnection databaseConnection;
 
     private final String Q_ALLPLAYERS =
-            "SELECT speler_id, naam, geslacht, gebdatum, CONCAT(a.straatnaam, ' ', a.huisnummer), a.postcode, a.woonplaats, telefoon, email, rating\n" +
-            "FROM speler\n" +
-            "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
-            "ORDER BY speler.speler_id;";
+            "SELECT speler_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
+                    "FROM speler\n" +
+                    "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
+                    "ORDER BY speler.speler_id;";
 
     private final String Q_DELETEPLAYER = "DELETE FROM speler WHERE speler_id = ?";
 
