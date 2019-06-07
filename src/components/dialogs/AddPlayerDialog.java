@@ -101,22 +101,31 @@ public class AddPlayerDialog extends BasicDialog {
             e.printStackTrace();
         }
 
-
         String city = this.cityField.getText();
         return new Player(0, name, gender, dateOfBirth, street, houseNr, zip, city, telephone, email, 0);
     }
 
     private boolean checkAllFields() {
 
-        InputType[] playerDatatypes = InputType.getPersonalDataTypes();
+        InputType[] playerDataTypes = {
+                InputType.NAME,         // Naam
+                InputType.NAME,         // Straat
+                InputType.NUMBER,       // Huisnummer
+                InputType.POST_CODE,    // Postcode
+                InputType.CITY,         // Woonplaats
+                                        // Geslacht
+                InputType.DATE,         // GeboorteDatum
+                InputType.TELEPHONE_NR, // Telefoonnummer
+                InputType.EMAIL         // Email
+        };
+
         JTextField[] textFields = this.getAllTextFields();
         boolean res = true;
 
-        for (int i = 0; i < playerDatatypes.length; i++) {
+        for (int i = 0; i < playerDataTypes.length; i++) {
             JTextField textField = textFields[i];
             String input = textField.getText();
-            boolean goodInput = playerDatatypes[i].isGoodInput(input);
-
+            boolean goodInput = playerDataTypes[i].isGoodInput(input);
 
             if (goodInput) {
                 unmark(textField);
@@ -145,7 +154,6 @@ public class AddPlayerDialog extends BasicDialog {
         for (int i = 0; i < nrOfFields; i++) {
 
             JLabel label = new JLabel(fieldnames[i]);
-
             label.setFont(new Font("Helvetica", Font.BOLD, 12));
 
             JPanel panel = new JPanel(new BorderLayout());

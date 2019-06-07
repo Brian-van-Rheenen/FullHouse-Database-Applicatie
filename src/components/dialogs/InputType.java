@@ -1,21 +1,16 @@
 package components.dialogs;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.sql.Time;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 public enum InputType {
 
     NAME {
         @Override
         boolean isGoodInput(String input) {
-            return input.matches("^[a-zA-Z]+$");
+            return input.matches("^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$");
+        }
+    }, CITY {
+        @Override
+        boolean isGoodInput(String input) {
+            return input.matches("^([a-zA-Z\\u0080-\\u024F]+(?:. |-| |'))*[a-zA-Z\\u0080-\\u024F]+$");
         }
     }, DATE {
         @Override
@@ -25,7 +20,7 @@ public enum InputType {
     }, NUMBER {
         @Override
         boolean isGoodInput(String input) {
-            return input.matches("^[0-9]*$");
+            return input.matches("^\\d+$");
         }
     }, TELEPHONE_NR {
         @Override
@@ -48,18 +43,6 @@ public enum InputType {
             return input.matches("[a-zA-Z]");
         }
     };
-
-    public static InputType[] getPersonalDataTypes() {
-
-        InputType[] inputTypes = {NAME, NAME, NUMBER, POST_CODE, NAME, DATE, TELEPHONE_NR, EMAIL};
-        return inputTypes;
-    }
-
-    /*"Naam", "Straat", "Huisnummer", "Postcode", "Woonplaats", "Geslacht",
-            "Geboortedatum",
-            "Telefoonnummer",
-            "Emailadres"};
-*/
 
     abstract boolean isGoodInput(String input);
 
