@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.function.Consumer;
 
 public class AddPlayerDialog extends BasicDialog {
 
@@ -81,6 +82,7 @@ public class AddPlayerDialog extends BasicDialog {
                     // Attempt to add to the database
                     provider.addPlayer(newPlayer);
                     this.playerList.add(newPlayer);
+                    invokeUpdateCallback();
                     JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
                     this.dispose();
                 } catch (SQLException e) {
@@ -126,7 +128,7 @@ public class AddPlayerDialog extends BasicDialog {
                 InputType.EMAIL         // Email
         };
 
-        JTextField[] textFields = this.getAllTextFields();
+        JTextField[] textFields = new JTextField[]{nameField, streetField, houseNrField, postcodeField, cityField, dob, telephoneNR, emailTextField};
         boolean res = true;
 
         for (int i = 0; i < playerDataTypes.length; i++) {
@@ -146,10 +148,21 @@ public class AddPlayerDialog extends BasicDialog {
         return res;
     }
 
+    private ArrayList<Consumer<Void>> callbackList = new ArrayList<>();
+
+    public void addListener(Consumer<Void> callback) {
+        callbackList.add(callback);
+    }
+
+    private void invokeUpdateCallback() {
+        for (Consumer<Void> consumer : callbackList) {
+            consumer.accept(null);
+        }
+    }
 
     @Override
     public void addAllFields() {
-        initCombobox();
+        initComboBox();
 
         String[] fieldnames = {"Naam", "Straat", "Huisnummer", "Postcode", "Woonplaats", "Geslacht",
                 "Geboortedatum",
@@ -175,16 +188,9 @@ public class AddPlayerDialog extends BasicDialog {
         }
     }
 
-
-    private void initCombobox() {
+    private void initComboBox() {
         String[] genders = {"M", "V", "O"};
         Arrays.stream(genders).forEach(g -> genderBox.addItem(g));
         genderBox.setSelectedIndex(2);
-    }
-
-
-    private JTextField[] getAllTextFields() {
-        JTextField[] res = {nameField, streetField, houseNrField, postcodeField, cityField, dob, telephoneNR, emailTextField};
-        return res;
     }
 }

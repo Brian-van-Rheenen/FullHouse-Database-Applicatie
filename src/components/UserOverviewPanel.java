@@ -11,6 +11,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -96,10 +98,9 @@ public class UserOverviewPanel extends JPanel {
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
         addButton.addActionListener(e -> {
-            // Code blocks until the Dialog is closed
-            new AddPlayerDialog(playerTableData);
-            // Refresh the data
-            tablePanel.updateModel(fetchDataModel());
+            AddPlayerDialog dialog = new AddPlayerDialog(playerTableData);
+
+            dialog.addListener((nothing) -> tablePanel.updateModel(fetchDataModel()));
         });
 
         JButton editButton = new JButton("Wijzigen");
