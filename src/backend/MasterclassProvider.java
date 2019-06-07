@@ -12,7 +12,7 @@ public class MasterclassProvider {
 
     private DatabaseConnection databaseConnection;
 
-    private final String Q_ALLMASTERCLASSES =
+    private static final String Q_ALLMASTERCLASSES =
             "SELECT m.idMasterclass, l.stad AS Locatie,\n" +
             "       event.capaciteit as Capaciteit,\n"+
             "       DATE_FORMAT(begintijd,  '%d-%m-%Y') AS BeginDatum,\n" +
@@ -29,7 +29,7 @@ public class MasterclassProvider {
             "         INNER JOIN bekende_speler bs on m.begeleiderNr = bs.idBekend\n" +
             "ORDER BY m.idMasterclass;";
 
-    private final String Q_ADDMASTERCLASS = "START TRANSACTION;\n" +
+    private static final String Q_ADDMASTERCLASS = "START TRANSACTION;\n" +
             "INSERT INTO event (locatie, capaciteit, begintijd, eindtijd, inschrijfgeld)\n" +
             "VALUES ((SELECT idLocatie FROM locatie WHERE stad = ? LIMIT 1), ?, ?, ?, ?);\n" +
             "INSERT INTO masterclass (idMasterclass, minimumLevel, begeleiderNr)\n" +
