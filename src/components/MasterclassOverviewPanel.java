@@ -2,6 +2,7 @@ package components;
 
 import backend.MasterclassProvider;
 import components.dialogs.AddMasterclassDialog;
+import components.dialogs.reports.MasterclassFilterPlayerDialog;
 import components.panels.OverviewPanel;
 import models.Masterclass;
 
@@ -78,11 +79,12 @@ public class MasterclassOverviewPanel extends OverviewPanel {
         //editButton.addActionListener(e -> new AddMasterclassDialog(this.masterclassTableData.get(5)));
         editButton.setPreferredSize(new Dimension(150, 200));
 
-        JButton reportButton = new JButton("Rapportages");
-        reportButton.setPreferredSize(new Dimension(150, 200));
+        JButton filterButton = new JButton("Filter spelers");
+        filterButton.setPreferredSize(new Dimension(150, 200));
+        filterButton.addActionListener(e -> new MasterclassFilterPlayerDialog());
 
         addButtonToPanel(addButton);
         addButtonToPanel(editButton);
-        addButtonToPanel(reportButton);
+        addButtonToPanel(filterButton);
     }
 }

@@ -10,6 +10,20 @@ public class TournamentProvider {
 
     private DatabaseConnection databaseConnection;
 
+    private final String Q_ALLTOURNAMENTS = "SELECT l.stad           AS Locatie,\n" +
+            "       DATE_FORMAT(begintijd, '%d-%m-%Y')               AS Begindatum,\n" +
+            "       TIME_FORMAT(begintijd, '%H:%i')                  AS Begintijd,\n" +
+            "       DATE_FORMAT(eindtijd, '%d-%m-%Y')                AS Einddatum,\n" +
+            "       TIME_FORMAT(eindtijd, '%H:%i')                   AS Eindtijd,\n" +
+            "       DATE_FORMAT(uiterste_inschrijfdatum, '%d-%m-%Y') AS 'Uiterste inschrijfdatum',\n" +
+            "       thema                                            AS Thema,\n" +
+            "       inschrijfgeld                                    AS Kosten,\n" +
+            "       toegang_beperking                                AS Toegangsbeperking\n" +
+            "FROM event\n" +
+            "         INNER JOIN locatie l on event.locatie = l.idLocatie\n" +
+            "         INNER JOIN toernooi t ON idEvent = t.idToernooi\n" +
+            "ORDER BY t.idToernooi;";
+
     public TournamentProvider() {
         getDBconnection();
     }
@@ -17,7 +31,7 @@ public class TournamentProvider {
     public ArrayList<Toernooi> getTournaments() throws SQLException {
         ArrayList<Toernooi> res = new ArrayList<>();
 
-        ResultSet rs = databaseConnection.executeQueryAndGetData(DB_Statements.Q_ALLTOURNAMENTS);
+        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLTOURNAMENTS);
         while(rs.next()){
             res.add(Toernooi.readTournament(rs));
         }

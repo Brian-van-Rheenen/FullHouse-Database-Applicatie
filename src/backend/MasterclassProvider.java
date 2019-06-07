@@ -36,6 +36,15 @@ public class MasterclassProvider {
             "VALUES (LAST_INSERT_ID(), ?, ?);\n" +
             "COMMIT;";
 
+    private static final String Q_FILTERPLAYERSBYRATING = "SELECT m.idMasterclass AS Masterclasscode,\n" +
+            "       s.naam          AS Naam,\n" +
+            "       s.rating        AS Rating\n" +
+            "FROM masterclass m\n" +
+            "         JOIN masterclass_deelname md on m.idMasterclass = md.mc_code\n" +
+            "         JOIN speler s on md.gast = s.speler_id\n" +
+            "WHERE rating >= ?\n" +
+            "ORDER BY s.rating;";
+
     public MasterclassProvider() {
         getDBconnection();
     }
@@ -87,6 +96,13 @@ public class MasterclassProvider {
         }
 
         return masterclass;
+    }
+
+    public ResultSet filterPlayersByRating(int rating) throws SQLException {
+        PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_FILTERPLAYERSBYRATING);
+        pst.setInt(1, rating);
+
+        return pst.executeQuery();
     }
 
     private void getDBconnection() {
