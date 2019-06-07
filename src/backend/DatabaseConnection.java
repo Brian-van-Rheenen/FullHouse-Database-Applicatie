@@ -49,7 +49,7 @@ public class DatabaseConnection {
                     "url",
                     // Did not find an URL, attempt to build one from the properties
                     // All properties must be lowercase
-                    String.format("%s://%s/%s", prop.getProperty("driver"), prop.getProperty("ip"), prop.getProperty("db"))
+                    String.format("%s://%s/%s?%s", prop.getProperty("driver"), prop.getProperty("ip"), prop.getProperty("db"), prop.getProperty("properties"))
             );
 
             //TODO remove this print if project is done

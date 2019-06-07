@@ -8,6 +8,7 @@ import models.Player;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
@@ -25,27 +26,17 @@ public class UserOverviewPanel extends JPanel {
     private TablePanel tablePanel;
 
     public UserOverviewPanel() {
+
+        playerProvider = new PlayerProvider();
+
         JPanel leftMenuPanel = new JPanel(new GridBagLayout());
         leftMenuPanel.setBackground(Color.LIGHT_GRAY);
-
-        model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        try {
-            playerProvider = new PlayerProvider();
-            fillTable(model);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         setLookAndFeel();
 
         addLeftMenuButtons(leftMenuPanel);
 
+        model = fetchDataModel();
         tablePanel = new TablePanel(model);
         this.add(tablePanel, BorderLayout.CENTER);
     }
@@ -54,17 +45,6 @@ public class UserOverviewPanel extends JPanel {
         this.setLayout(new BorderLayout(20, 20));
         this.setBackground(Color.LIGHT_GRAY);
         this.setBorder(new EmptyBorder(10, 10, 10, 10));
-    }
-
-    private void fillTable(DefaultTableModel tableModel) throws SQLException {
-        Object[] columnNames = {"id", "Naam", "Geslacht", "Geboortedatum", "Adres", "Postcode", "Woonplaats", "Telefoon", "Email", "Rating"};
-        ArrayList<Player> players = playerProvider.allPlayers();
-
-        for (int i = 0; i < columnNames.length; i++) {
-            tableModel.addColumn(columnNames[i]);
-        }
-
-        players.forEach(player -> tableModel.addRow(player.convertToTableData()));
     }
 
     private void addLeftMenuButtons(JPanel leftMenuPanel) {
@@ -79,6 +59,35 @@ public class UserOverviewPanel extends JPanel {
         this.add(leftMenuPanel, BorderLayout.LINE_START);
     }
 
+    /**
+     * Fetches all rows from the database and put's it in a model
+     * @return an event with the updated model
+     */
+    private DefaultTableModel fetchDataModel() {
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        try {
+            Object[] columnNames = {"id", "Naam", "Geslacht", "Geboortedatum", "Adres", "Postcode", "Woonplaats", "Telefoon", "Email", "Rating"};
+            ArrayList<Player> players = playerProvider.allPlayers();
+
+            for (Object columnName : columnNames) {
+                model.addColumn(columnName);
+            }
+
+            players.forEach(player -> model.addRow(player.convertToTableData()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+
+        return model;
+    }
+
     private JPanel getLeftMenuButtonsPanel() {
         JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3, 1, 20, 20));
         leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
@@ -86,10 +95,12 @@ public class UserOverviewPanel extends JPanel {
 
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
-
-        addButton.addActionListener(event ->
-                new AddPlayerDialog(this.playerTableData)
-        );
+        addButton.addActionListener(e -> {
+            // Code blocks until the Dialog is closed
+            new AddPlayerDialog(playerTableData);
+            // Refresh the data
+            tablePanel.updateModel(fetchDataModel());
+        });
 
         JButton editButton = new JButton("Wijzigen");
         editButton.addActionListener(e -> new AddPlayerDialog(this.playerTableData.get(5)));
@@ -102,7 +113,10 @@ public class UserOverviewPanel extends JPanel {
                 new NoSelectionDialog();
             } else {
                 int id = (Integer) model.getValueAt(tablePanel.getSelectedRow(), 0);
+                // Code blocks until the Dialog is closed
                 new DeleteDialog(id);
+                // Refresh the data
+                tablePanel.updateModel(fetchDataModel());
             }
         });
 
