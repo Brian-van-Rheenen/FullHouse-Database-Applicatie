@@ -1,10 +1,12 @@
 import components.MasterclassOverviewPanel;
+import components.ParticipantOverviewPanel;
 import components.UserOverviewPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+
 
 /**
  * This is the start panel with contains the tabbed pane (which in turn contains the different overview
@@ -32,6 +34,11 @@ public class HomePanel extends JPanel {
         tabbedPane.addTab("Masterclasses", null, masterclassPanel,
                 "Lijst van masterclasses");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+
+
+        tabbedPane.addTab("Deelnames", null, new ParticipantOverviewPanel(),
+                "Overzicht van deelnames");
+        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
         add(tabbedPane);
 

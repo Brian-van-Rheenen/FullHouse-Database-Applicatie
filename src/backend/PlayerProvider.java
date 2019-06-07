@@ -4,16 +4,24 @@ import models.Player;
 
 import java.sql.*;
 import java.util.ArrayList;
+import backend.DB_Statements.*;
+
+import static backend.DB_Statements.*;
 
 public class PlayerProvider {
 
     private DatabaseConnection databaseConnection;
-
-    private final String Q_ALLPLAYERS =
+    private static final String Q_ALLPLAYERS =
             "SELECT speler_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
-            "FROM speler\n" +
-            "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
-            "ORDER BY speler.speler_id;";
+                    "FROM speler\n" +
+                    "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
+                    "ORDER BY speler.speler_id;";
+
+
+
+    private static final String Q_DELETEPLAYER = "START TRANSACTION; UPDATE speler SET adres_id = 0, naam = 'VERWIJDERD', gebdatum = '1970-01-01', geslacht = 'O', telefoon = 'VERWIJDERD', email = 'VERWIJDERD', rating = 0 WHERE speler_id = ?; DELETE FROM adres WHERE adres_id NOT IN (SELECT adres_id FROM speler) AND adres_id != 0; COMMIT;";
+
+
 
     private final String Q_ADDPLAYER = "START TRANSACTION;\n" +
             "INSERT INTO adres (woonplaats, straatnaam, huisnummer, postcode)\n" +
@@ -23,7 +31,13 @@ public class PlayerProvider {
             "VALUES (LAST_INSERT_ID(), ?, ?, ?, ?, ?);\n" +
             "COMMIT;";
 
-    private final String Q_DELETEPLAYER = "START TRANSACTION; UPDATE speler SET adres_id = 0, naam = 'VERWIJDERD', gebdatum = '1970-01-01', geslacht = 'O', telefoon = 'VERWIJDERD', email = 'VERWIJDERD', rating = 0 WHERE speler_id = ?; DELETE FROM adres WHERE adres_id NOT IN (SELECT adres_id FROM speler) AND adres_id != 0; COMMIT;";
+
+    private final String Q_SELECTPLAYER =
+            "SELECT speler_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
+            "FROM speler\n" +
+            "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
+            "WHERE speler_id = ?\n" +
+            "ORDER BY speler.speler_id;";
 
     public PlayerProvider() {
         getDBconnection();
@@ -90,13 +104,21 @@ public class PlayerProvider {
      * @throws SQLException
      */
     public void deletePlayer(int id) throws SQLException {
-        try {
-            PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_DELETEPLAYER);
-            pst.setString(1, Integer.toString(id));
-            databaseConnection.executeQuery(pst);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_DELETEPLAYER);
+        pst.setString(1, Integer.toString(id));
+        databaseConnection.executeQuery(pst);
+    }
+
+    public Player getPlayerById(int id) throws SQLException {
+        PreparedStatement playerStatement = databaseConnection
+                .getConnection()
+                .prepareStatement(Q_SELECTPLAYER);
+
+        playerStatement.setInt(1, id);
+
+        ResultSet set = playerStatement.executeQuery();
+        set.next();
+        return Player.readPlayerData(set);
     }
 
     private void getDBconnection() {

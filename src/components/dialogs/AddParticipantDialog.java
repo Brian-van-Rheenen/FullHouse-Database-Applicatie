@@ -1,8 +1,8 @@
 package components.dialogs;
 
 
-import models.Player;
-import models.Toernooi;
+import models.Event;
+import models.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class AddParticipantDialog extends BasicDialog {
 
-    private ArrayList<Toernooi> tournaments = new ArrayList<>();
+    private ArrayList<Event> events = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
 
     private JTextField toernooiCodeField = new JTextField();
@@ -67,19 +67,21 @@ public class AddParticipantDialog extends BasicDialog {
         String inputForPLayer = playerNameField.getText();
         String inputForZIP = postcode.getText();
 
-        Optional<Toernooi> optionalToernooi = tournaments.stream().filter(toernooi -> toernooi.getCode().equals(inputForEvent)).findAny();
+        Optional<Event> optionalEvent = events.stream().filter(toernooi -> toernooi.isMatchForSearch(inputForEvent)).findAny();
         Optional<Player> optionalPlayer = players.stream()
                 .filter(player -> player.getName()
                         .equalsIgnoreCase(inputForPLayer)
                         && player.getZip().equalsIgnoreCase(inputForZIP)).findAny();
 
-        if (!optionalToernooi.isPresent()) {
+        if (!optionalEvent.isPresent()) {
             JOptionPane.showMessageDialog(this, "Het systeem kon de masterclass/toernooi niet vinden");
         } else if (!optionalPlayer.isPresent()) {
             JOptionPane.showMessageDialog(this, "Het systeem kon geen speler vinden met deze postcode");
 
         } else {
-            optionalToernooi.get().addContestant(optionalPlayer.get());
+            Player player = optionalPlayer.get();
+
+            optionalEvent.get().getParticipants().add(new Deelname(player, false));
         }
 
     }

@@ -14,6 +14,11 @@ public class Deelname {
         return player;
     }
 
+    public Object [] getTableFormatData(){
+        System.out.println(player.getName());
+        return new Object[]{player.convertToTableData(), betaald};
+    }
+
     public boolean isBetaald() {
         return betaald;
     }
