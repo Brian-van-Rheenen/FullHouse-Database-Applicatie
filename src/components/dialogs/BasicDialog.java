@@ -22,11 +22,8 @@ public abstract class BasicDialog extends JDialog {
         this.setSize(new Dimension(500, 800));
     }
 
-    public abstract void addAllFields();
-
     private void setLayoutAndBorder() {
         JPanel contentPane = new JPanel();
-        addButtons();
         this.setContentPane(contentPane);
         BoxLayout boxLayout = new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS);
         EmptyBorder emptyBorder = new EmptyBorder(10, 5, 10, 5);
@@ -49,7 +46,7 @@ public abstract class BasicDialog extends JDialog {
         if (!this.isForChange) {
             submit.setText("Toevoegen");
         } else {
-            cancel.setText("Cancel");
+            submit.setText("Aanpassen");
         }
 
         Font buttonFont = new Font("Helvetica", Font.PLAIN, 20);
@@ -58,7 +55,6 @@ public abstract class BasicDialog extends JDialog {
         cancel.setFont(buttonFont);
 
         submit.addActionListener(event -> handleConfirm());
-
         cancel.addActionListener(e -> this.dispose());
 
         JPanel buttonPanel = new JPanel();
@@ -77,6 +73,8 @@ public abstract class BasicDialog extends JDialog {
      * This method get's called when the user confirms input
      */
     public abstract void handleConfirm();
+
+    public abstract void addAllFields();
 
     public boolean isForChange() {
         return isForChange;
