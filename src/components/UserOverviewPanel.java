@@ -1,7 +1,7 @@
 package components;
 
 import backend.DataGetter;
-import components.dialogs.TestPlayerDialog;
+import components.dialogs.AddPlayerDialog;
 import models.Player;
 
 import javax.swing.*;
@@ -11,7 +11,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  * This is the general overview panel for users
@@ -85,12 +84,12 @@ public class UserOverviewPanel extends JPanel {
         addButton.setPreferredSize(buttonDimension);
 
         addButton.addActionListener(event ->
-                new TestPlayerDialog(this.playerTableData)
+                new AddPlayerDialog(this.playerTableData)
         );
 
 
         JButton editButton = new JButton("Wijzigen");
-        editButton.addActionListener(e -> new TestPlayerDialog(this.playerTableData.get(5)));
+        editButton.addActionListener(e -> new AddPlayerDialog(this.playerTableData.get(5)));
         editButton.setPreferredSize(buttonDimension);
 
         JButton deleteButton = new JButton("Verwijderen");

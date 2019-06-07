@@ -17,9 +17,6 @@ public abstract class BasicDialog extends JDialog {
         this.setResizable(false);
 
         this.setSize(new Dimension(500, 800));
-
-
-
     }
 
     public abstract void addAllFields();
@@ -32,41 +29,32 @@ public abstract class BasicDialog extends JDialog {
         EmptyBorder emptyBorder = new EmptyBorder(10, 5, 10, 5);
         contentPane.setBorder(emptyBorder);
 
-
         this.getContentPane().setLayout(boxLayout);
     }
 
     public void unmark(JTextField toUnmark) {
         toUnmark.setForeground(Color.BLACK);
-
         toUnmark.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
     }
 
     public void mark(JTextField toMark) {
-
         toMark.setForeground(Color.RED);
         toMark.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
     }
 
     public void addButtons() {
         if (!this.isForChange) {
-
             submit.setText("Toevoegen");
-
         } else {
             cancel.setText("Cancel");
         }
-
 
         Font buttonFont = new Font("Helvetica", Font.PLAIN, 20);
 
         submit.setFont(buttonFont);
         cancel.setFont(buttonFont);
 
-        submit.addActionListener(event -> {
-            doSomething();
-        });
-
+        submit.addActionListener(event -> handleConfirm());
 
         cancel.addActionListener(e -> this.dispose());
 
@@ -80,13 +68,12 @@ public abstract class BasicDialog extends JDialog {
         buttonPanel.add(cancel);
 
         this.getContentPane().add(buttonPanel);
-
-
     }
 
-
-    public abstract void doSomething();
-
+    /**
+     * This method get's called when the user confirms input
+     */
+    public abstract void handleConfirm();
 
     public boolean isForChange() {
         return isForChange;

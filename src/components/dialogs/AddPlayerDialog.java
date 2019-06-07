@@ -1,122 +1,164 @@
 package components.dialogs;
 
+import models.Player;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-/**
- * This is the popup / dialog window for adding players.
- */
-public class AddPlayerDialog extends Component {
+public class AddPlayerDialog extends BasicDialog {
 
-    /**
-     * Create and instantiate the custom dialog window
-     */
-    public AddPlayerDialog() {
-        JTextArea errors = new JTextArea();
-        errors.setMinimumSize(new Dimension(250, 50));
-        errors.setPreferredSize(new Dimension(250, 50));
-        errors.setEditable(false);
-        errors.setLineWrap(true);
-        errors.setWrapStyleWord(true);
-        errors.setOpaque(false);
-        errors.setForeground(Color.red);
+    private ArrayList<Player> playerList;
 
-        final JButton add = new JButton("Toevoegen");
-        add.addActionListener(e -> {
-            JOptionPane pane = getOptionPane((JComponent)e.getSource());
-            pane.setValue(add);
-        });
-        add.setEnabled(false);
+    private JTextField nameField = new JTextField();
 
-        final JButton cancel = new JButton("Annuleren");
-        cancel.addActionListener(e -> {
-            JOptionPane pane = getOptionPane((JComponent)e.getSource());
-            pane.setValue(cancel);
-        });
+    //adres
+    private JTextField streetField = new JTextField();
+    private JTextField houseNrField = new JTextField();
 
-        JTextField nameField = new JTextField();
-        JTextField cityField = new JTextField();
-        JTextField streetField = new JTextField();
-        JTextField houseNrField = new JTextField();
-        JTextField postalcodeField = new JTextField();
+    private JTextField postcodeField = new JTextField();
+    private JTextField cityField = new JTextField();
 
-        String[] genders = { "Man", "Vrouw" };
-        JComboBox <String> genderList = new JComboBox <> (genders);
-        genderList.setSelectedIndex(0);
+    //------
+    private JComboBox<String> genderBox = new JComboBox<>();
 
-        JTextField dateOfBirthField = new JTextField();
+    private JTextField dob = new JTextField();
 
-        dateOfBirthField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
+    private JTextField telephoneNR = new JTextField();
+    private JTextField emailTextField = new JTextField();
 
+    private JComponent[] fields = {nameField, streetField, houseNrField, postcodeField, cityField, genderBox, dob, telephoneNR, emailTextField};
+
+
+    public AddPlayerDialog(ArrayList<Player> playerList) {
+        super(false);
+        this.playerList = playerList;
+        initChildDialog();
+    }
+
+    private void initChildDialog() {
+        this.setSize(new Dimension(500, 800));
+
+        addAllFields();
+        addButtons();
+        this.setVisible(true);
+    }
+
+    public AddPlayerDialog(Player toChange) {
+        super(true);
+
+
+        telephoneNR.setText(toChange.getTelephoneNR());
+
+
+        streetField.setText(toChange.getStreet());
+        nameField.setText(toChange.getName());
+        houseNrField.setText(String.valueOf(toChange.getHouseNr()));
+        postcodeField.setText(toChange.getZip());
+        genderBox.setSelectedItem(toChange.getGender());
+        emailTextField.setText(toChange.getEmail());
+        this.dob.setText(toChange.getDobString());
+        this.cityField.setText(toChange.getWoonplaats());
+        initChildDialog();
+    }
+
+
+    private void addPlayerToList() {
+        this.playerList.add(createNewPlayer());
+    }
+
+    @Override
+    public void handleConfirm() {
+        if (!checkAllFields()) {
+            JOptionPane.showMessageDialog(this, "Iets ging niet helemaal goed");
+        } else {
+            if (!this.isForChange()) {
+                addPlayerToList();
             }
 
-            @Override
-            public void focusLost(FocusEvent e) {
-                DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                formatter.setLenient(false);
-
-                JTextField dateOfBirthField = (JTextField)e.getSource();
-
-                if(dateOfBirthField.getText().matches("([0-9]{2})-([0-9]{2})-([0-9]{4})")) {
-                    try {
-                        formatter.parse(dateOfBirthField.getText());
-                        errors.setText("");
-                        add.setEnabled(true);
-                        return;
-                    } catch (ParseException pe) {
-                        add.setEnabled(false);
-                        errors.setText("Geboortedatum is geen correcte datum.");
-                        return;
-                    }
-                }
-                else {
-                    add.setEnabled(false);
-                    errors.setText("Geboortedatum is niet in het correcte formaat (dd-MM-yyyy). Voorbeeld: 03-06-2000.");
-                    return;
-                }
-            }
-        });
-
-        JTextField phoneNrField = new JTextField();
-        JTextField emailField = new JTextField();
-
-        Object[] inputFields = {"Naam", nameField,
-                                "Woonplaats", cityField,
-                                "Straat", streetField,
-                                "Huisnummer", houseNrField,
-                                "Postcode", postalcodeField,
-                                "Geslacht", genderList,
-                                "Geboortedatum", dateOfBirthField,
-                                "Telefoonnummer", phoneNrField,
-                                "Emailadres", emailField,
-                                "", errors};
-
-        int option = JOptionPane.showOptionDialog(this, inputFields, "Speler toevoegen", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{add, cancel}, add);
-
-        if (option == JOptionPane.OK_OPTION) {
-            // toevoegen
+            // TODO: Update player
+            JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
         }
     }
 
-    /**
-     * Find the parent JOptionPane. This keeps looping until it finds the parent
-     * @param parent the component of which you need to know the parent
-     * @return the parent JOptionPane
-     */
-    protected JOptionPane getOptionPane(JComponent parent) {
-        JOptionPane pane;
-        if (!(parent instanceof JOptionPane)) {
-            pane = getOptionPane((JComponent)parent.getParent());
-        } else {
-            pane = (JOptionPane) parent;
+    private Player createNewPlayer() {
+        String telephone = telephoneNR.getText();
+        String street = streetField.getText();
+        String name = nameField.getText();
+        int houseNr = Integer.parseInt(houseNrField.getText());
+        String zip = postcodeField.getText();
+        String gender = (String) genderBox.getSelectedItem();
+        String email = emailTextField.getText();
+        String data = this.dob.getText();
+        String city = this.cityField.getText();
+        return new Player(name, 0, street, houseNr, zip, city, data, email, telephone, gender);
+    }
+
+    private boolean checkAllFields() {
+
+        InputType[] playerDatatypes = InputType.getPersonalDataTypes();
+        JTextField[] textFields = this.getAllTextFields();
+        boolean res = true;
+
+        for (int i = 0; i < playerDatatypes.length; i++) {
+            JTextField textField = textFields[i];
+            String input = textField.getText();
+            boolean goodInput = playerDatatypes[i].isGoodInput(input);
+
+
+            if (goodInput) {
+                unmark(textField);
+
+            } else {
+                mark(textField);
+                res = false;
+            }
         }
-        return pane;
+
+        return res;
+    }
+
+
+    @Override
+    public void addAllFields() {
+        initCombobox();
+
+        String[] fieldnames = {"Naam", "Straat", "Huisnummer", "Postcode", "Woonplaats", "Geslacht",
+                "Geboortedatum",
+                "Telefoonnummer",
+                "Emailadres"};
+
+        int nrOfFields = fields.length;
+
+        for (int i = 0; i < nrOfFields; i++) {
+
+            JLabel label = new JLabel(fieldnames[i]);
+
+            label.setFont(new Font("Helvetica", Font.BOLD, 12));
+
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(label);
+
+            this.add(panel);
+
+            JComponent field = fields[i];
+            field.setFont(new Font("Helvetica", Font.PLAIN, 20));
+            this.add(field);
+            this.add(Box.createRigidArea(new Dimension(300, 9)));
+        }
+    }
+
+
+    private void initCombobox() {
+        String[] genders = {"M", "V", "O"};
+        Arrays.stream(genders).forEach(g -> genderBox.addItem(g));
+        genderBox.setSelectedIndex(2);
+    }
+
+
+    private JTextField[] getAllTextFields() {
+        JTextField[] res = {nameField, streetField, houseNrField, postcodeField, cityField, dob, telephoneNR, emailTextField};
+        return res;
     }
 }

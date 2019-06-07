@@ -69,7 +69,7 @@ public class AddParticipantDialog extends BasicDialog {
      *
      */
     @Override
-    public void doSomething() {
+    public void handleConfirm() {
         String inputForEvent = toernooiCodeField.getText();
         String inputForPLayer = playerNameField.getText();
         String inputForZIP = postcode.getText();
