@@ -2,9 +2,7 @@ package backend;
 
 import models.Player;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class PlayerProvider {
@@ -19,7 +17,7 @@ public class PlayerProvider {
 
     private final String Q_ADDPLAYER = "START TRANSACTION;\n" +
             "INSERT INTO adres (woonplaats, straatnaam, huisnummer, postcode)\n" +
-            "SELECT ?, ?, ?, ? FROM adres WHERE NOT EXISTS(SELECT * FROM adres WHERE woonplaats = 'stad' AND straatnaam = 'straat' AND huisnummer = 1 AND postcode = '1234AB')\n" +
+            "SELECT ?, ?, ?, ? FROM adres WHERE NOT EXISTS(SELECT * FROM adres WHERE woonplaats = ? AND straatnaam = ? AND huisnummer = ? AND postcode = ?)\n" +
             "LIMIT 1;\n" +
             "INSERT INTO speler (adres_id, naam, gebdatum, geslacht, telefoon, email)\n" +
             "VALUES (LAST_INSERT_ID(), ?, ?, ?, ?, ?);\n" +
@@ -50,21 +48,40 @@ public class PlayerProvider {
     /**
      * Add a new player to the database.
      * @param player the player object to add.
+     * @return Player object with an updated id
      * @throws SQLException
      */
-    public void addPlayer(Player player) throws SQLException {
-        PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_ADDPLAYER);
-        pst.setString(1, player.getCity());
-        pst.setString(2, player.getStreet());
-        pst.setInt(3, player.getHouseNr());
-        pst.setString(4, player.getZip());
-        pst.setString(5, player.getName());
-        pst.setDate(6, player.getDob());
-        pst.setString(7, player.getGender());
-        pst.setString(8, player.getTelephoneNR());
-        pst.setString(9, player.getEmail());
+    public Player addPlayer(Player player) throws SQLException {
+        PreparedStatement addPlayerStatement = databaseConnection
+                .getConnection()
+                .prepareStatement(Q_ADDPLAYER, Statement.RETURN_GENERATED_KEYS);
 
-        databaseConnection.executeQuery(pst);
+        addPlayerStatement.setString(1, player.getCity());
+        addPlayerStatement.setString(2, player.getStreet());
+        addPlayerStatement.setInt(3, player.getHouseNr());
+        addPlayerStatement.setString(4, player.getZip());
+        addPlayerStatement.setString(5, player.getCity());
+        addPlayerStatement.setString(6, player.getStreet());
+        addPlayerStatement.setInt(7, player.getHouseNr());
+        addPlayerStatement.setString(8, player.getZip());
+
+        // Player part of query
+        addPlayerStatement.setString(9, player.getName());
+        addPlayerStatement.setDate(10, player.getDob());
+        addPlayerStatement.setString(11, player.getGender());
+        addPlayerStatement.setString(12, player.getTelephoneNR());
+        addPlayerStatement.setString(13, player.getEmail());
+
+        addPlayerStatement.executeUpdate();
+
+        // Update the player with the generated id
+        ResultSet set = databaseConnection.getConnection().createStatement().executeQuery("SELECT LAST_INSERT_ID()");
+        if(set.next()) {
+            // Set the Id for the player
+            player.setId(set.getInt(1));
+        }
+
+        return player;
     }
 
     /**

@@ -36,7 +36,7 @@ public class TablePanel extends JPanel {
         return table.getSelectedColumn();
     }
 
-    public void updateModel(TableModel model) {
-        table.setModel(model);
+    public TableModel getModel() {
+        return table.getModel();
     }
 }
