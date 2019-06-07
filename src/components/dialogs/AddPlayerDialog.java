@@ -4,8 +4,11 @@ import models.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 public class AddPlayerDialog extends BasicDialog {
 
@@ -48,18 +51,17 @@ public class AddPlayerDialog extends BasicDialog {
     public AddPlayerDialog(Player toChange) {
         super(true);
 
-
         telephoneNR.setText(toChange.getTelephoneNR());
-
-
-        streetField.setText(toChange.getStreet());
+        // TODO: check where to get streetfield
+        streetField.setText("");
         nameField.setText(toChange.getName());
-        houseNrField.setText(String.valueOf(toChange.getHouseNr()));
+        // TODO: check house nr
+        houseNrField.setText("");
         postcodeField.setText(toChange.getZip());
         genderBox.setSelectedItem(toChange.getGender());
         emailTextField.setText(toChange.getEmail());
-        this.dob.setText(toChange.getDobString());
-        this.cityField.setText(toChange.getWoonplaats());
+        this.dob.setText(toChange.getDob().toString());
+        this.cityField.setText(toChange.getCity());
         initChildDialog();
     }
 
@@ -90,9 +92,18 @@ public class AddPlayerDialog extends BasicDialog {
         String zip = postcodeField.getText();
         String gender = (String) genderBox.getSelectedItem();
         String email = emailTextField.getText();
-        String data = this.dob.getText();
+
+        Date dateOfBirth = new Date();
+
+        try {
+            dateOfBirth = new SimpleDateFormat("dd-MM-yyyy").parse(dob.getText());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
         String city = this.cityField.getText();
-        return new Player(name, 0, street, houseNr, zip, city, data, email, telephone, gender);
+        return new Player(0, name, gender, dateOfBirth, street, houseNr, zip, city, telephone, email, 0);
     }
 
     private boolean checkAllFields() {

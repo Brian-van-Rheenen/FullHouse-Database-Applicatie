@@ -1,12 +1,13 @@
 package components;
 
-import backend.DataGetter;
+import backend.PlayerProvider;
 import components.dialogs.AddPlayerDialog;
+import components.dialogs.DeleteDialog;
+import components.dialogs.NoSelectionDialog;
 import models.Player;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
@@ -17,47 +18,53 @@ import java.util.ArrayList;
  */
 public class UserOverviewPanel extends JPanel {
 
-    private DataGetter dataGetter;
     private ArrayList<Player> playerTableData = new ArrayList<>();
 
+    private DefaultTableModel model;
+    private PlayerProvider playerProvider;
+    private TablePanel tablePanel;
 
-    public UserOverviewPanel(DataGetter dataGetter) throws SQLException {
-        this.dataGetter = dataGetter;
-
+    public UserOverviewPanel() {
         JPanel leftMenuPanel = new JPanel(new GridBagLayout());
-        leftMenuPanel.setBackground(Color.GREEN);
+        leftMenuPanel.setBackground(Color.LIGHT_GRAY);
 
-        DefaultTableModel model = new DefaultTableModel();
+        model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-        fillTable(model);
-
+        try {
+            playerProvider = new PlayerProvider();
+            fillTable(model);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         setLookAndFeel();
 
         addLeftMenuButtons(leftMenuPanel);
 
-        TablePanel tablePanel = new TablePanel(model);
+        tablePanel = new TablePanel(model);
         this.add(tablePanel, BorderLayout.CENTER);
     }
 
     private void setLookAndFeel() {
         this.setLayout(new BorderLayout(20, 20));
         this.setBackground(Color.LIGHT_GRAY);
-        this.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));
+        this.setBorder(new EmptyBorder(10, 10, 10, 10));
     }
 
     private void fillTable(DefaultTableModel tableModel) throws SQLException {
-        Object[] columnNames = {"Naam", "Rating", "Adres", "Postcode", "Stad", "Geboortedatum", "Email", "Telefoon", "Geslacht"};
-        playerTableData.addAll(dataGetter.allPlayers());
+        Object[] columnNames = {"id", "Naam", "Geslacht", "Geboortedatum", "Adres", "Postcode", "Woonplaats", "Telefoon", "Email", "Rating"};
+        ArrayList<Player> players = playerProvider.allPlayers();
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < columnNames.length; i++) {
             tableModel.addColumn(columnNames[i]);
-
         }
 
-        playerTableData.stream().forEach(player -> tableModel.addRow(player.convertToTableData()));
-
-
+        players.forEach(player -> tableModel.addRow(player.convertToTableData()));
     }
 
     private void addLeftMenuButtons(JPanel leftMenuPanel) {
@@ -74,26 +81,30 @@ public class UserOverviewPanel extends JPanel {
 
     private JPanel getLeftMenuButtonsPanel() {
         JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3, 1, 20, 20));
-
-        Dimension buttonDimension = new Dimension(150, 200);
-
-        leftMenuButtonPanel.setPreferredSize(buttonDimension);
-
+        leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
+        leftMenuButtonPanel.setBackground(Color.LIGHT_GRAY);
 
         JButton addButton = new JButton("Toevoegen");
-        addButton.setPreferredSize(buttonDimension);
+        addButton.setPreferredSize(new Dimension(150, 200));
 
         addButton.addActionListener(event ->
                 new AddPlayerDialog(this.playerTableData)
         );
 
-
         JButton editButton = new JButton("Wijzigen");
         editButton.addActionListener(e -> new AddPlayerDialog(this.playerTableData.get(5)));
-        editButton.setPreferredSize(buttonDimension);
+        editButton.setPreferredSize(new Dimension(150, 200));
 
         JButton deleteButton = new JButton("Verwijderen");
-        deleteButton.setPreferredSize(buttonDimension);
+        deleteButton.setPreferredSize(new Dimension(150, 200));
+        deleteButton.addActionListener(e -> {
+            if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
+                new NoSelectionDialog();
+            } else {
+                int id = (Integer) model.getValueAt(tablePanel.getSelectedRow(), 0);
+                new DeleteDialog(id);
+            }
+        });
 
         leftMenuButtonPanel.add(addButton);
         leftMenuButtonPanel.add(editButton);

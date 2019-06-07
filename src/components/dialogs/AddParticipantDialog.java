@@ -1,8 +1,6 @@
 package components.dialogs;
 
 
-import backend.DataGetter;
-import components.dialogs.BasicDialog;
 import models.Player;
 import models.Toernooi;
 
@@ -12,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class AddParticipantDialog extends BasicDialog {
-
 
     private ArrayList<Toernooi> tournaments = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
@@ -64,16 +61,11 @@ public class AddParticipantDialog extends BasicDialog {
         return textFields;
     }
 
-
-    /**
-     *
-     */
     @Override
     public void handleConfirm() {
         String inputForEvent = toernooiCodeField.getText();
         String inputForPLayer = playerNameField.getText();
         String inputForZIP = postcode.getText();
-
 
         Optional<Toernooi> optionalToernooi = tournaments.stream().filter(toernooi -> toernooi.getCode().equals(inputForEvent)).findAny();
         Optional<Player> optionalPlayer = players.stream()

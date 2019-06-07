@@ -1,7 +1,6 @@
 package components;
 
-import backend.DataGetter;
-import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory;
+import backend.PlayerProvider;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,14 +8,10 @@ import javax.swing.table.DefaultTableModel;
 public class ParticipantOverviewPanel extends JPanel {
 
     private JComboBox <String> toernooiBox = new JComboBox<>();
-    private DataGetter dataGetter;
+    private PlayerProvider playerProvider;
     private DefaultTableModel tableModel = new DefaultTableModel();
 
-    public ParticipantOverviewPanel(DataGetter dataGetter) {
-        this.dataGetter = dataGetter;
+    public ParticipantOverviewPanel(PlayerProvider playerProvider) {
+        this.playerProvider = playerProvider;
     }
-
-
-
-
 }

@@ -1,4 +1,4 @@
-import backend.DataGetter;
+import backend.PlayerProvider;
 import components.UserOverviewPanel;
 
 import javax.swing.JTabbedPane;
@@ -17,12 +17,10 @@ public class HomePanel extends JPanel {
 
     public HomePanel() throws SQLException {
         super(new GridLayout(1, 1));
-        DataGetter dataGetter = new DataGetter();
-
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        UserOverviewPanel userOverviewPanel = new UserOverviewPanel(dataGetter);
+        UserOverviewPanel userOverviewPanel = new UserOverviewPanel();
 
         tabbedPane.addTab("Spelers", null, userOverviewPanel,
                 "Lijst van spelers");
