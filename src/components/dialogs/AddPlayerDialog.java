@@ -77,12 +77,11 @@ public class AddPlayerDialog extends BasicDialog {
             if (!this.isForChange()) {
 
                 try {
-                    Player newPlayer = createNewPlayer();
+                    // Attempt to add to the database, get the updated player with id back
+                    Player newPlayer = provider.addPlayer(createNewPlayer());
 
-                    // Attempt to add to the database
-                    provider.addPlayer(newPlayer);
                     this.playerList.add(newPlayer);
-                    invokeUpdateCallback();
+                    invokeUpdateCallback(newPlayer);
                     JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
                     this.dispose();
                 } catch (SQLException e) {
@@ -148,15 +147,15 @@ public class AddPlayerDialog extends BasicDialog {
         return res;
     }
 
-    private ArrayList<Consumer<Void>> callbackList = new ArrayList<>();
+    private ArrayList<Consumer<Player>> callbackList = new ArrayList<>();
 
-    public void addListener(Consumer<Void> callback) {
+    public void addListener(Consumer<Player> callback) {
         callbackList.add(callback);
     }
 
-    private void invokeUpdateCallback() {
-        for (Consumer<Void> consumer : callbackList) {
-            consumer.accept(null);
+    private void invokeUpdateCallback(Player player) {
+        for (Consumer<Player> consumer : callbackList) {
+            consumer.accept(player);
         }
     }
 

@@ -70,7 +70,10 @@ public class UserOverviewPanel extends OverviewPanel {
         addButton.addActionListener(e -> {
             AddPlayerDialog dialog = new AddPlayerDialog(playerTableData);
 
-            dialog.addListener((nothing) -> tablePanel.updateModel(fetchDataModel()));
+            dialog.addListener((player) -> {
+                DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
+                model.addRow(player.convertToTableData());
+            });
         });
 
         JButton editButton = new JButton("Wijzigen");
@@ -87,7 +90,11 @@ public class UserOverviewPanel extends OverviewPanel {
                 // Code blocks until the Dialog is closed
                 new DeleteDialog(id);
                 // Refresh the data
-                tablePanel.updateModel(fetchDataModel());
+
+                DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
+                // model.removeRow();
+
+                // tablePanel.updateModel(fetchDataModel());
             }
         });
 
