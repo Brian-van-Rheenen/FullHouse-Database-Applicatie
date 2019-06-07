@@ -13,6 +13,9 @@ public abstract class BasicDialog extends JDialog {
     public BasicDialog(boolean isForChange) {
         this.isForChange = isForChange;
 
+        // Center in the screen
+        this.setLocationRelativeTo(null);
+
         setLayoutAndBorder();
         this.setResizable(false);
 
