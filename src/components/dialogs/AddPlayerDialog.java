@@ -1,9 +1,11 @@
 package components.dialogs;
 
+import backend.PlayerProvider;
 import models.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.Date;
 public class AddPlayerDialog extends BasicDialog {
 
     private ArrayList<Player> playerList;
+    private PlayerProvider provider = new PlayerProvider();
 
     private JTextField nameField = new JTextField();
 
@@ -65,22 +68,26 @@ public class AddPlayerDialog extends BasicDialog {
         initChildDialog();
     }
 
-
-    private void addPlayerToList() {
-        this.playerList.add(createNewPlayer());
-    }
-
     @Override
     public void handleConfirm() {
         if (!checkAllFields()) {
             JOptionPane.showMessageDialog(this, "Iets ging niet helemaal goed");
         } else {
             if (!this.isForChange()) {
-                addPlayerToList();
-            }
 
-            // TODO: Update player
-            JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
+                try {
+                    Player newPlayer = createNewPlayer();
+
+                    // Attempt to add to the database
+                    provider.addPlayer(newPlayer);
+                    this.playerList.add(newPlayer);
+                    JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
+                    this.dispose();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Er is een fout opgetreden");
+                }
+            }
         }
     }
 
