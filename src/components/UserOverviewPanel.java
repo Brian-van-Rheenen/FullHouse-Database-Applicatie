@@ -1,7 +1,7 @@
 package components;
 
 import backend.PlayerProvider;
-import components.dialogs.AddInputDialog;
+import components.dialogs.AddPlayerDialog;
 import components.dialogs.DeleteDialog;
 import components.dialogs.NoSelectionDialog;
 import models.Player;
@@ -18,6 +18,8 @@ import java.util.ArrayList;
  * This is the general overview panel for users
  */
 public class UserOverviewPanel extends JPanel {
+
+    private ArrayList<Player> playerTableData = new ArrayList<>();
 
     private DefaultTableModel model;
     private PlayerProvider playerProvider;
@@ -95,12 +97,13 @@ public class UserOverviewPanel extends JPanel {
         addButton.setPreferredSize(new Dimension(150, 200));
         addButton.addActionListener(e -> {
             // Code blocks until the Dialog is closed
-            new AddInputDialog();
+            new AddPlayerDialog(playerTableData);
             // Refresh the data
             tablePanel.updateModel(fetchDataModel());
         });
 
         JButton editButton = new JButton("Wijzigen");
+        editButton.addActionListener(e -> new AddPlayerDialog(this.playerTableData.get(5)));
         editButton.setPreferredSize(new Dimension(150, 200));
 
         JButton deleteButton = new JButton("Verwijderen");
