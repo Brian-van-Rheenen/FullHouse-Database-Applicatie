@@ -90,11 +90,13 @@ public class UserOverviewPanel extends OverviewPanel {
                 // Code blocks until the Dialog is closed
                 new DeleteDialog(id);
                 // Refresh the data
-
                 DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
-                // model.removeRow();
-
-                // tablePanel.updateModel(fetchDataModel());
+                try {
+                    model.removeRow(id - 1);
+                    model.insertRow(id - 1, playerProvider.getPlayerById(id).convertToTableData());
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
