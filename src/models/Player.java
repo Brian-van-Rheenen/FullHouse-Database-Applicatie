@@ -3,6 +3,8 @@ package models;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 public class Player {
@@ -11,15 +13,18 @@ public class Player {
     private String name;
     private String gender;
     private java.sql.Date dob;
+    private String telephoneNR;
+    private String email;
+
+    private int adresId;
     private String street;
     private int houseNr;
     private String zip;
     private String city;
-    private String telephoneNR;
-    private String email;
+
     private int rating;
 
-    public Player(int id, String name, String gender, java.util.Date dob, String street, int houseNr, String zip, String city, String telephoneNR, String email, int rating) {
+    public Player(int id, int adresId, String name, String gender, java.util.Date dob, String street, int houseNr, String zip, String city, String telephoneNR, String email, int rating) {
         this.id = id;
         this.name = name;
         this.gender = gender;
@@ -35,18 +40,19 @@ public class Player {
 
     public static Player readPlayerData(ResultSet rs) throws SQLException {
         int id = rs.getInt(1);
-        String name = rs.getString(2);
-        String gender = rs.getString(3);
-        Date dob = rs.getDate(4);
-        String street = rs.getString(5);
-        int houseNr = rs.getInt(6);
-        String zip = rs.getString(7);
-        String city = rs.getString(8);
-        String tele = rs.getString(9);
-        String mail = rs.getString(10);
-        int rating = rs.getInt(11);
+        int adresId = rs.getInt(2);
+        String name = rs.getString(3);
+        String gender = rs.getString(4);
+        Date dob = rs.getDate(5);
+        String street = rs.getString(6);
+        int houseNr = rs.getInt(7);
+        String zip = rs.getString(8);
+        String city = rs.getString(9);
+        String tele = rs.getString(10);
+        String mail = rs.getString(11);
+        int rating = rs.getInt(12);
 
-        return new Player(id, name, gender, dob, street, houseNr, zip, city, tele, mail, rating);
+        return new Player(id, adresId, name, gender, dob, street, houseNr, zip, city, tele, mail, rating);
     }
 
     public Object[] convertToTableData(){
@@ -54,8 +60,13 @@ public class Player {
         return res;
     }
 
-    public java.sql.Date convertJavaDateToSqlDate(java.util.Date date) {
+    public static java.sql.Date convertJavaDateToSqlDate(java.util.Date date) {
         return new java.sql.Date(date.getTime());
+    }
+
+    public String convertSqlDateToString(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        return dateFormat.format(date);
     }
 
     @Override
@@ -120,7 +131,55 @@ public class Player {
         return email;
     }
 
+    public int getAdresId() {
+        return adresId;
+    }
+
     public int getRating() {
         return rating;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
+    public void setTelephoneNR(String telephoneNR) {
+        this.telephoneNR = telephoneNR;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setAdresId(int adresId) {
+        this.adresId = adresId;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public void setHouseNr(int houseNr) {
+        this.houseNr = houseNr;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

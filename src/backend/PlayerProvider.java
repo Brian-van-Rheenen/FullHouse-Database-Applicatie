@@ -11,19 +11,17 @@ import static backend.DB_Statements.*;
 public class PlayerProvider {
 
     private DatabaseConnection databaseConnection;
+
     private static final String Q_ALLPLAYERS =
-            "SELECT speler_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
-                    "FROM speler\n" +
-                    "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
-                    "ORDER BY speler.speler_id;";
+            "SELECT speler_id, a.adres_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
+            "FROM speler\n" +
+            "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
+            "ORDER BY speler.speler_id;";
 
+    private static final String Q_DELETEPLAYER =
+            "START TRANSACTION; UPDATE speler SET adres_id = 0, naam = 'VERWIJDERD', gebdatum = '1970-01-01', geslacht = 'O', telefoon = 'VERWIJDERD', email = 'VERWIJDERD', rating = 0 WHERE speler_id = ?; DELETE FROM adres WHERE adres_id NOT IN (SELECT adres_id FROM speler) AND adres_id != 0; COMMIT;";
 
-
-    private static final String Q_DELETEPLAYER = "START TRANSACTION; UPDATE speler SET adres_id = 0, naam = 'VERWIJDERD', gebdatum = '1970-01-01', geslacht = 'O', telefoon = 'VERWIJDERD', email = 'VERWIJDERD', rating = 0 WHERE speler_id = ?; DELETE FROM adres WHERE adres_id NOT IN (SELECT adres_id FROM speler) AND adres_id != 0; COMMIT;";
-
-
-
-    private final String Q_ADDPLAYER = "START TRANSACTION;\n" +
+    private static final String Q_ADDPLAYER = "START TRANSACTION;\n" +
             "INSERT INTO adres (woonplaats, straatnaam, huisnummer, postcode)\n" +
             "SELECT ?, ?, ?, ? FROM adres WHERE NOT EXISTS(SELECT * FROM adres WHERE woonplaats = ? AND straatnaam = ? AND huisnummer = ? AND postcode = ?)\n" +
             "LIMIT 1;\n" +
@@ -31,13 +29,22 @@ public class PlayerProvider {
             "VALUES (LAST_INSERT_ID(), ?, ?, ?, ?, ?);\n" +
             "COMMIT;";
 
-
-    private final String Q_SELECTPLAYER =
-            "SELECT speler_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
+    private static final String Q_SELECTPLAYER =
+            "SELECT speler_id, a.adres_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
             "FROM speler\n" +
             "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
             "WHERE speler_id = ?\n" +
             "ORDER BY speler.speler_id;";
+
+    private static final String Q_UPDATEPLAYER =
+            "START TRANSACTION;\n" +
+            "UPDATE adres\n" +
+            "SET woonplaats = ?, postcode = ?, straatnaam = ?, huisnummer = ?\n" +
+            "WHERE adres_id = ?;\n" +
+            "UPDATE speler\n" +
+            "SET naam = ?, gebdatum = ?, geslacht = ?, email = ?, telefoon = ?, rating = ?\n" +
+            "WHERE speler_id = ?;\n" +
+            "COMMIT;";
 
     public PlayerProvider() {
         getDBconnection();
@@ -98,6 +105,31 @@ public class PlayerProvider {
         return player;
     }
 
+    public void updatePlayer(Player updated) throws SQLException {
+        PreparedStatement updatePlayerStatement = databaseConnection
+                .getConnection()
+                .prepareStatement(Q_UPDATEPLAYER);
+
+        updatePlayerStatement.setString(1, updated.getCity());
+        updatePlayerStatement.setString(2, updated.getZip());
+        updatePlayerStatement.setString(3, updated.getStreet());
+        updatePlayerStatement.setInt(4, updated.getHouseNr());
+        // Set the address to update
+        updatePlayerStatement.setInt(5, updated.getAdresId());
+
+        // Player part of query
+        updatePlayerStatement.setString(6, updated.getName());
+        updatePlayerStatement.setDate(7, updated.getDob());
+        updatePlayerStatement.setString(8, updated.getGender());
+        updatePlayerStatement.setString(9, updated.getEmail());
+        updatePlayerStatement.setString(10, updated.getTelephoneNR());
+        updatePlayerStatement.setInt(11, updated.getRating());
+        // Set the Player to update
+        updatePlayerStatement.setInt(12, updated.getId());
+
+        updatePlayerStatement.executeUpdate();
+    }
+
     /**
      * Delete a player from the database.
      * @param id the player's id.
@@ -109,6 +141,12 @@ public class PlayerProvider {
         databaseConnection.executeQuery(pst);
     }
 
+    /**
+     * Returns the player with the given id from the database
+     * @param id The id to search for in the database
+     * @return A Player object
+     * @throws SQLException When connection or query fails
+     */
     public Player getPlayerById(int id) throws SQLException {
         PreparedStatement playerStatement = databaseConnection
                 .getConnection()

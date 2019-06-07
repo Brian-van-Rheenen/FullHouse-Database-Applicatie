@@ -12,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the general overview panel for users
@@ -30,16 +31,21 @@ public class UserOverviewPanel extends OverviewPanel {
 
         createButtons();
 
-        model = fetchDataModel();
+        try {
+            playerTableData = playerProvider.allPlayers();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        model = fetchDataModel(playerTableData);
         tablePanel = new TablePanel(model);
         this.add(tablePanel, BorderLayout.CENTER);
     }
 
     /**
-     * Fetches all rows from the database and put's it in a model
+     * Converts all Players to a dataModel
      * @return an event with the updated model
      */
-    private DefaultTableModel fetchDataModel() {
+    private DefaultTableModel fetchDataModel(List<Player> players) {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -47,19 +53,13 @@ public class UserOverviewPanel extends OverviewPanel {
             }
         };
 
-        try {
-            Object[] columnNames = {"id", "Naam", "Geslacht", "Geboortedatum", "Adres", "Postcode", "Woonplaats", "Telefoon", "Email", "Rating"};
-            ArrayList<Player> players = playerProvider.allPlayers();
+        Object[] columnNames = {"id", "Naam", "Geslacht", "Geboortedatum", "Adres", "Postcode", "Woonplaats", "Telefoon", "Email", "Rating"};
 
-            for (Object columnName : columnNames) {
-                model.addColumn(columnName);
-            }
-
-            players.forEach(player -> model.addRow(player.convertToTableData()));
-        } catch (SQLException e) {
-            e.printStackTrace();
-
+        for (Object columnName : columnNames) {
+            model.addColumn(columnName);
         }
+
+        players.forEach(player -> model.addRow(player.convertToTableData()));
 
         return model;
     }
@@ -77,7 +77,33 @@ public class UserOverviewPanel extends OverviewPanel {
         });
 
         JButton editButton = new JButton("Wijzigen");
-        editButton.addActionListener(e -> new AddPlayerDialog(this.playerTableData.get(5)));
+        editButton.addActionListener(e -> {
+
+            if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
+                new NoSelectionDialog();
+            } else {
+                int selectedRow = tablePanel.getSelectedRow();
+                Player updatingPlayer = findPlayerInList((Integer) model.getValueAt(tablePanel.getSelectedRow(), 0));
+                if(updatingPlayer == null) {
+                    // TODO: Refresh list with new data, although this should theoretically never happen
+                    return;
+                }
+
+                AddPlayerDialog updateDialog = new AddPlayerDialog(updatingPlayer);
+                updateDialog.addListener((player) -> {
+                    // Refresh the data
+                    DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
+                    try {
+                        model.removeRow(selectedRow);
+                        Player result = playerProvider.getPlayerById(updatingPlayer.getId());
+
+                        model.insertRow(selectedRow, result.convertToTableData());
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+            }
+        });
         editButton.setPreferredSize(new Dimension(150, 200));
 
         JButton deleteButton = new JButton("Verwijderen");
@@ -103,5 +129,14 @@ public class UserOverviewPanel extends OverviewPanel {
         addButtonToPanel(addButton);
         addButtonToPanel(editButton);
         addButtonToPanel(deleteButton);
+    }
+
+    private Player findPlayerInList(int playerId) {
+        for (Player p : playerTableData) {
+            if(p.getId() == playerId)
+                return p;
+        }
+
+        return null;
     }
 }

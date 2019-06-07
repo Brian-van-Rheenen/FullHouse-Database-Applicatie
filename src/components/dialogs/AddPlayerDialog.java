@@ -17,6 +17,7 @@ public class AddPlayerDialog extends BasicDialog {
 
     private ArrayList<Player> playerList;
     private PlayerProvider provider = new PlayerProvider();
+    private Player updatingPlayer = null;
 
     private JTextField nameField = new JTextField();
 
@@ -24,7 +25,7 @@ public class AddPlayerDialog extends BasicDialog {
     private JTextField streetField = new JTextField();
     private JTextField houseNrField = new JTextField();
 
-    private JTextField postcodeField = new JTextField();
+    private JTextField zipCodeField = new JTextField();
     private JTextField cityField = new JTextField();
 
     //------
@@ -35,7 +36,7 @@ public class AddPlayerDialog extends BasicDialog {
     private JTextField telephoneNR = new JTextField();
     private JTextField emailTextField = new JTextField();
 
-    private JComponent[] fields = {nameField, streetField, houseNrField, postcodeField, cityField, genderBox, dob, telephoneNR, emailTextField};
+    private JComponent[] fields = {nameField, streetField, houseNrField, zipCodeField, cityField, genderBox, dob, telephoneNR, emailTextField};
 
 
     public AddPlayerDialog(ArrayList<Player> playerList) {
@@ -55,49 +56,64 @@ public class AddPlayerDialog extends BasicDialog {
     public AddPlayerDialog(Player toChange) {
         super(true);
 
+        updatingPlayer = toChange;
+
         telephoneNR.setText(toChange.getTelephoneNR());
-        // TODO: check where to get streetfield
-        streetField.setText("");
+        streetField.setText(toChange.getStreet());
         nameField.setText(toChange.getName());
-        // TODO: check house nr
-        houseNrField.setText("");
-        postcodeField.setText(toChange.getZip());
+        houseNrField.setText(Integer.toString(toChange.getHouseNr()));
+        zipCodeField.setText(toChange.getZip());
         genderBox.setSelectedItem(toChange.getGender());
         emailTextField.setText(toChange.getEmail());
-        this.dob.setText(toChange.getDob().toString());
+        dob.setText(toChange.convertSqlDateToString(toChange.getDob()));
         this.cityField.setText(toChange.getCity());
         initChildDialog();
     }
 
     @Override
     public void handleConfirm() {
-        if (!checkAllFields()) {
-            JOptionPane.showMessageDialog(this, "Iets ging niet helemaal goed");
+        // Check if the input is valid
+        if (!validateInput()) {
+            JOptionPane.showMessageDialog(this, "Er zijn foute gegevens ingevoerd!");
+            return;
+        }
+
+        if (!this.isForChange()) {
+            // Create
+
+            try {
+                // Attempt to add to the database, get the updated player with id back
+                Player newPlayer = provider.addPlayer(createNewPlayer());
+
+                this.playerList.add(newPlayer);
+                invokeUpdateCallback(newPlayer);
+                JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
+                this.dispose();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Er is een fout opgetreden");
+            }
         } else {
-            if (!this.isForChange()) {
-
-                try {
-                    // Attempt to add to the database, get the updated player with id back
-                    Player newPlayer = provider.addPlayer(createNewPlayer());
-
-                    this.playerList.add(newPlayer);
-                    invokeUpdateCallback(newPlayer);
-                    JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
-                    this.dispose();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Er is een fout opgetreden");
-                }
+            // Update the player in the database
+            try {
+                Player updatedPlayer = fetchUpdatesForPlayer(updatingPlayer);
+                provider.updatePlayer(updatedPlayer);
+                invokeUpdateCallback(updatedPlayer);
+                this.dispose();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Er zijn foute gegevens ingevoerd!");
             }
         }
     }
 
     private Player createNewPlayer() {
+
         String telephone = telephoneNR.getText();
         String street = streetField.getText();
         String name = nameField.getText();
         int houseNr = Integer.parseInt(houseNrField.getText());
-        String zip = postcodeField.getText();
+        String zip = zipCodeField.getText();
         String gender = (String) genderBox.getSelectedItem();
         String email = emailTextField.getText();
 
@@ -110,10 +126,39 @@ public class AddPlayerDialog extends BasicDialog {
         }
 
         String city = this.cityField.getText();
-        return new Player(0, name, gender, dateOfBirth, street, houseNr, zip, city, telephone, email, 0);
+        return new Player(0, 0, name, gender, dateOfBirth, street, houseNr, zip, city, telephone, email, 0);
     }
 
-    private boolean checkAllFields() {
+    private Player fetchUpdatesForPlayer(Player player) {
+
+        Date dateOfBirth = new Date();
+
+        try {
+            dateOfBirth = new SimpleDateFormat("dd-MM-yyyy").parse(dob.getText());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        player.setName(nameField.getText());
+        player.setGender((String) genderBox.getSelectedItem());
+        player.setDob(Player.convertJavaDateToSqlDate(dateOfBirth));
+
+        player.setCity(cityField.getText());
+        player.setStreet(streetField.getText());
+        player.setHouseNr(Integer.parseInt(houseNrField.getText()));
+        player.setZip(zipCodeField.getText());
+
+        player.setEmail(emailTextField.getText());
+        player.setTelephoneNR(telephoneNR.getText());
+
+        return player;
+    }
+
+    /**
+     * Validate the input on the form
+     * @return true if the input is valid
+     */
+    private boolean validateInput() {
 
         InputType[] playerDataTypes = {
                 InputType.NAME,         // Naam
@@ -127,7 +172,7 @@ public class AddPlayerDialog extends BasicDialog {
                 InputType.EMAIL         // Email
         };
 
-        JTextField[] textFields = new JTextField[]{nameField, streetField, houseNrField, postcodeField, cityField, dob, telephoneNR, emailTextField};
+        JTextField[] textFields = new JTextField[]{nameField, streetField, houseNrField, zipCodeField, cityField, dob, telephoneNR, emailTextField};
         boolean res = true;
 
         for (int i = 0; i < playerDataTypes.length; i++) {
