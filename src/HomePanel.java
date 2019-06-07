@@ -1,11 +1,8 @@
-import backend.PlayerProvider;
+import components.MasterclassOverviewPanel;
 import components.UserOverviewPanel;
 
-import javax.swing.JTabbedPane;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JComponent;
-import java.awt.GridLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 
@@ -31,7 +28,7 @@ public class HomePanel extends JPanel {
                 "Lijst van toernooien");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
         
-        JComponent masterclassPanel = createPanel("Panel #3");
+        JComponent masterclassPanel = new MasterclassOverviewPanel();
         tabbedPane.addTab("Masterclasses", null, masterclassPanel,
                 "Lijst van masterclasses");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
@@ -44,8 +41,6 @@ public class HomePanel extends JPanel {
     protected JComponent createPanel(String text) {
         JPanel panel = new JPanel(false);
         JLabel filler = new JLabel(text);
-
-        // lijst
 
         filler.setHorizontalAlignment(JLabel.CENTER);
         panel.setLayout(new GridLayout(1, 1));
