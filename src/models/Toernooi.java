@@ -12,6 +12,21 @@ public class Toernooi extends Event {
     private String themanaam;
     private String entranceCheck;
 
+    public static final String Q_ALLTOURNAMENTS = "SELECT l.stad                                           AS Locatie,\n" +
+            "       DATE_FORMAT(begintijd, '%d-%m-%Y')               AS Begindatum,\n" +
+            "       TIME_FORMAT(begintijd, '%H:%i')                  AS Begintijd,\n" +
+            "       DATE_FORMAT(eindtijd, '%d-%m-%Y')                AS Einddatum,\n" +
+            "       TIME_FORMAT(eindtijd, '%H:%i')                   AS Eindtijd,\n" +
+            "       DATE_FORMAT(uiterste_inschrijfdatum, '%d-%m-%Y') AS 'Uiterste inschrijfdatum',\n" +
+            "       thema                                            AS Thema,\n" +
+            "       inschrijfgeld                                    AS Kosten,\n" +
+            "       toegang_beperking                                AS Toegangsbeperking\n" +
+            "FROM event\n" +
+            "         INNER JOIN locatie l on event.locatie = l.idLocatie\n" +
+            "         INNER JOIN toernooi t ON idEvent = t.idToernooi\n" +
+            "ORDER BY t.idToernooi;";
+
+
     public Toernooi(String stad, Date startDate, Time startTime, Date endDate, Time endTime, int fee ,String themanaam, String entranceCheck) {
         super(stad, startDate, startTime, endDate, endTime, fee);
         this.entranceCheck = entranceCheck;

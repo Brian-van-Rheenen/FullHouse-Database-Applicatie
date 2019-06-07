@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.function.Consumer;
 
 public class AddPlayerDialog extends BasicDialog {
 
@@ -76,11 +77,11 @@ public class AddPlayerDialog extends BasicDialog {
             if (!this.isForChange()) {
 
                 try {
-                    Player newPlayer = createNewPlayer();
+                    // Attempt to add to the database, get the updated player with id back
+                    Player newPlayer = provider.addPlayer(createNewPlayer());
 
-                    // Attempt to add to the database
-                    provider.addPlayer(newPlayer);
                     this.playerList.add(newPlayer);
+                    invokeUpdateCallback(newPlayer);
                     JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
                     this.dispose();
                 } catch (SQLException e) {
@@ -126,7 +127,7 @@ public class AddPlayerDialog extends BasicDialog {
                 InputType.EMAIL         // Email
         };
 
-        JTextField[] textFields = this.getAllTextFields();
+        JTextField[] textFields = new JTextField[]{nameField, streetField, houseNrField, postcodeField, cityField, dob, telephoneNR, emailTextField};
         boolean res = true;
 
         for (int i = 0; i < playerDataTypes.length; i++) {
@@ -146,10 +147,21 @@ public class AddPlayerDialog extends BasicDialog {
         return res;
     }
 
+    private ArrayList<Consumer<Player>> callbackList = new ArrayList<>();
+
+    public void addListener(Consumer<Player> callback) {
+        callbackList.add(callback);
+    }
+
+    private void invokeUpdateCallback(Player player) {
+        for (Consumer<Player> consumer : callbackList) {
+            consumer.accept(player);
+        }
+    }
 
     @Override
     public void addAllFields() {
-        initCombobox();
+        initComboBox();
 
         String[] fieldnames = {"Naam", "Straat", "Huisnummer", "Postcode", "Woonplaats", "Geslacht",
                 "Geboortedatum",
@@ -175,16 +187,9 @@ public class AddPlayerDialog extends BasicDialog {
         }
     }
 
-
-    private void initCombobox() {
+    private void initComboBox() {
         String[] genders = {"M", "V", "O"};
         Arrays.stream(genders).forEach(g -> genderBox.addItem(g));
         genderBox.setSelectedIndex(2);
-    }
-
-
-    private JTextField[] getAllTextFields() {
-        JTextField[] res = {nameField, streetField, houseNrField, postcodeField, cityField, dob, telephoneNR, emailTextField};
-        return res;
     }
 }

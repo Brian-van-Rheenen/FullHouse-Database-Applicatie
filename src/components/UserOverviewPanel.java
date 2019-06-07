@@ -4,11 +4,10 @@ import backend.PlayerProvider;
 import components.dialogs.AddPlayerDialog;
 import components.dialogs.DeleteDialog;
 import components.dialogs.NoSelectionDialog;
+import components.panels.OverviewPanel;
 import models.Player;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 /**
  * This is the general overview panel for users
  */
-public class UserOverviewPanel extends JPanel {
+public class UserOverviewPanel extends OverviewPanel {
 
     private ArrayList<Player> playerTableData = new ArrayList<>();
 
@@ -29,34 +28,11 @@ public class UserOverviewPanel extends JPanel {
 
         playerProvider = new PlayerProvider();
 
-        JPanel leftMenuPanel = new JPanel(new GridBagLayout());
-        leftMenuPanel.setBackground(Color.LIGHT_GRAY);
-
-        setLookAndFeel();
-
-        addLeftMenuButtons(leftMenuPanel);
+        createButtons();
 
         model = fetchDataModel();
         tablePanel = new TablePanel(model);
         this.add(tablePanel, BorderLayout.CENTER);
-    }
-
-    private void setLookAndFeel() {
-        this.setLayout(new BorderLayout(20, 20));
-        this.setBackground(Color.LIGHT_GRAY);
-        this.setBorder(new EmptyBorder(10, 10, 10, 10));
-    }
-
-    private void addLeftMenuButtons(JPanel leftMenuPanel) {
-        JPanel leftMenuButtonPanel = getLeftMenuButtonsPanel();
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.weighty = 1.0;
-
-        leftMenuPanel.add(leftMenuButtonPanel, gbc);
-
-        this.add(leftMenuPanel, BorderLayout.LINE_START);
     }
 
     /**
@@ -88,18 +64,16 @@ public class UserOverviewPanel extends JPanel {
         return model;
     }
 
-    private JPanel getLeftMenuButtonsPanel() {
-        JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3, 1, 20, 20));
-        leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
-        leftMenuButtonPanel.setBackground(Color.LIGHT_GRAY);
-
+    protected void createButtons() {
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
         addButton.addActionListener(e -> {
-            // Code blocks until the Dialog is closed
-            new AddPlayerDialog(playerTableData);
-            // Refresh the data
-            tablePanel.updateModel(fetchDataModel());
+            AddPlayerDialog dialog = new AddPlayerDialog(playerTableData);
+
+            dialog.addListener((player) -> {
+                DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
+                model.addRow(player.convertToTableData());
+            });
         });
 
         JButton editButton = new JButton("Wijzigen");
@@ -116,13 +90,16 @@ public class UserOverviewPanel extends JPanel {
                 // Code blocks until the Dialog is closed
                 new DeleteDialog(id);
                 // Refresh the data
-                tablePanel.updateModel(fetchDataModel());
+
+                DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
+                // model.removeRow();
+
+                // tablePanel.updateModel(fetchDataModel());
             }
         });
 
-        leftMenuButtonPanel.add(addButton);
-        leftMenuButtonPanel.add(editButton);
-        leftMenuButtonPanel.add(deleteButton);
-        return leftMenuButtonPanel;
+        addButtonToPanel(addButton);
+        addButtonToPanel(editButton);
+        addButtonToPanel(deleteButton);
     }
 }

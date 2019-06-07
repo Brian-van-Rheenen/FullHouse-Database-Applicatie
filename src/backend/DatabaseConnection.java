@@ -11,7 +11,7 @@ public class DatabaseConnection {
     private Connection connection;
 
     public DatabaseConnection() throws SQLException{
-      initConnection();
+        initConnection();
     }
 
     /**
