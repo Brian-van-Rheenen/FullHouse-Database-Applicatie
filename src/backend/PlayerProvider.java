@@ -1,31 +1,22 @@
 package backend;
 
 import models.Player;
+import models.Toernooi;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static backend.DB_Statements.*;
+import static backend.DB_Statements.Q_ALLPLAYERS;
+
 public class PlayerProvider {
 
     private DatabaseConnection databaseConnection;
 
-    private final String Q_ALLPLAYERS =
-            "SELECT speler_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
-            "FROM speler\n" +
-            "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
-            "ORDER BY speler.speler_id;";
 
-    private final String Q_ADDPLAYER = "START TRANSACTION;\n" +
-            "INSERT INTO adres (woonplaats, straatnaam, huisnummer, postcode)\n" +
-            "SELECT ?, ?, ?, ? FROM adres WHERE NOT EXISTS(SELECT * FROM adres WHERE woonplaats = 'stad' AND straatnaam = 'straat' AND huisnummer = 1 AND postcode = '1234AB')\n" +
-            "LIMIT 1;\n" +
-            "INSERT INTO speler (adres_id, naam, gebdatum, geslacht, telefoon, email)\n" +
-            "VALUES (LAST_INSERT_ID(), ?, ?, ?, ?, ?);\n" +
-            "COMMIT;";
 
-    private final String Q_DELETEPLAYER = "START TRANSACTION; UPDATE speler SET adres_id = 0, naam = 'VERWIJDERD', gebdatum = '1970-01-01', geslacht = 'O', telefoon = 'VERWIJDERD', email = 'VERWIJDERD', rating = 0 WHERE speler_id = ?; DELETE FROM adres WHERE adres_id NOT IN (SELECT adres_id FROM speler) AND adres_id != 0; COMMIT;";
 
     public PlayerProvider() {
         getDBconnection();
