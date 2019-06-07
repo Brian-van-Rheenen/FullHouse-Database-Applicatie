@@ -1,6 +1,7 @@
 package components;
 
 import backend.MasterclassProvider;
+import components.dialogs.AddMasterclassDialog;
 import components.panels.OverviewPanel;
 import models.Masterclass;
 
@@ -45,7 +46,7 @@ public class MasterclassOverviewPanel extends OverviewPanel {
         };
 
         try {
-            Object[] columnNames = {"id", "Stad", "Datum", "Begintijd", "Eindtijd", "Minimale Rating", "Kosten", "Begeleider"};
+            Object[] columnNames = {"id", "Stad", "Capaciteit", "Begintijd", "Eindtijd", "Minimale Rating", "Kosten", "Begeleider"};
             ArrayList<Masterclass> masterclasses = masterclassProvider.allMasterclasses();
 
             for (Object columnName : columnNames) {
@@ -65,13 +66,16 @@ public class MasterclassOverviewPanel extends OverviewPanel {
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
         addButton.addActionListener(e -> {
-            //AddPlayerDialog dialog = new AddPlayerDialog(masterclassTableData);
+            AddMasterclassDialog dialog = new AddMasterclassDialog(masterclassTableData);
 
-            //dialog.addListener((nothing) -> tablePanel.updateModel(fetchDataModel()));
+            dialog.addListener((masterclass) -> {
+                DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
+                model.addRow(masterclass.convertToTableData());
+            });
         });
 
         JButton editButton = new JButton("Wijzigen");
-        //editButton.addActionListener(e -> new AddPlayerDialog(this.masterclassTableData.get(5)));
+        //editButton.addActionListener(e -> new AddMasterclassDialog(this.masterclassTableData.get(5)));
         editButton.setPreferredSize(new Dimension(150, 200));
 
         JButton reportButton = new JButton("Rapportages");

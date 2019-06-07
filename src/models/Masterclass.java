@@ -13,39 +13,48 @@ public class Masterclass {
 
     private int id;
     private String city;
-    private Date date;
+    private int capacity;
+    private Date beginDate;
     private Time beginTime;
+    private Date endDate;
     private Time endTime;
     private int minimumRating;
     private int price;
     private String mentor;
+    private int mentorId;
 
-    public Masterclass(int id, String city, String date, Time beginTime, Time endTime, int minimumRating, int price, String mentor) {
+    public Masterclass(int id, String city, int capacity, String beginDate, Time beginTime, String endDate, Time endTime, int minimumRating, int price, String mentor, int mentorId) {
         this.id = id;
         this.city = city;
-        this.date = convertStringToSqlDate(date);
+        this.capacity = capacity;
+        this.beginDate = convertStringToSqlDate(beginDate);
         this.beginTime = beginTime;
+        this.endDate = convertStringToSqlDate(endDate);
         this.endTime = endTime;
         this.minimumRating = minimumRating;
         this.price = price;
         this.mentor = mentor;
+        this.mentorId = mentorId;
     }
 
     public static Masterclass readMasterclassData(ResultSet rs) throws SQLException {
         int id = rs.getInt(1);
         String city = rs.getString(2);
-        String date = rs.getString(3);
-        Time beginTime = rs.getTime(4);
-        Time endTime = rs.getTime(5);
-        int minimumRating = rs.getInt(6);
-        int price = rs.getInt(7);
-        String mentor = rs.getString(8);
+        int capacity = rs.getInt(3);
+        String beginDate = rs.getString(4);
+        Time beginTime = rs.getTime(5);
+        String endDate = rs.getString(6);
+        Time endTime = rs.getTime(7);
+        int minimumRating = rs.getInt(8);
+        int price = rs.getInt(9);
+        String mentor = rs.getString(10);
+        int mentorId = rs.getInt(11);
 
-        return new Masterclass(id, city, date, beginTime, endTime, minimumRating, price, mentor);
+        return new Masterclass(id, city, capacity, beginDate, beginTime, endDate, endTime, minimumRating, price, mentor, mentorId);
     }
 
     public Object[] convertToTableData(){
-        Object[] res = {id, city, date, beginTime, endTime, minimumRating, price, mentor};
+        Object[] res = {id, city, capacity, convertSqlDateToString(beginDate) + " " + beginTime, convertSqlDateToString(endDate) + " " + endTime, minimumRating, price, mentor};
         return res;
     }
 
@@ -62,40 +71,57 @@ public class Masterclass {
         return new java.sql.Date(date.getTime());
     }
 
+    public String convertSqlDateToString(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        return dateFormat.format(date);
+    }
+
+    public String createDateTime(Date date, Time time) {
+        return date + " " + time; // niet af, welke datum?
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Masterclass)) return false;
         Masterclass masterclass = (Masterclass) o;
         return city.equals(masterclass.city) &&
+                beginDate.equals(masterclass.beginDate) &&
                 beginTime.equals(masterclass.beginTime) &&
-                date.equals(masterclass.date) &&
+                endDate.equals(masterclass.endDate) &&
                 endTime == masterclass.endTime &&
                 minimumRating == masterclass.minimumRating &&
                 price == masterclass.price &&
-                mentor.equals(masterclass.mentor);
+                mentor.equals(masterclass.mentor) &&
+                mentorId == masterclass.mentorId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(city, beginTime, date, endTime, minimumRating, price, mentor);
+        return Objects.hash(city, beginDate, beginTime, endDate, endTime, minimumRating, price, mentor, mentorId);
     }
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id) { this.id = id; }
+
     public String getCity() {
         return city;
     }
 
-    public Date getDate() {
-        return date;
+    public int getCapacity() { return capacity; }
+
+    public Date getBeginDate() {
+        return beginDate;
     }
 
     public Time getBeginTime() {
         return beginTime;
     }
+
+    public Date getEndDate() { return endDate; }
 
     public Time getEndTime() {
         return endTime;
@@ -112,4 +138,8 @@ public class Masterclass {
     public String getMentor() {
         return mentor;
     }
+
+    public void setMentor(String mentor) { this.mentor = mentor; }
+
+    public int getMentorId() { return mentorId; }
 }
