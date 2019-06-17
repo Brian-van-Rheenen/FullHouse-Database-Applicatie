@@ -52,9 +52,6 @@ public class DatabaseConnection {
                     String.format("%s://%s/%s?%s", prop.getProperty("driver"), prop.getProperty("ip"), prop.getProperty("db"), prop.getProperty("properties"))
             );
 
-            //TODO remove this print if project is done
-            System.out.println(connectionString);
-
             // DriverManager only accepts *lowercase* password & user when passing in props directly
             connection = DriverManager.getConnection(connectionString, prop);
         } catch (IOException ex) {
