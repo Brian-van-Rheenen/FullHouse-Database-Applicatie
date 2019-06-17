@@ -14,6 +14,7 @@ public class AddMasterclassDialog extends BasicDialog {
 
     private ArrayList<Masterclass> masterclassList;
     private MasterclassProvider provider = new MasterclassProvider();
+    private Masterclass updatingMasterclass = null;
 
     private JTextField locationField = new JTextField();
 
@@ -51,38 +52,52 @@ public class AddMasterclassDialog extends BasicDialog {
     public AddMasterclassDialog(Masterclass toChange) {
         super(true);
 
-        //TODO fill textfields with existing data
-        locationField.setText("");
-        capacityField.setText("");
-        startDateField.setText("");
-        startTimeField.setText("");
-        endDateField.setText("");
-        endTimeField.setText("");
-        priceField.setText("");
-        minimumRatingField.setText("");
-        mentorField.setText("");
+        updatingMasterclass = toChange;
+
+        locationField.setText(toChange.getCity());
+        capacityField.setText(Integer.toString(toChange.getCapacity()));
+        startDateField.setText(toChange.convertSqlDateToString(toChange.getBeginDate()));
+        startTimeField.setText(toChange.getBeginTime().toString());
+        endDateField.setText(toChange.convertSqlDateToString(toChange.getEndDate()));
+        endTimeField.setText(toChange.getEndTime().toString());
+        priceField.setText(Integer.toString(toChange.getPrice()));
+        minimumRatingField.setText(Integer.toString(toChange.getMinimumRating()));
+        mentorField.setText(Integer.toString(toChange.getMentorId()));
         initChildDialog();
     }
 
     @Override
     public void handleConfirm() {
-        if (!checkAllFields()) {
-            JOptionPane.showMessageDialog(this, "Iets ging niet helemaal goed");
+        // Check if the input is valid
+        if (!validateInput()) {
+            JOptionPane.showMessageDialog(this, "Er zijn foute gegevens ingevoerd!");
+            return;
+        }
+
+        if (!this.isForChange()) {
+
+            try {
+                // Attempt to add to the database, get the updated masterclass with id back
+                Masterclass newMasterclass = provider.addMasterclass(createNewMasterclass());
+
+                this.masterclassList.add(newMasterclass);
+                invokeUpdateCallback(newMasterclass);
+                JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
+                this.dispose();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Er is een fout opgetreden");
+            }
         } else {
-            if (!this.isForChange()) {
-
-                try {
-                    // Attempt to add to the database, get the updated masterclass with id back
-                    Masterclass newMasterclass = provider.addMasterclass(createNewMasterclass());
-
-                    this.masterclassList.add(newMasterclass);
-                    invokeUpdateCallback(newMasterclass);
-                    JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
-                    this.dispose();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Er is een fout opgetreden");
-                }
+            // Update the masterclass in the database
+            try {
+                Masterclass updatedMasterclass = fetchUpdatesForMasterclass(updatingMasterclass);
+                provider.updateMasterclass(updatedMasterclass);
+                invokeUpdateCallback(updatedMasterclass);
+                this.dispose();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Er zijn foute gegevens ingevoerd!");
             }
         }
     }
@@ -96,12 +111,29 @@ public class AddMasterclassDialog extends BasicDialog {
         Time endTime = java.sql.Time.valueOf(endTimeField.getText());
         int price = Integer.parseInt(priceField.getText());
         int minimumRating = Integer.parseInt(minimumRatingField.getText());
-        int mentor = Integer.parseInt(mentorField.getText());
+        int mentorId = Integer.parseInt(mentorField.getText());
 
-        return new Masterclass(0, location, capacity, startDate, startTime, endDate, endTime, minimumRating, price, null, mentor);
+        return new Masterclass(0, location, capacity, startDate, startTime, endDate, endTime, minimumRating, price, null, mentorId);
     }
 
-    private boolean checkAllFields() {
+    private Masterclass fetchUpdatesForMasterclass(Masterclass masterclass) {
+
+        masterclass.setCity(locationField.getText());
+        masterclass.setCapacity(Integer.parseInt(capacityField.getText()));
+        masterclass.setBeginDate(masterclass.convertStringToSqlDate(startDateField.getText()));
+
+        masterclass.setBeginTime(java.sql.Time.valueOf(startTimeField.getText()));
+        masterclass.setEndDate(masterclass.convertStringToSqlDate(endDateField.getText()));
+        masterclass.setEndTime(java.sql.Time.valueOf(endTimeField.getText()));
+        masterclass.setPrice(Integer.parseInt(priceField.getText()));
+
+        masterclass.setMinimumRating(Integer.parseInt(minimumRatingField.getText()));
+        masterclass.setMentorId(Integer.parseInt(mentorField.getText()));
+
+        return masterclass;
+    }
+
+    private boolean validateInput() {
 
         InputType[] masterclassDataTypes = {
                 InputType.NAME,     // Locatie

@@ -2,6 +2,7 @@ package components;
 
 import backend.MasterclassProvider;
 import components.dialogs.AddMasterclassDialog;
+import components.dialogs.NoSelectionDialog;
 import components.dialogs.reports.MasterclassFilterPlayerDialog;
 import components.panels.OverviewPanel;
 import models.Masterclass;
@@ -29,6 +30,11 @@ public class MasterclassOverviewPanel extends OverviewPanel {
 
         createButtons();
 
+        try {
+            masterclassTableData = masterclassProvider.allMasterclasses();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         model = fetchDataModel();
         tablePanel = new TablePanel(model);
         this.add(tablePanel, BorderLayout.CENTER);
@@ -76,7 +82,32 @@ public class MasterclassOverviewPanel extends OverviewPanel {
         });
 
         JButton editButton = new JButton("Wijzigen");
-        //editButton.addActionListener(e -> new AddMasterclassDialog(this.masterclassTableData.get(5)));
+        editButton.addActionListener(e -> {
+            if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
+                new NoSelectionDialog();
+            } else {
+                int selectedRow = tablePanel.getSelectedRow();
+                Masterclass updatingMasterclass = findMasterclassInList((Integer) model.getValueAt(tablePanel.getSelectedRow(), 0));
+                if(updatingMasterclass == null) {
+                    // TODO: Refresh list with new data, although this should theoretically never happen
+                    return;
+                }
+
+                AddMasterclassDialog updateDialog = new AddMasterclassDialog(updatingMasterclass);
+                updateDialog.addListener((masterclass) -> {
+                    // Refresh the data
+                    DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
+                    try {
+                        model.removeRow(selectedRow);
+                        Masterclass result = masterclassProvider.getMasterclassById(updatingMasterclass.getId());
+
+                        model.insertRow(selectedRow, result.convertToTableData());
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+            }
+        });
         editButton.setPreferredSize(new Dimension(150, 200));
 
         JButton filterButton = new JButton("Filter spelers");
@@ -86,5 +117,14 @@ public class MasterclassOverviewPanel extends OverviewPanel {
         addButtonToPanel(addButton);
         addButtonToPanel(editButton);
         addButtonToPanel(filterButton);
+    }
+
+    private Masterclass findMasterclassInList(int masterclassId) {
+        for (Masterclass m : masterclassTableData) {
+            if(m.getId() == masterclassId)
+                return m;
+        }
+
+        return null;
     }
 }

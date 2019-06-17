@@ -36,6 +36,15 @@ public class MasterclassProvider {
             "VALUES (LAST_INSERT_ID(), ?, ?);\n" +
             "COMMIT;";
 
+    private static final String Q_SELECTMASTERCLASS =
+            "SELECT m.idMasterclass, l.stad, event.capaciteit, DATE_FORMAT(begintijd, '%d-%m-%Y'), TIME_FORMAT(begintijd, '%H:%i'), DATE_FORMAT(eindtijd, '%d-%m-%Y'), TIME_FORMAT(eindtijd, '%H:%i'), minimumLevel, inschrijfgeld, bs.naam, bs.idBekend\n" +
+            "FROM event\n" +
+            "INNER JOIN masterclass m on event.idEvent = m.idMasterclass\n" +
+            "INNER JOIN locatie l on event.locatie = l.idLocatie\n" +
+            "INNER JOIN bekende_speler bs on m.begeleiderNr = bs.idBekend\n" +
+            "WHERE event.idEvent = ?\n" +
+            "ORDER BY event.idEvent;";
+
     private static final String Q_FILTERPLAYERSBYRATING = "SELECT m.idMasterclass AS Masterclasscode,\n" +
             "       s.naam          AS Naam,\n" +
             "       s.rating        AS Rating\n" +
@@ -44,6 +53,16 @@ public class MasterclassProvider {
             "         JOIN speler s on md.gast = s.speler_id\n" +
             "WHERE rating >= ?\n" +
             "ORDER BY s.rating;";
+
+    private static final String Q_UPDATEMASTERCLASS =
+            "START TRANSACTION;\n" +
+            "UPDATE event\n" +
+            "SET locatie = (SELECT idLocatie FROM locatie WHERE stad = ?), capaciteit = ?, begintijd = ?, eindtijd = ?, inschrijfgeld = ?\n" +
+            "WHERE idEvent = ?;\n" +
+            "UPDATE masterclass\n" +
+            "SET minimumLevel = ?, begeleiderNr = ?\n" +
+            "WHERE idMasterclass = ?;\n" +
+            "COMMIT;";
 
     public MasterclassProvider() {
         getDBconnection();
@@ -98,11 +117,51 @@ public class MasterclassProvider {
         return masterclass;
     }
 
+    @SuppressWarnings("Duplicates")
+    public void updateMasterclass(Masterclass updated) throws SQLException {
+        PreparedStatement updateMasterclassStatement = databaseConnection
+                .getConnection()
+                .prepareStatement(Q_UPDATEMASTERCLASS);
+
+        updateMasterclassStatement.setString(1, updated.getCity());
+        updateMasterclassStatement.setInt(2, updated.getCapacity());
+        updateMasterclassStatement.setString(3, updated.createDateTime(updated.getBeginDate(), updated.getBeginTime()));
+        updateMasterclassStatement.setString(4, updated.createDateTime(updated.getEndDate(), updated.getEndTime()));
+        updateMasterclassStatement.setInt(5, updated.getPrice());
+        // Set the Event to update
+        updateMasterclassStatement.setInt(6, updated.getId());
+
+        updateMasterclassStatement.setInt(7, updated.getMinimumRating());
+        updateMasterclassStatement.setInt(8, updated.getMentorId());
+        // Set the Masterclass to update
+        updateMasterclassStatement.setInt(9, updated.getId());
+
+        updateMasterclassStatement.executeUpdate();
+    }
+
     public ResultSet filterPlayersByRating(int rating) throws SQLException {
         PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_FILTERPLAYERSBYRATING);
         pst.setInt(1, rating);
 
         return pst.executeQuery();
+    }
+
+    /**
+     * Returns the masterclass with the given id from the database
+     * @param id The id to search for in the database
+     * @return A Masterclass object
+     * @throws SQLException When connection or query fails
+     */
+    public Masterclass getMasterclassById(int id) throws SQLException {
+        PreparedStatement masterclassStatement = databaseConnection
+                .getConnection()
+                .prepareStatement(Q_SELECTMASTERCLASS);
+
+        masterclassStatement.setInt(1, id);
+
+        ResultSet set = masterclassStatement.executeQuery();
+        set.next();
+        return Masterclass.readMasterclassData(set);
     }
 
     private void getDBconnection() {

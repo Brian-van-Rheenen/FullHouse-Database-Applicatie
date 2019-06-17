@@ -77,7 +77,7 @@ public class Masterclass {
     }
 
     public String createDateTime(Date date, Time time) {
-        return date + " " + time; // niet af, welke datum?
+        return date + " " + time;
     }
 
     @Override
@@ -105,41 +105,87 @@ public class Masterclass {
         return id;
     }
 
-    public void setId(int id) { this.id = id; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getCity() {
         return city;
     }
 
-    public int getCapacity() { return capacity; }
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
 
     public Date getBeginDate() {
         return beginDate;
+    }
+
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
     }
 
     public Time getBeginTime() {
         return beginTime;
     }
 
-    public Date getEndDate() { return endDate; }
+    public void setBeginTime(Time beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
     public Time getEndTime() {
         return endTime;
+    }
+
+    public void setEndTime(Time endTime) {
+        this.endTime = endTime;
     }
 
     public int getMinimumRating() {
         return minimumRating;
     }
 
+    public void setMinimumRating(int minimumRating) {
+        this.minimumRating = minimumRating;
+    }
+
     public int getPrice() {
         return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public String getMentor() {
         return mentor;
     }
 
-    public void setMentor(String mentor) { this.mentor = mentor; }
+    public void setMentor(String mentor) {
+        this.mentor = mentor;
+    }
 
-    public int getMentorId() { return mentorId; }
+    public int getMentorId() {
+        return mentorId;
+    }
+
+    public void setMentorId(int mentorId) {
+        this.mentorId = mentorId;
+    }
 }
