@@ -42,6 +42,11 @@ public enum InputType {
         boolean isGoodInput(String input) {
             return input.matches("[a-zA-Z]");
         }
+    }, CAPACITY {
+        @Override
+        boolean isGoodInput(String input) {
+            return input.matches("\\b(0?[1-9]|1[0-9]|2[0-5])\\b");
+        }
     }, TIME {
         @Override
         boolean isGoodInput(String input) { return input.matches("(?:[01]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)"); }

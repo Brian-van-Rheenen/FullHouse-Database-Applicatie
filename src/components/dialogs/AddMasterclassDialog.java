@@ -105,7 +105,7 @@ public class AddMasterclassDialog extends BasicDialog {
 
         InputType[] masterclassDataTypes = {
                 InputType.NAME,     // Locatie
-                InputType.NUMBER,   // Capaciteit
+                InputType.CAPACITY, // Capaciteit
                 InputType.DATE,     // Start datum
                 InputType.TIME,     // Starttijd
                 InputType.DATE,     // Eind datun
