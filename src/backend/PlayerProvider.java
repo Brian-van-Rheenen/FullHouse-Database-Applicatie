@@ -4,9 +4,6 @@ import models.Player;
 
 import java.sql.*;
 import java.util.ArrayList;
-import backend.DB_Statements.*;
-
-import static backend.DB_Statements.*;
 
 public class PlayerProvider {
 
