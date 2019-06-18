@@ -70,7 +70,7 @@ public class TablePanel extends JPanel {
      */
     public void addSelectionListener(ListSelectionListener listener) {
         ListSelectionModel selectionModel = table.getSelectionModel();
-        if(selectionModel != null) {
+        if(selectionModel != null && listener != null) {
             selectionModel.addListSelectionListener(listener);
         }
     }
