@@ -1,8 +1,9 @@
 package components.dialogs;
 
 
+import models.Deelname;
 import models.Event;
-import models.*;
+import models.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,8 +58,7 @@ public class AddParticipantDialog extends BasicDialog {
 
 
     private JTextField[] getAllTextFields() {
-        JTextField[] textFields = {toernooiCodeField, playerNameField, postcode};
-        return textFields;
+        return new JTextField[]{toernooiCodeField, playerNameField, postcode};
     }
 
     @Override
@@ -71,7 +71,7 @@ public class AddParticipantDialog extends BasicDialog {
         Optional<Player> optionalPlayer = players.stream()
                 .filter(player -> player.getName()
                         .equalsIgnoreCase(inputForPLayer)
-                        && player.getZip().equalsIgnoreCase(inputForZIP)).findAny();
+                        && player.getAddress().getZipCode().equalsIgnoreCase(inputForZIP)).findAny();
 
         if (!optionalEvent.isPresent()) {
             JOptionPane.showMessageDialog(this, "Het systeem kon de masterclass/toernooi niet vinden");

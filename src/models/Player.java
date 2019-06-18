@@ -1,8 +1,8 @@
 package models;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
@@ -10,32 +10,30 @@ import java.util.Objects;
 public class Player {
 
     private int id;
+
+    private Address address;
+
     private String name;
     private String gender;
     private java.sql.Date dob;
     private String telephoneNR;
     private String email;
 
-    private int adresId;
-    private String street;
-    private int houseNr;
-    private String zip;
-    private String city;
-
     private int rating;
 
-    public Player(int id, int adresId, String name, String gender, java.util.Date dob, String street, int houseNr, String zip, String city, String telephoneNR, String email, int rating) {
+    public Player(int id, Address address, String name, String gender, java.util.Date dob, String telephoneNR, String email, int rating) {
         this.id = id;
         this.name = name;
         this.gender = gender;
         this.dob = convertJavaDateToSqlDate(dob);
-        this.street = street;
-        this.houseNr = houseNr;
-        this.zip = zip;
-        this.city = city;
         this.telephoneNR = telephoneNR;
         this.email = email;
+        this.address = address;
         this.rating = rating;
+    }
+
+    public Player(Address address, String name, String gender, java.util.Date dob, String telephoneNR, String email, int rating) {
+        this(-1, address, name, gender, dob, telephoneNR, email, rating);
     }
 
     public static Player readPlayerData(ResultSet rs) throws SQLException {
@@ -52,12 +50,22 @@ public class Player {
         String mail = rs.getString(11);
         int rating = rs.getInt(12);
 
-        return new Player(id, adresId, name, gender, dob, street, houseNr, zip, city, tele, mail, rating);
+        return new Player(id, new Address(adresId, city, street, houseNr, zip), name, gender, dob, tele, mail, rating);
     }
 
     public Object[] convertToTableData(){
-        Object[] res = {id, name, gender, dob, street + " " + houseNr, zip, city, telephoneNR, email, rating};
-        return res;
+        return new Object[] {
+                id,
+                name,
+                gender,
+                dob,
+                address.getStreet() + " " + address.getHouseNr(),
+                address.getZipCode(),
+                address.getCity(),
+                telephoneNR,
+                email,
+                rating
+        };
     }
 
     public static java.sql.Date convertJavaDateToSqlDate(java.util.Date date) {
@@ -75,8 +83,7 @@ public class Player {
         if (!(o instanceof Player)) return false;
         Player player = (Player) o;
         return name.equals(player.name) &&
-                street.equals(player.street) &&
-                houseNr == player.houseNr &&
+                address.equals(player.address) &&
                 gender.equals(player.gender) &&
                 dob.equals(player.dob) &&
                 email.equals(player.email);
@@ -84,7 +91,7 @@ public class Player {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, street, houseNr, gender, dob, email);
+        return Objects.hash(name, address, gender, dob, email);
     }
 
     public int getId() {
@@ -99,84 +106,52 @@ public class Player {
         return name;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public Date getDob() {
-        return dob;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public int getHouseNr() {
-        return houseNr;
-    }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getTelephoneNR() {
-        return telephoneNR;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public int getAdresId() {
-        return adresId;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGender() {
+        return gender;
     }
 
     public void setGender(String gender) {
         this.gender = gender;
     }
 
+    public Date getDob() {
+        return dob;
+    }
+
     public void setDob(Date dob) {
         this.dob = dob;
+    }
+
+    public String getTelephoneNR() {
+        return telephoneNR;
     }
 
     public void setTelephoneNR(String telephoneNR) {
         this.telephoneNR = telephoneNR;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setAdresId(int adresId) {
-        this.adresId = adresId;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
-    public void setHouseNr(int houseNr) {
-        this.houseNr = houseNr;
-    }
-
-    public void setZip(String zip) {
-        this.zip = zip;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+    public int getRating() {
+        return rating;
     }
 
     public void setRating(int rating) {

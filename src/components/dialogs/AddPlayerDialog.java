@@ -1,6 +1,7 @@
 package components.dialogs;
 
 import backend.PlayerProvider;
+import models.Address;
 import models.Player;
 
 import javax.swing.*;
@@ -61,14 +62,16 @@ public class AddPlayerDialog extends BasicDialog {
         updatingPlayer = toChange;
 
         telephoneNR.setText(toChange.getTelephoneNR());
-        streetField.setText(toChange.getStreet());
         nameField.setText(toChange.getName());
-        houseNrField.setText(Integer.toString(toChange.getHouseNr()));
-        zipCodeField.setText(toChange.getZip());
         genderBox.setSelectedItem(toChange.getGender());
         emailTextField.setText(toChange.getEmail());
         dob.setText(toChange.convertSqlDateToString(toChange.getDob()));
-        this.cityField.setText(toChange.getCity());
+
+        cityField.setText(toChange.getAddress().getCity());
+        streetField.setText(toChange.getAddress().getStreet());
+        houseNrField.setText(Integer.toString(toChange.getAddress().getHouseNr()));
+        zipCodeField.setText(toChange.getAddress().getZipCode());
+
         initChildDialog();
     }
 
@@ -143,7 +146,7 @@ public class AddPlayerDialog extends BasicDialog {
         }
 
         String city = this.cityField.getText();
-        return new Player(0, 0, name, gender, dateOfBirth, street, houseNr, zip, city, telephone, email, 0);
+        return new Player(new Address(city, street, houseNr, zip), name, gender, dateOfBirth, telephone, email, 0);
     }
 
     private Player fetchUpdatesForPlayer(Player player) {
@@ -160,10 +163,10 @@ public class AddPlayerDialog extends BasicDialog {
         player.setGender((String) genderBox.getSelectedItem());
         player.setDob(Player.convertJavaDateToSqlDate(dateOfBirth));
 
-        player.setCity(cityField.getText());
-        player.setStreet(streetField.getText());
-        player.setHouseNr(Integer.parseInt(houseNrField.getText()));
-        player.setZip(zipCodeField.getText());
+        player.getAddress().setCity(cityField.getText());
+        player.getAddress().setStreet(streetField.getText());
+        player.getAddress().setHouseNr(Integer.parseInt(houseNrField.getText()));
+        player.getAddress().setZipCode(zipCodeField.getText());
 
         player.setEmail(emailTextField.getText());
         player.setTelephoneNR(telephoneNR.getText());

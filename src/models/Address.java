@@ -9,10 +9,10 @@ public class Address {
 
     private String city;
     private String street;
-    private String houseNr;
+    private int houseNr;
     private String zipCode;
 
-    public Address(int id, String city, String street, String houseNr, String zipCode) {
+    public Address(int id, String city, String street, int houseNr, String zipCode) {
         this.id = id;
         this.city = city;
         this.street = street;
@@ -20,7 +20,7 @@ public class Address {
         this.zipCode = zipCode;
     }
 
-    public Address(String city, String street, String houseNr, String zipCode) {
+    public Address(String city, String street, int houseNr, String zipCode) {
         this(-1, city, street, houseNr, zipCode);
     }
 
@@ -48,11 +48,11 @@ public class Address {
         this.street = street;
     }
 
-    public String getHouseNr() {
+    public int getHouseNr() {
         return houseNr;
     }
 
-    public void setHouseNr(String houseNr) {
+    public void setHouseNr(int houseNr) {
         this.houseNr = houseNr;
     }
 

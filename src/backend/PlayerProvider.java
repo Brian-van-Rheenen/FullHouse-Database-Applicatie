@@ -1,8 +1,12 @@
 package backend;
 
+import models.Address;
 import models.Player;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class PlayerProvider {
@@ -74,14 +78,16 @@ public class PlayerProvider {
                 .getConnection()
                 .prepareStatement(Q_ADDPLAYER, Statement.RETURN_GENERATED_KEYS);
 
-        addPlayerStatement.setString(1, player.getCity());
-        addPlayerStatement.setString(2, player.getStreet());
-        addPlayerStatement.setInt(3, player.getHouseNr());
-        addPlayerStatement.setString(4, player.getZip());
-        addPlayerStatement.setString(5, player.getCity());
-        addPlayerStatement.setString(6, player.getStreet());
-        addPlayerStatement.setInt(7, player.getHouseNr());
-        addPlayerStatement.setString(8, player.getZip());
+        Address address = player.getAddress();
+
+        addPlayerStatement.setString(1, address.getCity());
+        addPlayerStatement.setString(2, address.getStreet());
+        addPlayerStatement.setInt(3, address.getHouseNr());
+        addPlayerStatement.setString(4, address.getZipCode());
+        addPlayerStatement.setString(5, address.getCity());
+        addPlayerStatement.setString(6, address.getStreet());
+        addPlayerStatement.setInt(7, address.getHouseNr());
+        addPlayerStatement.setString(8, address.getZipCode());
 
         // Player part of query
         addPlayerStatement.setString(9, player.getName());
@@ -107,12 +113,14 @@ public class PlayerProvider {
                 .getConnection()
                 .prepareStatement(Q_UPDATEPLAYER);
 
-        updatePlayerStatement.setString(1, updated.getCity());
-        updatePlayerStatement.setString(2, updated.getZip());
-        updatePlayerStatement.setString(3, updated.getStreet());
-        updatePlayerStatement.setInt(4, updated.getHouseNr());
+        Address updatedAddress = updated.getAddress();
+
+        updatePlayerStatement.setString(1, updatedAddress.getCity());
+        updatePlayerStatement.setString(2, updatedAddress.getZipCode());
+        updatePlayerStatement.setString(3, updatedAddress.getStreet());
+        updatePlayerStatement.setInt(4, updatedAddress.getHouseNr());
         // Set the address to update
-        updatePlayerStatement.setInt(5, updated.getAdresId());
+        updatePlayerStatement.setInt(5, updatedAddress.getId());
 
         // Player part of query
         updatePlayerStatement.setString(6, updated.getName());

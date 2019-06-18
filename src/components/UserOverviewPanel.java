@@ -29,10 +29,10 @@ public class UserOverviewPanel extends OverviewPanel {
             .addColumn("id"           , Player::getId)
             .addColumn("Naam"         , Player::getName)
             .addColumn("Geslacht"     , Player::getGender)
-            .addColumn("Geboortedatum", Player::getDob)
-            .addColumn("Adres"        , player -> String.format("%s %s", player.getStreet(), player.getHouseNr()))
-            .addColumn("Postcode"     , Player::getZip)
-            .addColumn("Woonplaats"   , Player::getCity)
+            .addColumn("Geboortedatum", player -> player.convertSqlDateToString(player.getDob()))
+            .addColumn("Adres"        , player -> String.format("%s %s", player.getAddress().getStreet(), player.getAddress().getHouseNr()))
+            .addColumn("Postcode"     , player -> player.getAddress().getZipCode())
+            .addColumn("Woonplaats"   , player -> player.getAddress().getCity())
             .addColumn("Telefoon"     , Player::getTelephoneNR)
             .addColumn("Email"        , Player::getEmail)
             .addColumn("Rating"       , Player::getRating)
@@ -139,7 +139,7 @@ public class UserOverviewPanel extends OverviewPanel {
             if(selectionEvent.getValueIsAdjusting())
                 return;
 
-            // TODO: Disable Delete button when the item is deleted
+            // TODO: Disable buttons when the item is deleted
             if(tablePanel.getSelectedRows().length > 0) {
                 editButton.setEnabled(true);
                 deleteButton.setEnabled(true);
