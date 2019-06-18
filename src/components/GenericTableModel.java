@@ -12,6 +12,10 @@ public class GenericTableModel<TModel> extends AbstractTableModel implements Lis
     private List<TModel> storage;
     private Representor<TModel> representor;
 
+    public Representor<TModel> getRepresentor() {
+        return representor;
+    }
+
     public GenericTableModel(List<TModel> list, Representor<TModel> representor) {
         this.storage = list;
         this.representor = representor;
