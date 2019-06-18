@@ -2,6 +2,7 @@ package components.dialogs;
 
 import backend.PlayerProvider;
 import models.Address;
+import models.Gender;
 import models.Player;
 
 import javax.swing.*;
@@ -10,7 +11,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
@@ -31,7 +31,7 @@ public class AddPlayerDialog extends BasicDialog {
     private JTextField cityField = new JTextField();
 
     //------
-    private JComboBox<String> genderBox = new JComboBox<>();
+    private JComboBox<Gender> genderBox = new JComboBox<>(Gender.values());
 
     private JTextField dob = new JTextField();
 
@@ -63,7 +63,11 @@ public class AddPlayerDialog extends BasicDialog {
 
         telephoneNR.setText(toChange.getTelephoneNR());
         nameField.setText(toChange.getName());
-        genderBox.setSelectedItem(toChange.getGender());
+
+        genderBox.setSelectedIndex(0);
+        DefaultComboBoxModel<Gender> model = (DefaultComboBoxModel<Gender>) genderBox.getModel();
+        model.setSelectedItem(toChange.getGender());
+
         emailTextField.setText(toChange.getEmail());
         dob.setText(toChange.convertSqlDateToString(toChange.getDob()));
 
@@ -134,7 +138,7 @@ public class AddPlayerDialog extends BasicDialog {
         String name = nameField.getText();
         int houseNr = Integer.parseInt(houseNrField.getText());
         String zip = zipCodeField.getText();
-        String gender = (String) genderBox.getSelectedItem();
+        Gender gender = (Gender) genderBox.getSelectedItem();
         String email = emailTextField.getText();
 
         Date dateOfBirth = new Date();
@@ -160,7 +164,7 @@ public class AddPlayerDialog extends BasicDialog {
         }
 
         player.setName(nameField.getText());
-        player.setGender((String) genderBox.getSelectedItem());
+        player.setGender((Gender) genderBox.getSelectedItem());
         player.setDob(Player.convertJavaDateToSqlDate(dateOfBirth));
 
         player.getAddress().setCity(cityField.getText());
@@ -226,8 +230,6 @@ public class AddPlayerDialog extends BasicDialog {
 
     @Override
     public void addAllFields() {
-        initComboBox();
-
         String[] fieldnames = {"Naam", "Straat", "Huisnummer", "Postcode", "Woonplaats", "Geslacht",
                 "Geboortedatum",
                 "Telefoonnummer",
@@ -250,11 +252,5 @@ public class AddPlayerDialog extends BasicDialog {
             this.add(field);
             this.add(Box.createRigidArea(new Dimension(300, 9)));
         }
-    }
-
-    private void initComboBox() {
-        String[] genders = {"M", "V", "O"};
-        Arrays.stream(genders).forEach(g -> genderBox.addItem(g));
-        genderBox.setSelectedIndex(2);
     }
 }
