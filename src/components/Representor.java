@@ -13,10 +13,10 @@ import java.util.function.Function;
  */
 public class Representor<TModel> {
 
-    private List<Function<TModel, String>> chain;
+    private List<Function<TModel, Object>> chain;
     private List<String> columnNames;
 
-    public Representor(List<String> names, List<Function<TModel, String>> callChain) {
+    public Representor(List<String> names, List<Function<TModel, Object>> callChain) {
         if(callChain.size() != names.size())
             throw new IllegalArgumentException("The amount of names and the amount of functions should be the same!");
 

@@ -9,10 +9,10 @@ import java.util.function.Function;
  */
 public class RepresentationBuilder<TModel> {
 
-    private ArrayList<Function<TModel, String>> callChain = new ArrayList<>();
+    private ArrayList<Function<TModel, Object>> callChain = new ArrayList<>();
     private ArrayList<String> names = new ArrayList<>();
 
-    public RepresentationBuilder<TModel> addColumn(String columnName, Function<TModel, String> converter) {
+    public RepresentationBuilder<TModel> addColumn(String columnName, Function<TModel, Object> converter) {
         callChain.add(converter);
         names.add(columnName);
         return this;

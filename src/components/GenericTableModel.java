@@ -26,12 +26,16 @@ public class GenericTableModel<TModel> extends AbstractTableModel implements Lis
         return false;
     }
 
+    @Override
+    public String getColumnName(int column) {
+        return representor.getColumnName(column);
+    }
+
     //region AbstractTableModel
 
     @Override
     public int getRowCount() {
-        // Names + the count of elements
-        return storage.size() + 1;
+        return storage.size();
     }
 
     @Override
@@ -41,13 +45,7 @@ public class GenericTableModel<TModel> extends AbstractTableModel implements Lis
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-
-        if(rowIndex == 0)
-            // Return the column names instead
-            return representor.getColumnName(columnIndex);
-
-        // Since the first row (row 0) is the column names we need to decrease the accessed index by one
-        TModel model = storage.get(rowIndex - 1);
+        TModel model = storage.get(rowIndex);
         return representor.invokeOn(model)[columnIndex];
     }
 
@@ -117,7 +115,6 @@ public class GenericTableModel<TModel> extends AbstractTableModel implements Lis
 
         if(result) {
             int endIndex = (storage.size());
-            // We need to take the 0th row (column names) into account
             fireTableRowsInserted(startIndex, endIndex);
         }
 
@@ -132,7 +129,7 @@ public class GenericTableModel<TModel> extends AbstractTableModel implements Lis
         boolean result = storage.addAll(index, c);
         if(result) {
             // Calculate the offset
-            int lastIndex = index + c.size();
+            int lastIndex = index + c.size() - 1;
             fireTableRowsInserted(index, lastIndex);
         }
 
@@ -153,7 +150,7 @@ public class GenericTableModel<TModel> extends AbstractTableModel implements Lis
     public void clear() {
         int lastIndex = (storage.size() - 1);
         storage.clear();
-        fireTableRowsDeleted(0, lastIndex);
+        fireTableRowsDeleted(1, lastIndex);
     }
 
     @Override
@@ -164,14 +161,14 @@ public class GenericTableModel<TModel> extends AbstractTableModel implements Lis
     @Override
     public TModel set(int index, TModel element) {
         TModel result = storage.set(index, element);
-        fireTableRowsUpdated(index + 1, index + 1);
+        fireTableRowsUpdated(index, index);
         return result;
     }
 
     @Override
     public void add(int index, TModel element) {
         storage.add(index, element);
-        fireTableRowsInserted(index + 1, index + 1);
+        fireTableRowsInserted(index, index);
     }
 
     @Override
