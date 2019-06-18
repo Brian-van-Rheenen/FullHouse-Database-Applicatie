@@ -16,7 +16,8 @@ public class AddMasterclassDialog extends BasicDialog {
     private MasterclassProvider provider = new MasterclassProvider();
     private Masterclass updatingMasterclass = null;
 
-    private JTextField locationField = new JTextField();
+    private String[] locations = addLocations();
+    private JComboBox locationField = new JComboBox(locations);
 
     private JTextField capacityField = new JTextField();
 
@@ -54,7 +55,12 @@ public class AddMasterclassDialog extends BasicDialog {
 
         updatingMasterclass = toChange;
 
-        locationField.setText(toChange.getCity());
+        for (int i = 0; i < locations.length; i++) {
+            if(locations[i].equals(toChange.getCity())) {
+                locationField.setSelectedIndex(i);
+            }
+        }
+
         capacityField.setText(Integer.toString(toChange.getCapacity()));
         startDateField.setText(toChange.convertSqlDateToString(toChange.getBeginDate()));
         startTimeField.setText(toChange.getBeginTime().toString());
@@ -103,7 +109,7 @@ public class AddMasterclassDialog extends BasicDialog {
     }
 
     private Masterclass createNewMasterclass() {
-        String location = locationField.getText();
+        String location = (String) locationField.getSelectedItem();
         int capacity = Integer.parseInt(capacityField.getText());
         String startDate = startDateField.getText();
         Time startTime = java.sql.Time.valueOf(startTimeField.getText());
@@ -118,7 +124,7 @@ public class AddMasterclassDialog extends BasicDialog {
 
     private Masterclass fetchUpdatesForMasterclass(Masterclass masterclass) {
 
-        masterclass.setCity(locationField.getText());
+        masterclass.setCity((String) locationField.getSelectedItem());
         masterclass.setCapacity(Integer.parseInt(capacityField.getText()));
         masterclass.setBeginDate(masterclass.convertStringToSqlDate(startDateField.getText()));
 
@@ -136,7 +142,6 @@ public class AddMasterclassDialog extends BasicDialog {
     private boolean validateInput() {
 
         InputType[] masterclassDataTypes = {
-                InputType.NAME,     // Locatie
                 InputType.CAPACITY, // Capaciteit
                 InputType.DATE,     // Start datum
                 InputType.TIME,     // Starttijd
@@ -147,7 +152,7 @@ public class AddMasterclassDialog extends BasicDialog {
                 InputType.NUMBER    // Mentor id
         };
 
-        JTextField[] textFields = new JTextField[]{locationField, capacityField, startDateField, startTimeField, endDateField, endTimeField, priceField, minimumRatingField, mentorField};
+        JTextField[] textFields = new JTextField[]{capacityField, startDateField, startTimeField, endDateField, endTimeField, priceField, minimumRatingField, mentorField};
         boolean res = true;
 
         for (int i = 0; i < masterclassDataTypes.length; i++) {
@@ -203,5 +208,16 @@ public class AddMasterclassDialog extends BasicDialog {
             this.add(field);
             this.add(Box.createRigidArea(new Dimension(300, 9)));
         }
+    }
+
+    private String[] addLocations() {
+        try {
+            ArrayList<String> locationsList = provider.getAllLocations();
+            return locationsList.toArray(new String[locationsList.size()]);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

@@ -64,6 +64,9 @@ public class MasterclassProvider {
             "WHERE idMasterclass = ?;\n" +
             "COMMIT;";
 
+    private static final String Q_ALLLOCATIONS =
+            "SELECT stad FROM locatie;";
+
     public MasterclassProvider() {
         getDBconnection();
     }
@@ -162,6 +165,17 @@ public class MasterclassProvider {
         ResultSet set = masterclassStatement.executeQuery();
         set.next();
         return Masterclass.readMasterclassData(set);
+    }
+
+    public ArrayList<String> getAllLocations() throws SQLException {
+        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLLOCATIONS);
+        ArrayList<String> res = new ArrayList<>();
+
+        while (rs.next()) {
+            res.add(rs.getString(1));
+        }
+
+        return res;
     }
 
     private void getDBconnection() {
