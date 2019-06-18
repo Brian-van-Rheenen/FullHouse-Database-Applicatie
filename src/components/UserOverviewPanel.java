@@ -114,6 +114,7 @@ public class UserOverviewPanel extends OverviewPanel {
                         try {
                             playerProvider.deletePlayer(playerId);
                             model.set(playerIndex, playerProvider.getPlayerById(playerId));
+                            tablePanel.clearSelection();
                         } catch (SQLException exception) {
                             exception.printStackTrace();
                             JOptionPane.showMessageDialog(

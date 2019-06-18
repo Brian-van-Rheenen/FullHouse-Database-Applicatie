@@ -74,4 +74,12 @@ public class TablePanel extends JPanel {
             selectionModel.addListSelectionListener(listener);
         }
     }
+
+    /**
+     * Clears the current selection in the {@link JTable}
+     */
+    public void clearSelection() {
+        table.clearSelection();
+    }
+
 }
