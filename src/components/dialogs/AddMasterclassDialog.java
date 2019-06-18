@@ -31,7 +31,8 @@ public class AddMasterclassDialog extends BasicDialog {
 
     private JTextField minimumRatingField = new JTextField();
 
-    private JTextField mentorField = new JTextField();
+    private String[] famousPlayers = addFamousPlayers();
+    private JComboBox mentorField = new JComboBox(famousPlayers);
 
     private JComponent[] fields = {locationField, capacityField, startDateField, startTimeField, endDateField, endTimeField, priceField, minimumRatingField, mentorField};
 
@@ -68,7 +69,13 @@ public class AddMasterclassDialog extends BasicDialog {
         endTimeField.setText(toChange.getEndTime().toString());
         priceField.setText(Integer.toString(toChange.getPrice()));
         minimumRatingField.setText(Integer.toString(toChange.getMinimumRating()));
-        mentorField.setText(Integer.toString(toChange.getMentorId()));
+
+        for (int i = 0; i < famousPlayers.length; i++) {
+            if(famousPlayers[i].equals(toChange.getMentor())) {
+                mentorField.setSelectedIndex(i);
+            }
+        }
+
         initChildDialog();
     }
 
@@ -117,9 +124,9 @@ public class AddMasterclassDialog extends BasicDialog {
         Time endTime = java.sql.Time.valueOf(endTimeField.getText());
         int price = Integer.parseInt(priceField.getText());
         int minimumRating = Integer.parseInt(minimumRatingField.getText());
-        int mentorId = Integer.parseInt(mentorField.getText());
+        String mentor = (String) mentorField.getSelectedItem();
 
-        return new Masterclass(0, location, capacity, startDate, startTime, endDate, endTime, minimumRating, price, null, mentorId);
+        return new Masterclass(0, location, capacity, startDate, startTime, endDate, endTime, minimumRating, price, mentor);
     }
 
     private Masterclass fetchUpdatesForMasterclass(Masterclass masterclass) {
@@ -134,7 +141,7 @@ public class AddMasterclassDialog extends BasicDialog {
         masterclass.setPrice(Integer.parseInt(priceField.getText()));
 
         masterclass.setMinimumRating(Integer.parseInt(minimumRatingField.getText()));
-        masterclass.setMentorId(Integer.parseInt(mentorField.getText()));
+        masterclass.setMentor((String) mentorField.getSelectedItem());
 
         return masterclass;
     }
@@ -149,10 +156,9 @@ public class AddMasterclassDialog extends BasicDialog {
                 InputType.TIME,     // Eindtijd
                 InputType.NUMBER,   // Inschrijfgeld / prijs
                 InputType.NUMBER,   // Minimale rating
-                InputType.NUMBER    // Mentor id
         };
 
-        JTextField[] textFields = new JTextField[]{capacityField, startDateField, startTimeField, endDateField, endTimeField, priceField, minimumRatingField, mentorField};
+        JTextField[] textFields = new JTextField[]{capacityField, startDateField, startTimeField, endDateField, endTimeField, priceField, minimumRatingField};
         boolean res = true;
 
         for (int i = 0; i < masterclassDataTypes.length; i++) {
@@ -189,7 +195,7 @@ public class AddMasterclassDialog extends BasicDialog {
         String[] fieldnames = {"Locatie", "Capaciteit", "Startdatum", "Starttijd", "Einddatum", "Eindtijd",
                 "Inschrijfgeld",
                 "Minimale Rating",
-                "Mentor id"};
+                "Mentor"};
 
         int nrOfFields = fields.length;
 
@@ -214,6 +220,17 @@ public class AddMasterclassDialog extends BasicDialog {
         try {
             ArrayList<String> locationsList = provider.getAllLocations();
             return locationsList.toArray(new String[locationsList.size()]);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private String[] addFamousPlayers() {
+        try {
+            ArrayList<String> famousPlayersList = provider.getAllFamousPlayers();
+            return famousPlayersList.toArray(new String[famousPlayersList.size()]);
         } catch (SQLException e) {
             e.printStackTrace();
         }

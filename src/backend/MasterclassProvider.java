@@ -33,7 +33,7 @@ public class MasterclassProvider {
             "INSERT INTO event (locatie, capaciteit, begintijd, eindtijd, inschrijfgeld)\n" +
             "VALUES ((SELECT idLocatie FROM locatie WHERE stad = ? LIMIT 1), ?, ?, ?, ?);\n" +
             "INSERT INTO masterclass (idMasterclass, minimumLevel, begeleiderNr)\n" +
-            "VALUES (LAST_INSERT_ID(), ?, ?);\n" +
+            "VALUES (LAST_INSERT_ID(), ?, (SELECT idBekend FROM bekende_speler WHERE naam = ?))\n" +
             "COMMIT;";
 
     private static final String Q_SELECTMASTERCLASS =
@@ -60,12 +60,15 @@ public class MasterclassProvider {
             "SET locatie = (SELECT idLocatie FROM locatie WHERE stad = ?), capaciteit = ?, begintijd = ?, eindtijd = ?, inschrijfgeld = ?\n" +
             "WHERE idEvent = ?;\n" +
             "UPDATE masterclass\n" +
-            "SET minimumLevel = ?, begeleiderNr = ?\n" +
+            "SET minimumLevel = ?, begeleiderNr = (SELECT idBekend FROM bekende_speler WHERE naam = ?)\n" +
             "WHERE idMasterclass = ?;\n" +
             "COMMIT;";
 
     private static final String Q_ALLLOCATIONS =
             "SELECT stad FROM locatie;";
+
+    private static final String Q_ALLFAMOUSPLAYERS =
+            "SELECT naam FROM bekende_speler;";
 
     public MasterclassProvider() {
         getDBconnection();
@@ -105,12 +108,12 @@ public class MasterclassProvider {
         addMasterclassStatement.setString(4, masterclass.createDateTime(masterclass.getEndDate(), masterclass.getEndTime()));
         addMasterclassStatement.setInt(5, masterclass.getPrice());
         addMasterclassStatement.setInt(6, masterclass.getMinimumRating());
-        addMasterclassStatement.setInt(7, masterclass.getMentorId());
+        addMasterclassStatement.setString(7, masterclass.getMentor());
 
         addMasterclassStatement.executeUpdate();
 
         // Update the masterclass with the generated id
-        ResultSet set = databaseConnection.getConnection().createStatement().executeQuery("SELECT LAST_INSERT_ID(), naam FROM bekende_speler WHERE idBekend = " + masterclass.getMentorId());
+        ResultSet set = databaseConnection.getConnection().createStatement().executeQuery("SELECT LAST_INSERT_ID(), naam FROM bekende_speler WHERE idBekend = (SELECT idBekend FROM bekende_speler WHERE naam = '" + masterclass.getMentor() + "');");
         if(set.next()) {
             // Set the Id for the masterclass
             masterclass.setId(set.getInt(1));
@@ -135,7 +138,7 @@ public class MasterclassProvider {
         updateMasterclassStatement.setInt(6, updated.getId());
 
         updateMasterclassStatement.setInt(7, updated.getMinimumRating());
-        updateMasterclassStatement.setInt(8, updated.getMentorId());
+        updateMasterclassStatement.setString(8, updated.getMentor());
         // Set the Masterclass to update
         updateMasterclassStatement.setInt(9, updated.getId());
 
@@ -169,6 +172,17 @@ public class MasterclassProvider {
 
     public ArrayList<String> getAllLocations() throws SQLException {
         ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLLOCATIONS);
+        ArrayList<String> res = new ArrayList<>();
+
+        while (rs.next()) {
+            res.add(rs.getString(1));
+        }
+
+        return res;
+    }
+
+    public ArrayList<String> getAllFamousPlayers() throws SQLException {
+        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLFAMOUSPLAYERS);
         ArrayList<String> res = new ArrayList<>();
 
         while (rs.next()) {

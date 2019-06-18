@@ -21,9 +21,8 @@ public class Masterclass {
     private int minimumRating;
     private int price;
     private String mentor;
-    private int mentorId;
 
-    public Masterclass(int id, String city, int capacity, String beginDate, Time beginTime, String endDate, Time endTime, int minimumRating, int price, String mentor, int mentorId) {
+    public Masterclass(int id, String city, int capacity, String beginDate, Time beginTime, String endDate, Time endTime, int minimumRating, int price, String mentor) {
         this.id = id;
         this.city = city;
         this.capacity = capacity;
@@ -34,7 +33,6 @@ public class Masterclass {
         this.minimumRating = minimumRating;
         this.price = price;
         this.mentor = mentor;
-        this.mentorId = mentorId;
     }
 
     public static Masterclass readMasterclassData(ResultSet rs) throws SQLException {
@@ -48,9 +46,8 @@ public class Masterclass {
         int minimumRating = rs.getInt(8);
         int price = rs.getInt(9);
         String mentor = rs.getString(10);
-        int mentorId = rs.getInt(11);
 
-        return new Masterclass(id, city, capacity, beginDate, beginTime, endDate, endTime, minimumRating, price, mentor, mentorId);
+        return new Masterclass(id, city, capacity, beginDate, beginTime, endDate, endTime, minimumRating, price, mentor);
     }
 
     public Object[] convertToTableData(){
@@ -92,13 +89,12 @@ public class Masterclass {
                 endTime == masterclass.endTime &&
                 minimumRating == masterclass.minimumRating &&
                 price == masterclass.price &&
-                mentor.equals(masterclass.mentor) &&
-                mentorId == masterclass.mentorId;
+                mentor.equals(masterclass.mentor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(city, beginDate, beginTime, endDate, endTime, minimumRating, price, mentor, mentorId);
+        return Objects.hash(city, beginDate, beginTime, endDate, endTime, minimumRating, price, mentor);
     }
 
     public int getId() {
@@ -179,13 +175,5 @@ public class Masterclass {
 
     public void setMentor(String mentor) {
         this.mentor = mentor;
-    }
-
-    public int getMentorId() {
-        return mentorId;
-    }
-
-    public void setMentorId(int mentorId) {
-        this.mentorId = mentorId;
     }
 }
