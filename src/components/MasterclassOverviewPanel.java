@@ -84,7 +84,7 @@ public class MasterclassOverviewPanel extends OverviewPanel {
         JButton editButton = new JButton("Wijzigen");
         editButton.addActionListener(e -> {
             if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
-                new NoSelectionDialog();
+                new NoSelectionDialog("masterclass");
             } else {
                 int selectedRow = tablePanel.getSelectedRow();
                 Masterclass updatingMasterclass = findMasterclassInList((Integer) model.getValueAt(tablePanel.getSelectedRow(), 0));

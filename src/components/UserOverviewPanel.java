@@ -72,7 +72,7 @@ public class UserOverviewPanel extends OverviewPanel {
         editButton.addActionListener(e -> {
 
             if(tablePanel.getSelectedRows() == null || tablePanel.getSelectedRows().length < 1) {
-                new NoSelectionDialog();
+                new NoSelectionDialog("persoon");
             } else {
                 int selectedRow = tablePanel.getSelectedRow();
                 Optional<Player> updatingPlayer = findPlayerInList((Integer) model.getValueAt(selectedRow, 0));
@@ -94,7 +94,7 @@ public class UserOverviewPanel extends OverviewPanel {
         deleteButton.setPreferredSize(new Dimension(150, 200));
         deleteButton.addActionListener(e -> {
             if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
-                new NoSelectionDialog();
+                new NoSelectionDialog("persoon");
             } else {
                 int playerId = (Integer) model.getValueAt(tablePanel.getSelectedRow(), 0);
                 Optional<Player> possiblePlayer = findPlayerInList(playerId);
