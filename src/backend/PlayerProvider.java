@@ -14,7 +14,7 @@ public class PlayerProvider {
     private DatabaseConnection databaseConnection;
 
     private static final String Q_ALLPLAYERS =
-            "SELECT speler_id, a.adres_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
+            "SELECT speler_id, a.adres_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating, deleted\n" +
             "FROM speler\n" +
             "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
             "ORDER BY speler.speler_id;";
@@ -31,7 +31,7 @@ public class PlayerProvider {
             "COMMIT;";
 
     private static final String Q_SELECTPLAYER =
-            "SELECT speler_id, a.adres_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating\n" +
+            "SELECT speler_id, a.adres_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating, deleted\n" +
             "FROM speler\n" +
             "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
             "WHERE speler_id = ?\n" +
@@ -43,7 +43,7 @@ public class PlayerProvider {
             "SET woonplaats = ?, postcode = ?, straatnaam = ?, huisnummer = ?\n" +
             "WHERE adres_id = ?;\n" +
             "UPDATE speler\n" +
-            "SET naam = ?, gebdatum = ?, geslacht = ?, email = ?, telefoon = ?, rating = ?\n" +
+            "SET naam = ?, gebdatum = ?, geslacht = ?, email = ?, telefoon = ?, rating = ?, deleted = ?\n" +
             "WHERE speler_id = ?;\n" +
             "COMMIT;";
 
@@ -129,8 +129,9 @@ public class PlayerProvider {
         updatePlayerStatement.setString(9, updated.getEmail());
         updatePlayerStatement.setString(10, updated.getTelephoneNR());
         updatePlayerStatement.setInt(11, updated.getRating());
+        updatePlayerStatement.setBoolean(12, updated.isDeleted());
         // Set the Player to update
-        updatePlayerStatement.setInt(12, updated.getId());
+        updatePlayerStatement.setInt(13, updated.getId());
 
         updatePlayerStatement.executeUpdate();
     }

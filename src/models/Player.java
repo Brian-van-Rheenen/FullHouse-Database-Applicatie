@@ -21,7 +21,9 @@ public class Player {
 
     private int rating;
 
-    public Player(int id, Address address, String name, Gender gender, java.util.Date dob, String telephoneNR, String email, int rating) {
+    private boolean deleted;
+
+    public Player(int id, Address address, String name, Gender gender, java.util.Date dob, String telephoneNR, String email, int rating, boolean deleted) {
         this.id = id;
         this.name = name;
         this.gender = gender;
@@ -30,10 +32,11 @@ public class Player {
         this.email = email;
         this.address = address;
         this.rating = rating;
+        this.deleted = false;
     }
 
     public Player(Address address, String name, Gender gender, java.util.Date dob, String telephoneNR, String email, int rating) {
-        this(-1, address, name, gender, dob, telephoneNR, email, rating);
+        this(-1, address, name, gender, dob, telephoneNR, email, rating, false);
     }
 
     public static Player readPlayerData(ResultSet rs) throws SQLException {
@@ -49,8 +52,9 @@ public class Player {
         String tele = rs.getString(10);
         String mail = rs.getString(11);
         int rating = rs.getInt(12);
+        boolean deleted = rs.getBoolean(13);
 
-        return new Player(id, new Address(adresId, city, street, houseNr, zip), name, gender, dob, tele, mail, rating);
+        return new Player(id, new Address(adresId, city, street, houseNr, zip), name, gender, dob, tele, mail, rating, deleted);
     }
 
     public Object[] convertToTableData(){
@@ -156,5 +160,13 @@ public class Player {
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }
