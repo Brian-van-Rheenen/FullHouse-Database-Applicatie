@@ -11,11 +11,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class AddPlayerDialog extends BasicDialog {
 
-    private ArrayList<Player> playerList;
+    private List<Player> playerList;
     private PlayerProvider provider = new PlayerProvider();
     private Player updatingPlayer = null;
 
@@ -39,9 +40,9 @@ public class AddPlayerDialog extends BasicDialog {
     private JComponent[] fields = {nameField, streetField, houseNrField, zipCodeField, cityField, genderBox, dob, telephoneNR, emailTextField};
 
 
-    public AddPlayerDialog(ArrayList<Player> playerList) {
+    public AddPlayerDialog(List<Player> players) {
         super(false);
-        this.playerList = playerList;
+        playerList = players;
         initChildDialog();
     }
 
@@ -53,9 +54,10 @@ public class AddPlayerDialog extends BasicDialog {
         this.setVisible(true);
     }
 
-    public AddPlayerDialog(Player toChange) {
+    public AddPlayerDialog(List<Player> players, Player toChange) {
         super(true);
 
+        playerList = players;
         updatingPlayer = toChange;
 
         telephoneNR.setText(toChange.getTelephoneNR());
@@ -86,7 +88,7 @@ public class AddPlayerDialog extends BasicDialog {
                 Player newPlayer = provider.addPlayer(createNewPlayer());
 
                 this.playerList.add(newPlayer);
-                invokeUpdateCallback(newPlayer);
+//                invokeUpdateCallback(newPlayer);
                 JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
                 this.dispose();
             } catch (SQLException e) {
@@ -96,9 +98,24 @@ public class AddPlayerDialog extends BasicDialog {
         } else {
             // Update the player in the database
             try {
+                // Fetch updates from the screen
                 Player updatedPlayer = fetchUpdatesForPlayer(updatingPlayer);
                 provider.updatePlayer(updatedPlayer);
-                invokeUpdateCallback(updatedPlayer);
+
+                // Update the model
+                int index = playerList.indexOf(updatedPlayer);
+                if(index == -1) {
+                    // Could not find the model, something went wrong
+                    // Recover by refreshing the entire list
+                    playerList.clear();
+                    playerList.addAll(provider.allPlayers());
+                } else {
+                    // Only update the player in the list
+                    playerList.set(index, updatedPlayer);
+                }
+
+//                invokeUpdateCallback(updatedPlayer);
+                // Close the screen
                 this.dispose();
             } catch (SQLException e) {
                 e.printStackTrace();

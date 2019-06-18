@@ -8,122 +8,144 @@ import components.panels.OverviewPanel;
 import models.Player;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 /**
  * This is the general overview panel for users
  */
 public class UserOverviewPanel extends OverviewPanel {
 
-    private ArrayList<Player> playerTableData = new ArrayList<>();
-
-    private DefaultTableModel model;
+    private Representor<Player> playerRepresentor;
+    private GenericTableModel<Player> model;
     private PlayerProvider playerProvider;
     private TablePanel tablePanel;
 
     public UserOverviewPanel() {
-
         playerProvider = new PlayerProvider();
 
-        createButtons();
+        playerRepresentor = new RepresentationBuilder<Player>()
+            .addColumn("id"           , Player::getId)
+            .addColumn("Naam"         , Player::getName)
+            .addColumn("Geslacht"     , Player::getGender)
+            .addColumn("Geboortedatum", Player::getDob)
+            .addColumn("Adres"        , player -> String.format("%s %s", player.getStreet(), player.getHouseNr()))
+            .addColumn("Postcode"     , Player::getZip)
+            .addColumn("Woonplaats"   , Player::getCity)
+            .addColumn("Telefoon"     , Player::getTelephoneNR)
+            .addColumn("Email"        , Player::getEmail)
+            .addColumn("Rating"       , Player::getRating)
+            .build();
 
-        try {
-            playerTableData = playerProvider.allPlayers();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        model = fetchDataModel(playerTableData);
+        downloadPlayerData();
+
         tablePanel = new TablePanel(model);
         this.add(tablePanel, BorderLayout.CENTER);
+        createButtons();
     }
 
     /**
-     * Converts all Players to a dataModel
-     * @return an event with the updated model
+     * Refreshes the {@link #model} with data from the database
      */
-    private DefaultTableModel fetchDataModel(List<Player> players) {
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        Object[] columnNames = {"id", "Naam", "Geslacht", "Geboortedatum", "Adres", "Postcode", "Woonplaats", "Telefoon", "Email", "Rating"};
-
-        for (Object columnName : columnNames) {
-            model.addColumn(columnName);
+    private void downloadPlayerData() {
+        try {
+            // Fill the table with SQL data
+            model = new GenericTableModel<>(playerProvider.allPlayers(), playerRepresentor);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Failed to download, replace it with an empty list
+            model = new GenericTableModel<>(playerRepresentor);
         }
-
-        players.forEach(player -> model.addRow(player.convertToTableData()));
-
-        return model;
     }
 
     protected void createButtons() {
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
         addButton.addActionListener(e -> {
-            AddPlayerDialog dialog = new AddPlayerDialog(playerTableData);
-
-            dialog.addListener((player) -> {
-                DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
-                model.addRow(player.convertToTableData());
-            });
+            AddPlayerDialog dialog = new AddPlayerDialog(model);
+            dialog.addListener((player) -> model.add(player));
         });
 
         JButton editButton = new JButton("Wijzigen");
+        editButton.setEnabled(false);
         editButton.addActionListener(e -> {
 
-            if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
+            if(tablePanel.getSelectedRows() == null || tablePanel.getSelectedRows().length < 1) {
                 new NoSelectionDialog();
             } else {
                 int selectedRow = tablePanel.getSelectedRow();
-                Player updatingPlayer = findPlayerInList((Integer) model.getValueAt(tablePanel.getSelectedRow(), 0));
-                if(updatingPlayer == null) {
-                    // TODO: Refresh list with new data, although this should theoretically never happen
+                Optional<Player> updatingPlayer = findPlayerInList((Integer) model.getValueAt(selectedRow, 0));
+                if(!updatingPlayer.isPresent()) {
+                    // This suggests that we missed an event (delete or edit) and are out of sync with the database
+                    // Refresh list with new data, although this should theoretically never happen
+                    downloadPlayerData();
                     return;
                 }
 
-                AddPlayerDialog updateDialog = new AddPlayerDialog(updatingPlayer);
-                updateDialog.addListener((player) -> {
-                    // Refresh the data
-                    DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
-                    try {
-                        model.removeRow(selectedRow);
-                        Player result = playerProvider.getPlayerById(updatingPlayer.getId());
-
-                        model.insertRow(selectedRow, result.convertToTableData());
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
-                });
+                // Update the player
+                new AddPlayerDialog(model, updatingPlayer.get());
             }
         });
         editButton.setPreferredSize(new Dimension(150, 200));
 
         JButton deleteButton = new JButton("Verwijderen");
+        deleteButton.setEnabled(false);
         deleteButton.setPreferredSize(new Dimension(150, 200));
         deleteButton.addActionListener(e -> {
             if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
                 new NoSelectionDialog();
             } else {
-                int id = (Integer) model.getValueAt(tablePanel.getSelectedRow(), 0);
-                int selectedRow = tablePanel.getSelectedRow();
-                // Code blocks until the Dialog is closed
-                new DeleteDialog(id);
-                // Refresh the data
-                DefaultTableModel model = (DefaultTableModel) tablePanel.getModel();
-                try {
-                    model.removeRow(selectedRow);
-                    model.insertRow(selectedRow, playerProvider.getPlayerById(id).convertToTableData());
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
+                int playerId = (Integer) model.getValueAt(tablePanel.getSelectedRow(), 0);
+                Optional<Player> possiblePlayer = findPlayerInList(playerId);
+
+                if(possiblePlayer.isPresent() && model.indexOf(possiblePlayer.get()) != -1) {
+                    Player player = possiblePlayer.get();
+                    int playerIndex = model.indexOf(player);
+
+                    // Code blocks until the Dialog is closed
+                    int result = new DeleteDialog(playerId).showDialog();
+
+                    if(result == JOptionPane.OK_OPTION) {
+                        // Remove data from the model
+                        try {
+                            playerProvider.deletePlayer(playerId);
+                            model.set(playerIndex, playerProvider.getPlayerById(playerId));
+                        } catch (SQLException exception) {
+                            exception.printStackTrace();
+                            JOptionPane.showMessageDialog(
+                                    this,
+                                    "Er is iets fout gegaan met het verwijderen van de speler. Probeer het opnieuw.",
+                                    "Foutmelding",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                    }
+                } else {
+                    // This suggests that we missed an event (delete or edit) and are out of sync with the database
+                    // Refresh list with new data, although this should theoretically never happen
+                    downloadPlayerData();
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "De tabel loopt achter op de database. probeer de speler opnieuw te verwijderen",
+                            "Foutmelding",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
+            }
+        });
+
+        tablePanel.addSelectionListener((selectionEvent) -> {
+            if(selectionEvent.getValueIsAdjusting())
+                return;
+
+            // TODO: Disable Delete button when the item is deleted
+            if(tablePanel.getSelectedRows().length > 0) {
+                editButton.setEnabled(true);
+                deleteButton.setEnabled(true);
+            } else {
+                editButton.setEnabled(false);
+                deleteButton.setEnabled(false);
             }
         });
 
@@ -132,12 +154,9 @@ public class UserOverviewPanel extends OverviewPanel {
         addButtonToPanel(deleteButton);
     }
 
-    private Player findPlayerInList(int playerId) {
-        for (Player p : playerTableData) {
-            if(p.getId() == playerId)
-                return p;
-        }
-
-        return null;
+    private Optional<Player> findPlayerInList(int playerId) {
+        return model.stream()
+                .filter((player) -> player.getId() == playerId)
+                .findFirst();
     }
 }
