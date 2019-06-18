@@ -5,6 +5,9 @@ import components.dialogs.AddPlayerDialog;
 import components.dialogs.DeleteDialog;
 import components.dialogs.NoSelectionDialog;
 import components.panels.OverviewPanel;
+import components.representation.GenericTableModel;
+import components.representation.RepresentationBuilder;
+import components.representation.Representor;
 import models.Player;
 
 import javax.swing.*;
