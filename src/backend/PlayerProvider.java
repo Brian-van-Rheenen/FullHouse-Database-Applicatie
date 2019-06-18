@@ -20,7 +20,7 @@ public class PlayerProvider {
             "ORDER BY speler.speler_id;";
 
     private static final String Q_DELETEPLAYER =
-            "START TRANSACTION; UPDATE speler SET adres_id = 0, naam = 'VERWIJDERD', gebdatum = '1970-01-01', geslacht = 'O', telefoon = 'VERWIJDERD', email = 'VERWIJDERD', rating = 0 WHERE speler_id = ?; DELETE FROM adres WHERE adres_id NOT IN (SELECT adres_id FROM speler) AND adres_id != 0; COMMIT;";
+            "START TRANSACTION; UPDATE speler SET adres_id = 0, naam = 'VERWIJDERD', gebdatum = '1970-01-01', geslacht = 'O', telefoon = 'VERWIJDERD', email = 'VERWIJDERD', rating = 0, deleted = TRUE WHERE speler_id = ?; DELETE FROM adres WHERE adres_id NOT IN (SELECT adres_id FROM speler) AND adres_id != 0; COMMIT;";
 
     private static final String Q_ADDPLAYER = "START TRANSACTION;\n" +
             "INSERT INTO adres (woonplaats, straatnaam, huisnummer, postcode)\n" +
@@ -53,11 +53,11 @@ public class PlayerProvider {
 
     /**
      * Retrieve all players from the database.
-     * @return an ArrayList with all players.
-     * @throws SQLException
+     * @return an {@link ArrayList} with all {@link Player} in the database.
+     * @throws SQLException when the query has failed
      */
     public ArrayList<Player> allPlayers() throws SQLException {
-        ResultSet rs = databaseConnection.executeQueryAndGetData( Q_ALLPLAYERS);
+        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLPLAYERS);
         ArrayList<Player> res = new ArrayList<>();
 
         while (rs.next()) {
@@ -71,7 +71,7 @@ public class PlayerProvider {
      * Add a new player to the database.
      * @param player the player object to add.
      * @return Player object with an updated id
-     * @throws SQLException
+     * @throws SQLException when the query has failed
      */
     public Player addPlayer(Player player) throws SQLException {
         PreparedStatement addPlayerStatement = databaseConnection
@@ -139,7 +139,7 @@ public class PlayerProvider {
     /**
      * Delete a player from the database.
      * @param id the player's id.
-     * @throws SQLException
+     * @throws SQLException when the deletion has failed
      */
     public void deletePlayer(int id) throws SQLException {
         PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_DELETEPLAYER);

@@ -139,17 +139,23 @@ public class UserOverviewPanel extends OverviewPanel {
         });
 
         tablePanel.addSelectionListener((selectionEvent) -> {
+            // Selection is not jet finished. Ignore the event
             if(selectionEvent.getValueIsAdjusting())
                 return;
 
-            // TODO: Disable buttons when the item is deleted
-            if(tablePanel.getSelectedRows().length > 0) {
-                editButton.setEnabled(true);
-                deleteButton.setEnabled(true);
-            } else {
-                editButton.setEnabled(false);
-                deleteButton.setEnabled(false);
+            int[] selectedRows = tablePanel.getSelectedRows();
+            if(selectedRows.length == 1) {
+                Player selectedPlayer = model.get(selectedRows[0]);
+                if(!selectedPlayer.isDeleted()) {
+                    editButton.setEnabled(true);
+                    deleteButton.setEnabled(true);
+                    return;
+                }
             }
+
+            // If we cannot find the player or the selection count is not 1 disable the buttons
+            editButton.setEnabled(false);
+            deleteButton.setEnabled(false);
         });
 
         addButtonToPanel(addButton);

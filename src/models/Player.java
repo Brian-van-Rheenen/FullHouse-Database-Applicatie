@@ -32,7 +32,7 @@ public class Player {
         this.email = email;
         this.address = address;
         this.rating = rating;
-        this.deleted = false;
+        this.deleted = deleted;
     }
 
     public Player(Address address, String name, Gender gender, java.util.Date dob, String telephoneNR, String email, int rating) {
