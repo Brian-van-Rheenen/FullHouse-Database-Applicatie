@@ -92,7 +92,7 @@ public class PlayerProvider {
         // Player part of query
         addPlayerStatement.setString(9, player.getName());
         addPlayerStatement.setDate(10, player.getDob());
-        addPlayerStatement.setString(11, player.getGender());
+        addPlayerStatement.setString(11, player.getGender().getDatabaseRepresentation());
         addPlayerStatement.setString(12, player.getTelephoneNR());
         addPlayerStatement.setString(13, player.getEmail());
 
@@ -125,7 +125,7 @@ public class PlayerProvider {
         // Player part of query
         updatePlayerStatement.setString(6, updated.getName());
         updatePlayerStatement.setDate(7, updated.getDob());
-        updatePlayerStatement.setString(8, updated.getGender());
+        updatePlayerStatement.setString(8, updated.getGender().getDatabaseRepresentation());
         updatePlayerStatement.setString(9, updated.getEmail());
         updatePlayerStatement.setString(10, updated.getTelephoneNR());
         updatePlayerStatement.setInt(11, updated.getRating());

@@ -14,14 +14,14 @@ public class Player {
     private Address address;
 
     private String name;
-    private String gender;
+    private Gender gender;
     private java.sql.Date dob;
     private String telephoneNR;
     private String email;
 
     private int rating;
 
-    public Player(int id, Address address, String name, String gender, java.util.Date dob, String telephoneNR, String email, int rating) {
+    public Player(int id, Address address, String name, Gender gender, java.util.Date dob, String telephoneNR, String email, int rating) {
         this.id = id;
         this.name = name;
         this.gender = gender;
@@ -32,7 +32,7 @@ public class Player {
         this.rating = rating;
     }
 
-    public Player(Address address, String name, String gender, java.util.Date dob, String telephoneNR, String email, int rating) {
+    public Player(Address address, String name, Gender gender, java.util.Date dob, String telephoneNR, String email, int rating) {
         this(-1, address, name, gender, dob, telephoneNR, email, rating);
     }
 
@@ -40,7 +40,7 @@ public class Player {
         int id = rs.getInt(1);
         int adresId = rs.getInt(2);
         String name = rs.getString(3);
-        String gender = rs.getString(4);
+        Gender gender = Gender.parse(rs.getString(4));
         Date dob = rs.getDate(5);
         String street = rs.getString(6);
         int houseNr = rs.getInt(7);
@@ -110,11 +110,11 @@ public class Player {
         this.name = name;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 

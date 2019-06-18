@@ -1,4 +1,4 @@
-package components;
+package components.representation;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.*;

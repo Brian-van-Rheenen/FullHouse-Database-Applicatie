@@ -1,4 +1,4 @@
-package components;
+package components.representation;
 
 import java.util.List;
 import java.util.function.Function;
