@@ -28,7 +28,6 @@ public class AddParticipantDialog extends BasicDialog {
         this.setVisible(true);
     }
 
-    @Override
     public void addAllFields() {
 
         JPanel panel = new JPanel(new BorderLayout());

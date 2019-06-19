@@ -74,7 +74,25 @@ public abstract class BasicDialog extends JDialog {
      */
     public abstract void handleConfirm();
 
-    public abstract void addAllFields();
+    public void addAllFields(JComponent[] fields, String[] fieldNames) {
+        int nrOfFields = fields.length;
+
+        for (int i = 0; i < nrOfFields; i++) {
+
+            JLabel label = new JLabel(fieldNames[i]);
+            label.setFont(new Font("Helvetica", Font.BOLD, 12));
+
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(label);
+
+            this.add(panel);
+
+            JComponent field = fields[i];
+            field.setFont(new Font("Helvetica", Font.PLAIN, 20));
+            this.add(field);
+            this.add(Box.createRigidArea(new Dimension(300, 9)));
+        }
+    }
 
     public boolean isForChange() {
         return isForChange;

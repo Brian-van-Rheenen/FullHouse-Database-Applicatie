@@ -212,29 +212,12 @@ public class AddPlayerDialog extends BasicDialog {
         return res;
     }
 
-    @Override
     public void addAllFields() {
         String[] fieldnames = {"Naam", "Straat", "Huisnummer", "Postcode", "Woonplaats", "Geslacht",
                 "Geboortedatum",
                 "Telefoonnummer",
                 "Emailadres"};
 
-        int nrOfFields = fields.length;
-
-        for (int i = 0; i < nrOfFields; i++) {
-
-            JLabel label = new JLabel(fieldnames[i]);
-            label.setFont(new Font("Helvetica", Font.BOLD, 12));
-
-            JPanel panel = new JPanel(new BorderLayout());
-            panel.add(label);
-
-            this.add(panel);
-
-            JComponent field = fields[i];
-            field.setFont(new Font("Helvetica", Font.PLAIN, 20));
-            this.add(field);
-            this.add(Box.createRigidArea(new Dimension(300, 9)));
-        }
+        super.addAllFields(fields, fieldnames);
     }
 }
