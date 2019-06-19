@@ -173,23 +173,8 @@ public class AddMasterclassDialog extends BasicDialog {
         };
 
         JTextField[] textFields = new JTextField[]{capacityField, startDateField, startTimeField, endDateField, endTimeField, priceField, minimumRatingField};
-        boolean res = true;
 
-        for (int i = 0; i < masterclassDataTypes.length; i++) {
-            JTextField textField = textFields[i];
-            String input = textField.getText();
-            boolean goodInput = masterclassDataTypes[i].isGoodInput(input);
-
-            if (goodInput) {
-                unmark(textField);
-
-            } else {
-                mark(textField);
-                res = false;
-            }
-        }
-
-        return res;
+        return super.validateInput(masterclassDataTypes, textFields);
     }
 
     public void addAllFields() {

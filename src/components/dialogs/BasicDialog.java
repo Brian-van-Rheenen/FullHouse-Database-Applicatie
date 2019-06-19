@@ -74,6 +74,26 @@ public abstract class BasicDialog extends JDialog {
      */
     public abstract void handleConfirm();
 
+    public boolean validateInput(InputType[] masterclassDataTypes, JTextField[] textFields) {
+        boolean res = true;
+
+        for (int i = 0; i < masterclassDataTypes.length; i++) {
+            JTextField textField = textFields[i];
+            String input = textField.getText();
+            boolean goodInput = masterclassDataTypes[i].isGoodInput(input);
+
+            if (goodInput) {
+                unmark(textField);
+
+            } else {
+                mark(textField);
+                res = false;
+            }
+        }
+
+        return res;
+    }
+
     public void addAllFields(JComponent[] fields, String[] fieldNames) {
         int nrOfFields = fields.length;
 

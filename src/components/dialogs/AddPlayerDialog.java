@@ -193,23 +193,8 @@ public class AddPlayerDialog extends BasicDialog {
         };
 
         JTextField[] textFields = new JTextField[]{nameField, streetField, houseNrField, zipCodeField, cityField, dob, telephoneNR, emailTextField};
-        boolean res = true;
 
-        for (int i = 0; i < playerDataTypes.length; i++) {
-            JTextField textField = textFields[i];
-            String input = textField.getText();
-            boolean goodInput = playerDataTypes[i].isGoodInput(input);
-
-            if (goodInput) {
-                unmark(textField);
-
-            } else {
-                mark(textField);
-                res = false;
-            }
-        }
-
-        return res;
+        return super.validateInput(playerDataTypes, textFields);
     }
 
     public void addAllFields() {
