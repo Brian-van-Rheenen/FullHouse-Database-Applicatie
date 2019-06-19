@@ -1,6 +1,6 @@
 import components.MasterclassOverviewPanel;
 import components.ParticipantOverviewPanel;
-import components.UserOverviewPanel;
+import components.PlayerOverviewPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,9 +19,9 @@ public class HomePanel extends JPanel {
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        UserOverviewPanel userOverviewPanel = new UserOverviewPanel();
+        PlayerOverviewPanel playerOverviewPanel = new PlayerOverviewPanel();
 
-        tabbedPane.addTab("Spelers", null, userOverviewPanel,
+        tabbedPane.addTab("Spelers", null, playerOverviewPanel,
                 "Lijst van spelers");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 

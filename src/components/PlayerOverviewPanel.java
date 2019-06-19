@@ -18,14 +18,14 @@ import java.util.Optional;
 /**
  * This is the general overview panel for users
  */
-public class UserOverviewPanel extends OverviewPanel {
+public class PlayerOverviewPanel extends OverviewPanel {
 
     private Representor<Player> playerRepresentor;
     private GenericTableModel<Player> model;
     private PlayerProvider playerProvider;
     private TablePanel tablePanel;
 
-    public UserOverviewPanel() {
+    public PlayerOverviewPanel() {
         playerProvider = new PlayerProvider();
 
         playerRepresentor = new RepresentationBuilder<Player>()
