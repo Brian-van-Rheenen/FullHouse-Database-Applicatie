@@ -8,7 +8,7 @@ import java.util.Objects;
 public abstract class Event {
 
     private int id;
-    private String stad;
+    private String city;
     private Date startDate;
     private Time startTime;
     private Date endDate;
@@ -18,7 +18,7 @@ public abstract class Event {
 
     public Event(int id, String stad, Date startDate, Time startTime, Date endDate, Time endTime, int fee) {
         this.id = id;
-        this.stad = stad;
+        this.city = stad;
         this.startDate = startDate;
         this.endDate = endDate;
         this.startTime = startTime;
@@ -33,7 +33,7 @@ public abstract class Event {
     public abstract Object[] getTableData();
 
     public Object[] getBasicFieldsEvent() {
-        return new Object[]{stad, startDate, startTime, endDate, endTime, entranceFee};
+        return new Object[]{city, startDate, startTime, endDate, endTime, entranceFee};
     }
 
     public ArrayList<Deelname> getParticipants() {
@@ -45,7 +45,7 @@ public abstract class Event {
         if (this == o) return true;
         if (!(o instanceof Event)) return false;
         Event event = (Event) o;
-        return stad.equals(event.stad) &&
+        return city.equals(event.city) &&
                 startDate.equals(event.startDate);
     }
 
@@ -61,7 +61,7 @@ public abstract class Event {
 
     @Override
     public int hashCode() {
-        return Objects.hash(stad, startDate);
+        return Objects.hash(city, startDate);
     }
 
     public int getId() {
@@ -72,13 +72,12 @@ public abstract class Event {
         this.id = id;
     }
 
-    // TODO: fix dit naar het Engels please
-    public String getStad() {
-        return stad;
+    public String getCity() {
+        return city;
     }
 
-    public void setStad(String stad) {
-        this.stad = stad;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public Date getStartDate() {
