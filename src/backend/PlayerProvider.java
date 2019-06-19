@@ -22,12 +22,17 @@ public class PlayerProvider {
     private static final String Q_DELETEPLAYER =
             "START TRANSACTION; UPDATE speler SET adres_id = 0, naam = 'VERWIJDERD', gebdatum = '1970-01-01', geslacht = 'O', telefoon = 'VERWIJDERD', email = 'VERWIJDERD', rating = 0, deleted = TRUE WHERE speler_id = ?; DELETE FROM adres WHERE adres_id NOT IN (SELECT adres_id FROM speler) AND adres_id != 0; COMMIT;";
 
-    private static final String Q_ADDPLAYER = "START TRANSACTION;\n" +
-            "INSERT INTO adres (woonplaats, straatnaam, huisnummer, postcode)\n" +
-            "SELECT ?, ?, ?, ? FROM adres WHERE NOT EXISTS(SELECT * FROM adres WHERE woonplaats = ? AND straatnaam = ? AND huisnummer = ? AND postcode = ?)\n" +
-            "LIMIT 1;\n" +
+    private static final String Q_ADDPLAYER =
+            "START TRANSACTION;\n" +
+            "INSERT IGNORE INTO adres (woonplaats, straatnaam, huisnummer, postcode)\n" +
+            "VALUES (?, ?, ?, ?);\n" +
             "INSERT INTO speler (adres_id, naam, gebdatum, geslacht, telefoon, email)\n" +
-            "VALUES (LAST_INSERT_ID(), ?, ?, ?, ?, ?);\n" +
+            "VALUES ((SELECT adres.adres_id\n" +
+            "         FROM adres\n" +
+            "         WHERE woonplaats = ?\n" +
+            "           AND straatnaam = ?\n" +
+            "           AND huisnummer = ?\n" +
+            "           AND postcode = ?), ?, ?, ?, ?, ?);\n" +
             "COMMIT;";
 
     private static final String Q_SELECTPLAYER =
@@ -39,12 +44,26 @@ public class PlayerProvider {
 
     private static final String Q_UPDATEPLAYER =
             "START TRANSACTION;\n" +
-            "UPDATE adres\n" +
-            "SET woonplaats = ?, postcode = ?, straatnaam = ?, huisnummer = ?\n" +
-            "WHERE adres_id = ?;\n" +
+            "INSERT IGNORE INTO adres (woonplaats, straatnaam, huisnummer, postcode)\n" +
+            "VALUES (?, ?, ?, ?);\n" +
+            "\n" +
             "UPDATE speler\n" +
-            "SET naam = ?, gebdatum = ?, geslacht = ?, email = ?, telefoon = ?, rating = ?, deleted = ?\n" +
+            "SET adres_id = (SELECT adres.adres_id\n" +
+            "                FROM adres\n" +
+            "                WHERE woonplaats = ? AND straatnaam = ? AND huisnummer = ? AND postcode = ?),\n" +
+            "    naam     = ?,\n" +
+            "    gebdatum = ?,\n" +
+            "    geslacht = ?,\n" +
+            "    email    = ?,\n" +
+            "    telefoon = ?,\n" +
+            "    rating   = ?,\n" +
+            "    deleted  = ?\n" +
             "WHERE speler_id = ?;\n" +
+            "\n" +
+            "DELETE\n" +
+            "FROM adres\n" +
+            "WHERE adres_id NOT IN (SELECT adres_id FROM speler);\n" +
+            "\n" +
             "COMMIT;";
 
     public PlayerProvider() {
@@ -80,21 +99,23 @@ public class PlayerProvider {
 
         Address address = player.getAddress();
 
-        addPlayerStatement.setString(1, address.getCity());
-        addPlayerStatement.setString(2, address.getStreet());
-        addPlayerStatement.setInt(3, address.getHouseNr());
-        addPlayerStatement.setString(4, address.getZipCode());
-        addPlayerStatement.setString(5, address.getCity());
-        addPlayerStatement.setString(6, address.getStreet());
-        addPlayerStatement.setInt(7, address.getHouseNr());
-        addPlayerStatement.setString(8, address.getZipCode());
+        int index = 0;
+        addPlayerStatement.setString(++index, address.getCity());
+        addPlayerStatement.setString(++index, address.getStreet());
+        addPlayerStatement.setInt(++index, address.getHouseNr());
+        addPlayerStatement.setString(++index, address.getZipCode());
+
+        addPlayerStatement.setString(++index, address.getCity());
+        addPlayerStatement.setString(++index, address.getStreet());
+        addPlayerStatement.setInt(++index, address.getHouseNr());
+        addPlayerStatement.setString(++index, address.getZipCode());
 
         // Player part of query
-        addPlayerStatement.setString(9, player.getName());
-        addPlayerStatement.setDate(10, player.getDob());
-        addPlayerStatement.setString(11, player.getGender().getDatabaseRepresentation());
-        addPlayerStatement.setString(12, player.getTelephoneNR());
-        addPlayerStatement.setString(13, player.getEmail());
+        addPlayerStatement.setString(++index, player.getName());
+        addPlayerStatement.setDate(++index, player.getDob());
+        addPlayerStatement.setString(++index, player.getGender().getDatabaseRepresentation());
+        addPlayerStatement.setString(++index, player.getTelephoneNR());
+        addPlayerStatement.setString(++index, player.getEmail());
 
         addPlayerStatement.executeUpdate();
 
@@ -115,23 +136,28 @@ public class PlayerProvider {
 
         Address updatedAddress = updated.getAddress();
 
-        updatePlayerStatement.setString(1, updatedAddress.getCity());
-        updatePlayerStatement.setString(2, updatedAddress.getZipCode());
-        updatePlayerStatement.setString(3, updatedAddress.getStreet());
-        updatePlayerStatement.setInt(4, updatedAddress.getHouseNr());
-        // Set the address to update
-        updatePlayerStatement.setInt(5, updatedAddress.getId());
+        int index = 0;
+        updatePlayerStatement.setString(++index, updatedAddress.getCity());
+        updatePlayerStatement.setString(++index, updatedAddress.getStreet());
+        updatePlayerStatement.setInt(++index, updatedAddress.getHouseNr());
+        updatePlayerStatement.setString(++index, updatedAddress.getZipCode());
+
+        // Address part of query
+        updatePlayerStatement.setString(++index, updatedAddress.getCity());
+        updatePlayerStatement.setString(++index, updatedAddress.getStreet());
+        updatePlayerStatement.setInt(++index, updatedAddress.getHouseNr());
+        updatePlayerStatement.setString(++index, updatedAddress.getZipCode());
 
         // Player part of query
-        updatePlayerStatement.setString(6, updated.getName());
-        updatePlayerStatement.setDate(7, updated.getDob());
-        updatePlayerStatement.setString(8, updated.getGender().getDatabaseRepresentation());
-        updatePlayerStatement.setString(9, updated.getEmail());
-        updatePlayerStatement.setString(10, updated.getTelephoneNR());
-        updatePlayerStatement.setInt(11, updated.getRating());
-        updatePlayerStatement.setBoolean(12, updated.isDeleted());
+        updatePlayerStatement.setString(++index, updated.getName());
+        updatePlayerStatement.setDate(++index, updated.getDob());
+        updatePlayerStatement.setString(++index, updated.getGender().getDatabaseRepresentation());
+        updatePlayerStatement.setString(++index, updated.getEmail());
+        updatePlayerStatement.setString(++index, updated.getTelephoneNR());
+        updatePlayerStatement.setInt(++index, updated.getRating());
+        updatePlayerStatement.setBoolean(++index, updated.isDeleted());
         // Set the Player to update
-        updatePlayerStatement.setInt(13, updated.getId());
+        updatePlayerStatement.setInt(++index, updated.getId());
 
         updatePlayerStatement.executeUpdate();
     }

@@ -2,7 +2,7 @@
 driver=jdbc:mysql
 
 # IP address needed for database connection
-ip=IP ADDRESS
+ip=IP ADRESS
 
 # Port for database connection. Default is 3306
 port=3306
