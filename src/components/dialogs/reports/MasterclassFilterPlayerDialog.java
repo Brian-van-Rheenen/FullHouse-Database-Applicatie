@@ -15,15 +15,9 @@ public class MasterclassFilterPlayerDialog extends InputDialog {
     MasterclassProvider provider = new MasterclassProvider();
 
     public MasterclassFilterPlayerDialog() {
-        int rating = 0;
-
         try {
-            rating = Integer.parseInt(JOptionPane.showInputDialog(null, "Op welke minimale rating wilt u filtreren?"));
-        } catch (NumberFormatException nfe) {
-            // Do nothing. Just close the popup as default.
-        }
+            int rating = Integer.parseInt(JOptionPane.showInputDialog(null, "Op welke minimale rating wilt u filtreren?"));
 
-        if(rating != 0) {
             try {
                 ResultSet rs = provider.filterPlayersByRating(rating);
 
@@ -58,8 +52,12 @@ public class MasterclassFilterPlayerDialog extends InputDialog {
                 tableDialog.pack();
                 tableDialog.setVisible(true);
             } catch (SQLException e) {
+
+                // handle SQL error
                 e.printStackTrace();
             }
+        } catch (NumberFormatException nfe) {
+            // Do nothing. Just close the popup as default.
         }
     }
 }
