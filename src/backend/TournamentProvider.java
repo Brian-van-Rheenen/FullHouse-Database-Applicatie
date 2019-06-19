@@ -1,6 +1,6 @@
 package backend;
 
-import models.Toernooi;
+import models.Tournament;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,12 +28,12 @@ public class TournamentProvider {
         getDBconnection();
     }
 
-    public ArrayList<Toernooi> getTournaments() throws SQLException {
-        ArrayList<Toernooi> res = new ArrayList<>();
+    public ArrayList<Tournament> getTournaments() throws SQLException {
+        ArrayList<Tournament> res = new ArrayList<>();
 
         ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLTOURNAMENTS);
         while(rs.next()){
-            res.add(Toernooi.readTournament(rs));
+            res.add(Tournament.readTournament(rs));
         }
 
 

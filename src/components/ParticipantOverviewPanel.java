@@ -63,7 +63,7 @@ public class ParticipantOverviewPanel extends JPanel {
 
     private void initEventList() {
         try {
-            ArrayList<Toernooi> toAdd = tournamentProvider.getTournaments();
+            ArrayList<Tournament> toAdd = tournamentProvider.getTournaments();
             this.events.addAll(toAdd);
         } catch (SQLException sqle) {
             sqle.printStackTrace();

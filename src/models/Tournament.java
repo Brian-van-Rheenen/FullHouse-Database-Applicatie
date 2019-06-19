@@ -6,7 +6,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Toernooi extends Event {
+public class Tournament extends Event {
 
     private ArrayList<Deelname> participations = new ArrayList<>();
     private String themanaam;
@@ -27,7 +27,7 @@ public class Toernooi extends Event {
             "ORDER BY t.idToernooi;";
 
 
-    public Toernooi(String stad, Date startDate, Time startTime, Date endDate, Time endTime, int fee ,String themanaam, String entranceCheck) {
+    public Tournament(String stad, Date startDate, Time startTime, Date endDate, Time endTime, int fee , String themanaam, String entranceCheck) {
         super(stad, startDate, startTime, endDate, endTime, fee);
         this.entranceCheck = entranceCheck;
         this.themanaam = themanaam;
@@ -44,7 +44,7 @@ public class Toernooi extends Event {
         return participations;
     }
 
-    public static Toernooi readTournament(ResultSet resultSet) throws SQLException {
+    public static Tournament readTournament(ResultSet resultSet) throws SQLException {
 
         String stad = resultSet.getString(1);
         Date startDate = resultSet.getDate(2);
@@ -57,7 +57,7 @@ public class Toernooi extends Event {
         int inschrijfgeld = resultSet.getInt(8);
         String entrance= resultSet.getString(9);
 
-        return new Toernooi(stad,startDate,startTime, endDate, endTime, inschrijfgeld,thema, entrance);
+        return new Tournament(stad,startDate,startTime, endDate, endTime, inschrijfgeld,thema, entrance);
     }
 
 
