@@ -104,9 +104,9 @@ public class MasterclassProvider {
 
         addMasterclassStatement.setString(1, masterclass.getCity());
         addMasterclassStatement.setInt(2, masterclass.getCapacity());
-        addMasterclassStatement.setString(3, masterclass.createDateTime(masterclass.getBeginDate(), masterclass.getBeginTime()));
+        addMasterclassStatement.setString(3, masterclass.createDateTime(masterclass.getStartDate(), masterclass.getStartTime()));
         addMasterclassStatement.setString(4, masterclass.createDateTime(masterclass.getEndDate(), masterclass.getEndTime()));
-        addMasterclassStatement.setInt(5, masterclass.getPrice());
+        addMasterclassStatement.setInt(5, masterclass.getEntranceFee());
         addMasterclassStatement.setInt(6, masterclass.getMinimumRating());
         addMasterclassStatement.setString(7, masterclass.getMentor());
 
@@ -131,9 +131,9 @@ public class MasterclassProvider {
 
         updateMasterclassStatement.setString(1, updated.getCity());
         updateMasterclassStatement.setInt(2, updated.getCapacity());
-        updateMasterclassStatement.setString(3, updated.createDateTime(updated.getBeginDate(), updated.getBeginTime()));
+        updateMasterclassStatement.setString(3, updated.createDateTime(updated.getStartDate(), updated.getStartTime()));
         updateMasterclassStatement.setString(4, updated.createDateTime(updated.getEndDate(), updated.getEndTime()));
-        updateMasterclassStatement.setInt(5, updated.getPrice());
+        updateMasterclassStatement.setInt(5, updated.getEntranceFee());
         // Set the Event to update
         updateMasterclassStatement.setInt(6, updated.getId());
 

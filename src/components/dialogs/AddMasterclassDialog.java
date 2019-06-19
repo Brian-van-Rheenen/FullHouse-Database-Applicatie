@@ -27,14 +27,14 @@ public class AddMasterclassDialog extends BasicDialog {
     private JTextField endDateField = new JTextField();
     private JTextField endTimeField = new JTextField();
 
-    private JTextField priceField = new JTextField();
+    private JTextField entranceFeeField = new JTextField();
 
     private JTextField minimumRatingField = new JTextField();
 
     private String[] famousPlayers = addFamousPlayers();
     private JComboBox mentorField = new JComboBox(famousPlayers);
 
-    private JComponent[] fields = {locationField, capacityField, startDateField, startTimeField, endDateField, endTimeField, priceField, minimumRatingField, mentorField};
+    private JComponent[] fields = {locationField, capacityField, startDateField, startTimeField, endDateField, endTimeField, entranceFeeField, minimumRatingField, mentorField};
 
 
     public AddMasterclassDialog(List<Masterclass> masterclasses) {
@@ -64,11 +64,11 @@ public class AddMasterclassDialog extends BasicDialog {
         }
 
         capacityField.setText(Integer.toString(toChange.getCapacity()));
-        startDateField.setText(toChange.convertSqlDateToString(toChange.getBeginDate()));
-        startTimeField.setText(toChange.getBeginTime().toString());
+        startDateField.setText(toChange.convertSqlDateToString(toChange.getStartDate()));
+        startTimeField.setText(toChange.getStartTime().toString());
         endDateField.setText(toChange.convertSqlDateToString(toChange.getEndDate()));
         endTimeField.setText(toChange.getEndTime().toString());
-        priceField.setText(Integer.toString(toChange.getPrice()));
+        entranceFeeField.setText(Integer.toString(toChange.getEntranceFee()));
         minimumRatingField.setText(Integer.toString(toChange.getMinimumRating()));
 
         for (int i = 0; i < famousPlayers.length; i++) {
@@ -136,23 +136,23 @@ public class AddMasterclassDialog extends BasicDialog {
         Time startTime = java.sql.Time.valueOf(startTimeField.getText());
         String endDate = endDateField.getText();
         Time endTime = java.sql.Time.valueOf(endTimeField.getText());
-        int price = Integer.parseInt(priceField.getText());
+        int entranceFee = Integer.parseInt(entranceFeeField.getText());
         int minimumRating = Integer.parseInt(minimumRatingField.getText());
         String mentor = (String) mentorField.getSelectedItem();
 
-        return new Masterclass(0, location, capacity, startDate, startTime, endDate, endTime, minimumRating, price, mentor);
+        return new Masterclass(0, location, capacity, startDate, startTime, endDate, endTime, minimumRating, entranceFee, mentor);
     }
 
     private Masterclass fetchUpdatesForMasterclass(Masterclass masterclass) {
 
         masterclass.setCity((String) locationField.getSelectedItem());
         masterclass.setCapacity(Integer.parseInt(capacityField.getText()));
-        masterclass.setBeginDate(masterclass.convertStringToSqlDate(startDateField.getText()));
+        masterclass.setStartDate(masterclass.convertStringToSqlDate(startDateField.getText()));
 
-        masterclass.setBeginTime(java.sql.Time.valueOf(startTimeField.getText()));
+        masterclass.setStartTime(java.sql.Time.valueOf(startTimeField.getText()));
         masterclass.setEndDate(masterclass.convertStringToSqlDate(endDateField.getText()));
         masterclass.setEndTime(java.sql.Time.valueOf(endTimeField.getText()));
-        masterclass.setPrice(Integer.parseInt(priceField.getText()));
+        masterclass.setEntranceFee(Integer.parseInt(entranceFeeField.getText()));
 
         masterclass.setMinimumRating(Integer.parseInt(minimumRatingField.getText()));
         masterclass.setMentor((String) mentorField.getSelectedItem());
@@ -172,7 +172,7 @@ public class AddMasterclassDialog extends BasicDialog {
                 InputType.NUMBER,   // Minimale rating
         };
 
-        JTextField[] textFields = new JTextField[]{capacityField, startDateField, startTimeField, endDateField, endTimeField, priceField, minimumRatingField};
+        JTextField[] textFields = new JTextField[]{capacityField, startDateField, startTimeField, endDateField, endTimeField, entranceFeeField, minimumRatingField};
 
         return super.validateInput(masterclassDataTypes, textFields);
     }

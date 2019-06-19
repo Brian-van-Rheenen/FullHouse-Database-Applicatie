@@ -11,10 +11,8 @@ import components.representation.Representor;
 import models.Masterclass;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -34,10 +32,10 @@ public class MasterclassOverviewPanel extends OverviewPanel {
                 .addColumn("id"                  , Masterclass::getId)
                 .addColumn("Stad"                , Masterclass::getCity)
                 .addColumn("Capaciteit"          , Masterclass::getCapacity)
-                .addColumn("Begintijd"           , masterclass -> masterclass.convertSqlDateToString(masterclass.getBeginDate()) + " " + masterclass.getBeginTime())
+                .addColumn("Begintijd"           , masterclass -> masterclass.convertSqlDateToString(masterclass.getStartDate()) + " " + masterclass.getStartTime())
                 .addColumn("Eindtijd"            , masterclass -> masterclass.convertSqlDateToString(masterclass.getEndDate()) + " " + masterclass.getEndTime())
                 .addColumn("Minimale Rating"     , Masterclass::getMinimumRating)
-                .addColumn("Kosten"              , Masterclass::getPrice)
+                .addColumn("Kosten"              , Masterclass::getEntranceFee)
                 .addColumn("Begeleider"          , Masterclass::getMentor)
                 .build();
 

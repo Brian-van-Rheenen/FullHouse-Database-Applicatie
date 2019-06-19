@@ -1,8 +1,11 @@
 package models;
 
+import java.sql.Date;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 
 public abstract class Event {
@@ -16,21 +19,23 @@ public abstract class Event {
     private int entranceFee;
     private ArrayList<Deelname> participants = new ArrayList<>();
 
-    public Event(int id, String stad, Date startDate, Time startTime, Date endDate, Time endTime, int fee) {
+    public Event(int id, String city, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
         this.id = id;
-        this.city = stad;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.city = city;
+        this.startDate = convertStringToSqlDate(startDate);
         this.startTime = startTime;
+        this.endDate = convertStringToSqlDate(endDate);
         this.endTime = endTime;
-        this.entranceFee = fee;
+        this.entranceFee = entranceFee;
     }
 
-    public Event(String stad, Date startDate, Time startTime, Date endDate, Time endTime, int entranceFee) {
-        this(-1, stad, startDate, startTime, endDate, endTime, entranceFee);
+    public Event(String city, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
+        this(-1, city, startDate, startTime, endDate, endTime, entranceFee);
     }
 
-    public abstract Object[] getTableData();
+    public abstract boolean isMatchForSearch(String search);
+
+    public abstract Object[] convertToTableData();
 
     public Object[] getBasicFieldsEvent() {
         return new Object[]{city, startDate, startTime, endDate, endTime, entranceFee};
@@ -38,6 +43,19 @@ public abstract class Event {
 
     public ArrayList<Deelname> getParticipants() {
         return participants;
+    }
+
+    public java.sql.Date convertStringToSqlDate(String dateString) {
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+
+        java.util.Date date = null;
+        try {
+            date = format.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return new java.sql.Date(date.getTime());
     }
 
     @Override
@@ -49,14 +67,8 @@ public abstract class Event {
                 startDate.equals(event.startDate);
     }
 
-    public abstract boolean isMatchForSearch(String search);
-
     public boolean isOnSameDate(String dateString) {
         return startDate.toString().equalsIgnoreCase(dateString);
-    }
-
-    public int getEntranceFee() {
-        return entranceFee;
     }
 
     @Override
@@ -88,14 +100,6 @@ public abstract class Event {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
     public Time getStartTime() {
         return startTime;
     }
@@ -104,11 +108,27 @@ public abstract class Event {
         this.startTime = startTime;
     }
 
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
     public Time getEndTime() {
         return endTime;
     }
 
     public void setEndTime(Time endTime) {
         this.endTime = endTime;
+    }
+
+    public int getEntranceFee() {
+        return entranceFee;
+    }
+
+    public void setEntranceFee(int entranceFee) {
+        this.entranceFee = entranceFee;
     }
 }

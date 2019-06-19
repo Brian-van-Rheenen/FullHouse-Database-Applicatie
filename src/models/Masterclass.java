@@ -5,33 +5,22 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Date;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 
-public class Masterclass {
+public class Masterclass extends Event {
 
     private int id;
-    private String city;
     private int capacity;
-    private Date beginDate;
-    private Time beginTime;
-    private Date endDate;
-    private Time endTime;
     private int minimumRating;
-    private int price;
     private String mentor;
 
-    public Masterclass(int id, String city, int capacity, String beginDate, Time beginTime, String endDate, Time endTime, int minimumRating, int price, String mentor) {
+    public Masterclass(int id, String city, int capacity, String StartDate, Time StartTime, String endDate, Time endTime, int minimumRating, int entranceFee, String mentor) {
+        super(id, city, StartDate, StartTime, endDate, endTime, entranceFee);
+
         this.id = id;
-        this.city = city;
         this.capacity = capacity;
-        this.beginDate = convertStringToSqlDate(beginDate);
-        this.beginTime = beginTime;
-        this.endDate = convertStringToSqlDate(endDate);
-        this.endTime = endTime;
         this.minimumRating = minimumRating;
-        this.price = price;
         this.mentor = mentor;
     }
 
@@ -39,33 +28,31 @@ public class Masterclass {
         int id = rs.getInt(1);
         String city = rs.getString(2);
         int capacity = rs.getInt(3);
-        String beginDate = rs.getString(4);
-        Time beginTime = rs.getTime(5);
+        String StartDate = rs.getString(4);
+        Time StartTime = rs.getTime(5);
         String endDate = rs.getString(6);
         Time endTime = rs.getTime(7);
         int minimumRating = rs.getInt(8);
-        int price = rs.getInt(9);
+        int entranceFee = rs.getInt(9);
         String mentor = rs.getString(10);
 
-        return new Masterclass(id, city, capacity, beginDate, beginTime, endDate, endTime, minimumRating, price, mentor);
+        return new Masterclass(id, city, capacity, StartDate, StartTime, endDate, endTime, minimumRating, entranceFee, mentor);
+    }
+
+    /**
+     * This method is not used in Masterclass, but the parent requires this method to be implemented.
+     * If, for some reason, someone calls this method, throw an unsupported operation exception.
+     * @param search String to be matched
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public boolean isMatchForSearch(String search) {
+        throw new UnsupportedOperationException();
     }
 
     public Object[] convertToTableData(){
-        Object[] res = {id, city, capacity, convertSqlDateToString(beginDate) + " " + beginTime, convertSqlDateToString(endDate) + " " + endTime, minimumRating, price, mentor};
+        Object[] res = {id, getCity(), capacity, convertSqlDateToString(getStartDate()) + " " + getStartTime(), convertSqlDateToString(getEndDate()) + " " + getEndTime(), minimumRating, getEntranceFee(), mentor};
         return res;
-    }
-
-    public java.sql.Date convertStringToSqlDate(String dateString) {
-        DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-
-        java.util.Date date = null;
-        try {
-            date = format.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return new java.sql.Date(date.getTime());
     }
 
     public String convertSqlDateToString(Date date) {
@@ -82,35 +69,19 @@ public class Masterclass {
         if (this == o) return true;
         if (!(o instanceof Masterclass)) return false;
         Masterclass masterclass = (Masterclass) o;
-        return city.equals(masterclass.city) &&
-                beginDate.equals(masterclass.beginDate) &&
-                beginTime.equals(masterclass.beginTime) &&
-                endDate.equals(masterclass.endDate) &&
-                endTime == masterclass.endTime &&
+        return getCity().equals(masterclass.getCity()) &&
+                getStartDate().equals(masterclass.getStartDate()) &&
+                getStartTime().equals(masterclass.getStartTime()) &&
+                getEndDate().equals(masterclass.getEndDate()) &&
+                getEndTime() == masterclass.getEndTime() &&
                 minimumRating == masterclass.minimumRating &&
-                price == masterclass.price &&
+                getEntranceFee() == masterclass.getEntranceFee() &&
                 mentor.equals(masterclass.mentor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(city, beginDate, beginTime, endDate, endTime, minimumRating, price, mentor);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+        return Objects.hash(getCity(), getStartDate(), getStartTime(), getEndDate(), getEndTime(), minimumRating, getEntranceFee(), mentor);
     }
 
     public int getCapacity() {
@@ -121,38 +92,6 @@ public class Masterclass {
         this.capacity = capacity;
     }
 
-    public Date getBeginDate() {
-        return beginDate;
-    }
-
-    public void setBeginDate(Date beginDate) {
-        this.beginDate = beginDate;
-    }
-
-    public Time getBeginTime() {
-        return beginTime;
-    }
-
-    public void setBeginTime(Time beginTime) {
-        this.beginTime = beginTime;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public Time getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Time endTime) {
-        this.endTime = endTime;
-    }
-
     public int getMinimumRating() {
         return minimumRating;
     }
@@ -161,12 +100,12 @@ public class Masterclass {
         this.minimumRating = minimumRating;
     }
 
-    public int getPrice() {
-        return price;
+    public int getEntranceFee() {
+        return super.getEntranceFee();
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setEntranceFee(int entranceFee) {
+        super.setEntranceFee(entranceFee);
     }
 
     public String getMentor() {
