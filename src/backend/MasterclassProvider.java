@@ -33,7 +33,7 @@ public class MasterclassProvider {
             "INSERT INTO event (locatie, capaciteit, begintijd, eindtijd, inschrijfgeld)\n" +
             "VALUES ((SELECT idLocatie FROM locatie WHERE stad = ? LIMIT 1), ?, ?, ?, ?);\n" +
             "INSERT INTO masterclass (idMasterclass, minimumLevel, begeleiderNr)\n" +
-            "VALUES (LAST_INSERT_ID(), ?, (SELECT idBekend FROM bekende_speler WHERE naam = ?))\n" +
+            "VALUES (LAST_INSERT_ID(), ?, (SELECT idBekend FROM bekende_speler WHERE naam = ?));\n" +
             "COMMIT;";
 
     private static final String Q_SELECTMASTERCLASS =
@@ -152,24 +152,7 @@ public class MasterclassProvider {
         return pst.executeQuery();
     }
 
-    /**
-     * Returns the masterclass with the given id from the database
-     * @param id The id to search for in the database
-     * @return A Masterclass object
-     * @throws SQLException When connection or query fails
-     */
-    public Masterclass getMasterclassById(int id) throws SQLException {
-        PreparedStatement masterclassStatement = databaseConnection
-                .getConnection()
-                .prepareStatement(Q_SELECTMASTERCLASS);
-
-        masterclassStatement.setInt(1, id);
-
-        ResultSet set = masterclassStatement.executeQuery();
-        set.next();
-        return Masterclass.readMasterclassData(set);
-    }
-
+    @SuppressWarnings("Duplicates")
     public ArrayList<String> getAllLocations() throws SQLException {
         ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLLOCATIONS);
         ArrayList<String> res = new ArrayList<>();
@@ -181,6 +164,7 @@ public class MasterclassProvider {
         return res;
     }
 
+    @SuppressWarnings("Duplicates")
     public ArrayList<String> getAllFamousPlayers() throws SQLException {
         ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLFAMOUSPLAYERS);
         ArrayList<String> res = new ArrayList<>();

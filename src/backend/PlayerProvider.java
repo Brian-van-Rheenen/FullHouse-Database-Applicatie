@@ -92,6 +92,7 @@ public class PlayerProvider {
      * @return Player object with an updated id
      * @throws SQLException when the query has failed
      */
+    @SuppressWarnings("Duplicates")
     public Player addPlayer(Player player) throws SQLException {
         PreparedStatement addPlayerStatement = databaseConnection
                 .getConnection()
@@ -129,6 +130,7 @@ public class PlayerProvider {
         return player;
     }
 
+    @SuppressWarnings("Duplicates")
     public void updatePlayer(Player updated) throws SQLException {
         PreparedStatement updatePlayerStatement = databaseConnection
                 .getConnection()

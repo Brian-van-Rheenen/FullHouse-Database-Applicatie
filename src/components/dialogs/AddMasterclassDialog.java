@@ -8,11 +8,11 @@ import java.awt.*;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.function.Consumer;
+import java.util.List;
 
 public class AddMasterclassDialog extends BasicDialog {
 
-    private ArrayList<Masterclass> masterclassList;
+    private List<Masterclass> masterclassList;
     private MasterclassProvider provider = new MasterclassProvider();
     private Masterclass updatingMasterclass = null;
 
@@ -37,9 +37,9 @@ public class AddMasterclassDialog extends BasicDialog {
     private JComponent[] fields = {locationField, capacityField, startDateField, startTimeField, endDateField, endTimeField, priceField, minimumRatingField, mentorField};
 
 
-    public AddMasterclassDialog(ArrayList<Masterclass> masterclassList) {
+    public AddMasterclassDialog(List<Masterclass> masterclasses) {
         super(false);
-        this.masterclassList = masterclassList;
+        masterclassList = masterclasses;
         initChildDialog();
     }
 
@@ -51,9 +51,10 @@ public class AddMasterclassDialog extends BasicDialog {
         this.setVisible(true);
     }
 
-    public AddMasterclassDialog(Masterclass toChange) {
+    public AddMasterclassDialog(List<Masterclass> masterclasses, Masterclass toChange) {
         super(true);
 
+        masterclassList = masterclasses;
         updatingMasterclass = toChange;
 
         for (int i = 0; i < locations.length; i++) {
@@ -94,7 +95,6 @@ public class AddMasterclassDialog extends BasicDialog {
                 Masterclass newMasterclass = provider.addMasterclass(createNewMasterclass());
 
                 this.masterclassList.add(newMasterclass);
-                invokeUpdateCallback(newMasterclass);
                 JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
                 this.dispose();
             } catch (SQLException e) {
@@ -104,9 +104,23 @@ public class AddMasterclassDialog extends BasicDialog {
         } else {
             // Update the masterclass in the database
             try {
+                // Fetch updates from the screen
                 Masterclass updatedMasterclass = fetchUpdatesForMasterclass(updatingMasterclass);
                 provider.updateMasterclass(updatedMasterclass);
-                invokeUpdateCallback(updatedMasterclass);
+
+                // Update the model
+                int index = masterclassList.indexOf(updatedMasterclass);
+                if(index == -1) {
+                    // Could not find the model, something went wrong
+                    // Recover by refreshing the entire list
+                    masterclassList.clear();
+                    masterclassList.addAll(provider.allMasterclasses());
+                } else {
+                    // Only update the player in the list
+                    masterclassList.set(index, updatedMasterclass);
+                }
+
+                // Close the screen
                 this.dispose();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -176,18 +190,6 @@ public class AddMasterclassDialog extends BasicDialog {
         }
 
         return res;
-    }
-
-    private ArrayList<Consumer<Masterclass>> callbackList = new ArrayList<>();
-
-    public void addListener(Consumer<Masterclass> callback) {
-        callbackList.add(callback);
-    }
-
-    private void invokeUpdateCallback(Masterclass masterclass) {
-        for (Consumer<Masterclass> consumer : callbackList) {
-            consumer.accept(masterclass);
-        }
     }
 
     @Override

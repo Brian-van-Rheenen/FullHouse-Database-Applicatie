@@ -10,10 +10,8 @@ import java.awt.*;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class AddPlayerDialog extends BasicDialog {
 
@@ -95,7 +93,6 @@ public class AddPlayerDialog extends BasicDialog {
                 Player newPlayer = provider.addPlayer(createNewPlayer());
 
                 this.playerList.add(newPlayer);
-//                invokeUpdateCallback(newPlayer);
                 JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
                 this.dispose();
             } catch (SQLException e) {
@@ -121,7 +118,6 @@ public class AddPlayerDialog extends BasicDialog {
                     playerList.set(index, updatedPlayer);
                 }
 
-//                invokeUpdateCallback(updatedPlayer);
                 // Close the screen
                 this.dispose();
             } catch (SQLException e) {
@@ -214,18 +210,6 @@ public class AddPlayerDialog extends BasicDialog {
         }
 
         return res;
-    }
-
-    private ArrayList<Consumer<Player>> callbackList = new ArrayList<>();
-
-    public void addListener(Consumer<Player> callback) {
-        callbackList.add(callback);
-    }
-
-    private void invokeUpdateCallback(Player player) {
-        for (Consumer<Player> consumer : callbackList) {
-            consumer.accept(player);
-        }
     }
 
     @Override

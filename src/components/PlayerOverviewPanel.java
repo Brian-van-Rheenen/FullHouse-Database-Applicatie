@@ -66,8 +66,7 @@ public class PlayerOverviewPanel extends OverviewPanel {
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
         addButton.addActionListener(e -> {
-            AddPlayerDialog dialog = new AddPlayerDialog(model);
-            dialog.addListener((player) -> model.add(player));
+            new AddPlayerDialog(model);
         });
 
         JButton editButton = new JButton("Wijzigen");
