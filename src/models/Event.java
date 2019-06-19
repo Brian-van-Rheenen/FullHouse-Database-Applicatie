@@ -5,28 +5,34 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
-public abstract  class Event  {
+public abstract class Event {
 
+    private int id;
     private String stad;
     private Date startDate;
-    private Date endDate;
     private Time startTime;
-    private  Time endTime;
+    private Date endDate;
+    private Time endTime;
     private int entranceFee;
-    private ArrayList <Deelname> participants = new ArrayList<>();
+    private ArrayList<Deelname> participants = new ArrayList<>();
 
-    public Event(String stad, Date startDate, Time startTime, Date endDate, Time endTime, int fee) {
-        this.entranceFee = fee;
+    public Event(int id, String stad, Date startDate, Time startTime, Date endDate, Time endTime, int fee) {
+        this.id = id;
         this.stad = stad;
         this.startDate = startDate;
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.entranceFee = fee;
     }
 
-    public abstract Object [] getTableData();
+    public Event(String stad, Date startDate, Time startTime, Date endDate, Time endTime, int entranceFee) {
+        this(-1, stad, startDate, startTime, endDate, endTime, entranceFee);
+    }
 
-    public Object [] getBasicFieldsEvent(){
+    public abstract Object[] getTableData();
+
+    public Object[] getBasicFieldsEvent() {
         return new Object[]{stad, startDate, startTime, endDate, endTime, entranceFee};
     }
 
@@ -45,7 +51,7 @@ public abstract  class Event  {
 
     public abstract boolean isMatchForSearch(String search);
 
-    public boolean isOnSameDate(String dateString){
+    public boolean isOnSameDate(String dateString) {
         return startDate.toString().equalsIgnoreCase(dateString);
     }
 
@@ -58,6 +64,15 @@ public abstract  class Event  {
         return Objects.hash(stad, startDate);
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    // TODO: fix dit naar het Engels please
     public String getStad() {
         return stad;
     }

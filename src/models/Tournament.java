@@ -12,10 +12,16 @@ public class Tournament extends Event {
     private String themanaam;
     private String entranceCheck;
 
-    public Tournament(String stad, Date startDate, Time startTime, Date endDate, Time endTime, int fee , String themanaam, String entranceCheck) {
-        super(stad, startDate, startTime, endDate, endTime, fee);
-        this.entranceCheck = entranceCheck;
+    public Tournament(int id, String stad, Date startDate, Time startTime, Date endDate, Time endTime, int fee , String themanaam, String entranceCheck) {
+        super(id, stad, startDate, startTime, endDate, endTime, fee);
         this.themanaam = themanaam;
+        this.entranceCheck = entranceCheck;
+    }
+
+    public Tournament(String stad, Date startDate, Time startTime, Date endDate, Time endTime, int entranceFee, String themanaam, String entranceCheck) {
+        super(stad, startDate, startTime, endDate, endTime, entranceFee);
+        this.themanaam = themanaam;
+        this.entranceCheck = entranceCheck;
     }
 
     @Override
@@ -50,7 +56,7 @@ public class Tournament extends Event {
 
         return new Tournament(stad,startDate,startTime, endDate, endTime, inschrijfgeld,thema, entrance);
     }
-    
+
     @Override
     public Object[] getTableData() {
         return new Object[]{themanaam, super.getBasicFieldsEvent(), entranceCheck};
