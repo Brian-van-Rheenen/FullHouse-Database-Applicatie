@@ -101,11 +101,10 @@ public class MasterclassProvider {
         addMasterclassStatement.executeUpdate();
 
         // Update the masterclass with the generated id
-        ResultSet set = databaseConnection.createStatement().executeQuery("SELECT LAST_INSERT_ID(), naam FROM bekende_speler WHERE idBekend = (SELECT idBekend FROM bekende_speler WHERE naam = '" + masterclass.getMentor() + "');");
+        ResultSet set = databaseConnection.createStatement().executeQuery("SELECT LAST_INSERT_ID()");
         if(set.next()) {
             // Set the Id for the masterclass
             masterclass.setId(set.getInt(1));
-            masterclass.setMentor(set.getString(2));
         }
 
         return masterclass;
