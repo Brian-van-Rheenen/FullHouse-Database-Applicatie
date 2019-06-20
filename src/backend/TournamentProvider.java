@@ -2,13 +2,14 @@ package backend;
 
 import models.Tournament;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class TournamentProvider {
 
-    private DatabaseConnection databaseConnection;
+    private Connection databaseConnection;
 
     private final String Q_ALLTOURNAMENTS =
             "SELECT t.idToernooi                                     AS ID,\n" +
@@ -34,7 +35,7 @@ public class TournamentProvider {
     public ArrayList<Tournament> getTournaments() throws SQLException {
         ArrayList<Tournament> res = new ArrayList<>();
 
-        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLTOURNAMENTS);
+        ResultSet rs = DatabaseConnection.executeQueryAndGetData(Q_ALLTOURNAMENTS);
         while(rs.next()){
             res.add(Tournament.readTournament(rs));
         }
@@ -43,13 +44,7 @@ public class TournamentProvider {
         return res;
     }
 
-
     private void getDBconnection() {
-        try{
-            databaseConnection = new DatabaseConnection();
-        }catch(SQLException sqle){
-            sqle.printStackTrace();
-        }
+        databaseConnection = DatabaseConnection.getConnection();
     }
-
 }
