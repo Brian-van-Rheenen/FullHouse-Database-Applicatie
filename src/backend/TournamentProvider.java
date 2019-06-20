@@ -4,6 +4,7 @@ import models.Participant;
 import models.Player;
 import models.Tournament;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 public class TournamentProvider {
 
-    private DatabaseConnection databaseConnection;
+    private Connection databaseConnection;
 
     private final String Q_ALLTOURNAMENTS =
             "SELECT t.idToernooi                                     AS ID,\n" +
@@ -38,26 +39,13 @@ public class TournamentProvider {
                     "INNER JOIN toernooi on toernooiCode=idToernooi "   +
                     "INNER JOIN adres a on speler.adres_id = a.adres_id;";
 
-
-
-
-
     public TournamentProvider() {
         getDBconnection();
     }
 
-    private void getDBconnection() {
-        try {
-            databaseConnection = new DatabaseConnection();
-        }catch (SQLException sqle){
-            sqle.printStackTrace();
-        }
-    }
-
     public ArrayList<Tournament> getTournaments() throws SQLException {
-
         ArrayList <Tournament> tournaments = new ArrayList<>();
-        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLTOURNAMENTS);
+        ResultSet rs = DatabaseConnection.executeQueryAndGetData(Q_ALLTOURNAMENTS);
         while(rs.next()){
             tournaments.add(Tournament.readTournament(rs));
         }
@@ -68,14 +56,11 @@ public class TournamentProvider {
     }
 
     private ResultSet queryParticipants() throws SQLException{
-        return  databaseConnection.getConnection().prepareStatement(Q_PARTCIPANTS).executeQuery();
-
+        return databaseConnection.prepareStatement(Q_PARTCIPANTS).executeQuery();
     }
 
     private void addParticipants(ArrayList <Tournament> tournaments) throws SQLException{
-
-
-        ResultSet   rs = queryParticipants();
+        ResultSet rs = queryParticipants();
 
         while(rs.next()){
             Player player = Player.readPlayerData(rs);
@@ -87,9 +72,9 @@ public class TournamentProvider {
                 tournament.getParticipants().add(new Participant(player, paid));
             }else throw new IllegalStateException();
         }
-
     }
 
-
-
+    private void getDBconnection() {
+        databaseConnection = DatabaseConnection.getConnection();
+    }
 }

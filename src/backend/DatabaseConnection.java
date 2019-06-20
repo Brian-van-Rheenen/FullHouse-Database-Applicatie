@@ -8,37 +8,24 @@ import java.util.Properties;
 
 public class DatabaseConnection {
 
-    private Connection connection;
-
-    public DatabaseConnection() throws SQLException{
-        initConnection();
-    }
+    private static Connection connection;
 
     /**
-     * Execute a prepared statement and return data.
-     * @param query a query to execute
-     * @return ResultSet with the data from the query
-     * @throws SQLException
+     * Check if a database connection has already been made. If not, create that connection.
+     * @return the database connection object.
      */
-    public ResultSet executeQueryAndGetData(String query) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        return preparedStatement.executeQuery();
-    }
+    public static Connection getConnection() {
+        if (connection != null) return connection;
 
-    /**
-     * Execute a prepared statement.
-     * @param preparedStatement a prepared statement
-     * @throws SQLException
-     */
-    public void executeQuery(PreparedStatement preparedStatement) throws SQLException {
-        preparedStatement.execute();
-    }
-
-    public Connection getConnection() {
+        connection = initConnection();
         return connection;
     }
 
-    private void initConnection() throws SQLException{
+    /**
+     * Initialize a connection to the database.
+     * @return the database connection object.
+     */
+    private static Connection initConnection() {
         try (InputStream input = new FileInputStream("src/resources/database.properties")) {
             Properties prop = new Properties();
 
@@ -49,13 +36,40 @@ public class DatabaseConnection {
                     "url",
                     // Did not find an URL, attempt to build one from the properties
                     // All properties must be lowercase
-                    String.format("%s://%s/%s?%s", prop.getProperty("driver"), prop.getProperty("ip"), prop.getProperty("db"), prop.getProperty("properties"))
+                    String.format("%s://%s:%s/%s?%s", prop.getProperty("driver"), prop.getProperty("ip"), prop.getProperty("port"), prop.getProperty("db"), prop.getProperty("properties"))
             );
 
-            // DriverManager only accepts *lowercase* password & user when passing in props directly
-            connection = DriverManager.getConnection(connectionString, prop);
+            try {
+                // DriverManager only accepts *lowercase* password & user when passing in props directly
+                connection = DriverManager.getConnection(connectionString, prop);
+            }
+            catch (SQLException sql) {
+                sql.printStackTrace();
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+
+        return connection;
+    }
+
+    /**
+     * Execute a prepared statement and return data.
+     * @param query a query to execute
+     * @return ResultSet with the data from the query
+     * @throws SQLException
+     */
+    public static ResultSet executeQueryAndGetData(String query) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        return preparedStatement.executeQuery();
+    }
+
+    /**
+     * Execute a prepared statement.
+     * @param preparedStatement a prepared statement
+     * @throws SQLException
+     */
+    public static void executeQuery(PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement.execute();
     }
 }

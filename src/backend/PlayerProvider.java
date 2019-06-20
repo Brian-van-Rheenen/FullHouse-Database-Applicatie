@@ -3,15 +3,12 @@ package backend;
 import models.Address;
 import models.Player;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class PlayerProvider {
 
-    private DatabaseConnection databaseConnection;
+    private Connection databaseConnection;
 
     private static final String Q_ALLPLAYERS =
             "SELECT speler_id, a.adres_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating, deleted\n" +
@@ -76,7 +73,7 @@ public class PlayerProvider {
      * @throws SQLException when the query has failed
      */
     public ArrayList<Player> allPlayers() throws SQLException {
-        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLPLAYERS);
+        ResultSet rs = DatabaseConnection.executeQueryAndGetData(Q_ALLPLAYERS);
         ArrayList<Player> res = new ArrayList<>();
 
         while (rs.next()) {
@@ -95,7 +92,6 @@ public class PlayerProvider {
     @SuppressWarnings("Duplicates")
     public Player addPlayer(Player player) throws SQLException {
         PreparedStatement addPlayerStatement = databaseConnection
-                .getConnection()
                 .prepareStatement(Q_ADDPLAYER, Statement.RETURN_GENERATED_KEYS);
 
         Address address = player.getAddress();
@@ -121,7 +117,7 @@ public class PlayerProvider {
         addPlayerStatement.executeUpdate();
 
         // Update the player with the generated id
-        ResultSet set = databaseConnection.getConnection().createStatement().executeQuery("SELECT LAST_INSERT_ID()");
+        ResultSet set = databaseConnection.createStatement().executeQuery("SELECT LAST_INSERT_ID()");
         if(set.next()) {
             // Set the Id for the player
             player.setId(set.getInt(1));
@@ -133,7 +129,6 @@ public class PlayerProvider {
     @SuppressWarnings("Duplicates")
     public void updatePlayer(Player updated) throws SQLException {
         PreparedStatement updatePlayerStatement = databaseConnection
-                .getConnection()
                 .prepareStatement(Q_UPDATEPLAYER);
 
         Address updatedAddress = updated.getAddress();
@@ -170,9 +165,9 @@ public class PlayerProvider {
      * @throws SQLException when the deletion has failed
      */
     public void deletePlayer(int id) throws SQLException {
-        PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_DELETEPLAYER);
+        PreparedStatement pst = databaseConnection.prepareStatement(Q_DELETEPLAYER);
         pst.setString(1, Integer.toString(id));
-        databaseConnection.executeQuery(pst);
+        DatabaseConnection.executeQuery(pst);
     }
 
     /**
@@ -183,7 +178,6 @@ public class PlayerProvider {
      */
     public Player getPlayerById(int id) throws SQLException {
         PreparedStatement playerStatement = databaseConnection
-                .getConnection()
                 .prepareStatement(Q_SELECTPLAYER);
 
         playerStatement.setInt(1, id);
@@ -194,10 +188,6 @@ public class PlayerProvider {
     }
 
     private void getDBconnection() {
-        try{
-            databaseConnection = new DatabaseConnection();
-        }catch(SQLException sqle){
-            sqle.printStackTrace();
-        }
+        databaseConnection = DatabaseConnection.getConnection();
     }
 }

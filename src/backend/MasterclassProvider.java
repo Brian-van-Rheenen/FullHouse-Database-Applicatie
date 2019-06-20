@@ -2,15 +2,12 @@ package backend;
 
 import models.Masterclass;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class MasterclassProvider {
 
-    private DatabaseConnection databaseConnection;
+    private Connection databaseConnection;
 
     private static final String Q_ALLMASTERCLASSES =
             "SELECT m.idMasterclass AS ID,\n" +
@@ -36,15 +33,6 @@ public class MasterclassProvider {
             "INSERT INTO masterclass (idMasterclass, minimumLevel, begeleiderNr)\n" +
             "VALUES (LAST_INSERT_ID(), ?, (SELECT idBekend FROM bekende_speler WHERE naam = ?));\n" +
             "COMMIT;";
-
-    private static final String Q_SELECTMASTERCLASS =
-            "SELECT m.idMasterclass, l.stad, event.capaciteit, DATE_FORMAT(begintijd, '%d-%m-%Y'), TIME_FORMAT(begintijd, '%H:%i'), DATE_FORMAT(eindtijd, '%d-%m-%Y'), TIME_FORMAT(eindtijd, '%H:%i'), minimumLevel, inschrijfgeld, bs.naam, bs.idBekend\n" +
-            "FROM event\n" +
-            "INNER JOIN masterclass m on event.idEvent = m.idMasterclass\n" +
-            "INNER JOIN locatie l on event.locatie = l.idLocatie\n" +
-            "INNER JOIN bekende_speler bs on m.begeleiderNr = bs.idBekend\n" +
-            "WHERE event.idEvent = ?\n" +
-            "ORDER BY event.idEvent;";
 
     private static final String Q_FILTERPLAYERSBYRATING = "SELECT m.idMasterclass AS Masterclasscode,\n" +
             "       s.naam          AS Naam,\n" +
@@ -81,7 +69,7 @@ public class MasterclassProvider {
      * @throws SQLException
      */
     public ArrayList<Masterclass> allMasterclasses() throws SQLException {
-        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLMASTERCLASSES);
+        ResultSet rs = DatabaseConnection.executeQueryAndGetData(Q_ALLMASTERCLASSES);
         ArrayList<Masterclass> res = new ArrayList<>();
 
         while (rs.next()) {
@@ -100,7 +88,6 @@ public class MasterclassProvider {
     @SuppressWarnings("Duplicates")
     public Masterclass addMasterclass(Masterclass masterclass) throws SQLException {
         PreparedStatement addMasterclassStatement = databaseConnection
-                .getConnection()
                 .prepareStatement(Q_ADDMASTERCLASS, Statement.RETURN_GENERATED_KEYS);
 
         addMasterclassStatement.setString(1, masterclass.getCity());
@@ -114,7 +101,7 @@ public class MasterclassProvider {
         addMasterclassStatement.executeUpdate();
 
         // Update the masterclass with the generated id
-        ResultSet set = databaseConnection.getConnection().createStatement().executeQuery("SELECT LAST_INSERT_ID(), naam FROM bekende_speler WHERE idBekend = (SELECT idBekend FROM bekende_speler WHERE naam = '" + masterclass.getMentor() + "');");
+        ResultSet set = databaseConnection.createStatement().executeQuery("SELECT LAST_INSERT_ID(), naam FROM bekende_speler WHERE idBekend = (SELECT idBekend FROM bekende_speler WHERE naam = '" + masterclass.getMentor() + "');");
         if(set.next()) {
             // Set the Id for the masterclass
             masterclass.setId(set.getInt(1));
@@ -127,7 +114,6 @@ public class MasterclassProvider {
     @SuppressWarnings("Duplicates")
     public void updateMasterclass(Masterclass updated) throws SQLException {
         PreparedStatement updateMasterclassStatement = databaseConnection
-                .getConnection()
                 .prepareStatement(Q_UPDATEMASTERCLASS);
 
         updateMasterclassStatement.setString(1, updated.getCity());
@@ -147,7 +133,7 @@ public class MasterclassProvider {
     }
 
     public ResultSet filterPlayersByRating(int rating) throws SQLException {
-        PreparedStatement pst = databaseConnection.getConnection().prepareStatement(Q_FILTERPLAYERSBYRATING);
+        PreparedStatement pst = databaseConnection.prepareStatement(Q_FILTERPLAYERSBYRATING);
         pst.setInt(1, rating);
 
         return pst.executeQuery();
@@ -155,7 +141,7 @@ public class MasterclassProvider {
 
     @SuppressWarnings("Duplicates")
     public ArrayList<String> getAllLocations() throws SQLException {
-        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLLOCATIONS);
+        ResultSet rs = DatabaseConnection.executeQueryAndGetData(Q_ALLLOCATIONS);
         ArrayList<String> res = new ArrayList<>();
 
         while (rs.next()) {
@@ -167,7 +153,7 @@ public class MasterclassProvider {
 
     @SuppressWarnings("Duplicates")
     public ArrayList<String> getAllFamousPlayers() throws SQLException {
-        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLFAMOUSPLAYERS);
+        ResultSet rs = DatabaseConnection.executeQueryAndGetData(Q_ALLFAMOUSPLAYERS);
         ArrayList<String> res = new ArrayList<>();
 
         while (rs.next()) {
@@ -178,10 +164,6 @@ public class MasterclassProvider {
     }
 
     private void getDBconnection() {
-        try{
-            databaseConnection = new DatabaseConnection();
-        }catch(SQLException sqle){
-            sqle.printStackTrace();
-        }
+        databaseConnection = DatabaseConnection.getConnection();
     }
 }
