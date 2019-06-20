@@ -51,7 +51,7 @@ public class MasterclassProvider {
             "FROM masterclass m\n" +
             "         JOIN masterclass_deelname md on m.idMasterclass = md.mc_code\n" +
             "         JOIN speler s on md.gast = s.speler_id\n" +
-            "WHERE rating >= ?\n" +
+            "WHERE rating >= ? AND s.deleted = 0\n" +
             "ORDER BY s.rating;";
 
     private static final String Q_UPDATEMASTERCLASS =
