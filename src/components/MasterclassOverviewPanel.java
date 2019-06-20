@@ -34,8 +34,8 @@ public class MasterclassOverviewPanel extends OverviewPanel {
                 .addColumn("Capaciteit"          , Masterclass::getCapacity)
                 .addColumn("Begintijd"           , masterclass -> masterclass.convertSqlDateToString(masterclass.getStartDate()) + " " + masterclass.getStartTime())
                 .addColumn("Eindtijd"            , masterclass -> masterclass.convertSqlDateToString(masterclass.getEndDate()) + " " + masterclass.getEndTime())
-                .addColumn("Minimale Rating"     , Masterclass::getMinimumRating)
                 .addColumn("Kosten"              , Masterclass::getEntranceFee)
+                .addColumn("Minimale Rating"     , Masterclass::getMinimumRating)
                 .addColumn("Begeleider"          , Masterclass::getMentor)
                 .build();
 
