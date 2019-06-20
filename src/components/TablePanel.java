@@ -2,6 +2,7 @@ package components;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
 
@@ -81,5 +82,10 @@ public class TablePanel extends JPanel {
     public void clearSelection() {
         table.clearSelection();
     }
+
+    public void setModel(DefaultTableModel model) {
+        this.table.setModel(model);
+    }
+
 
 }

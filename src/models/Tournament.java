@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class Tournament extends Event {
 
-    private ArrayList<Deelname> participations = new ArrayList<>();
+    private ArrayList<Participant> participations = new ArrayList<>();
     private String theme;
     private Date finalSubmitDate;
     private String entryRestriction;
@@ -32,10 +32,16 @@ public class Tournament extends Event {
     }
 
     public boolean isMatchForSearch(String search) {
-        boolean b = this.isOnSameDate(search) || this.theme.equalsIgnoreCase(search);
-        System.out.println("boolean " + b);
+        boolean b = this.isOnSameDate(search) || this.theme.equalsIgnoreCase(search) || matchesID(search);
         return b;
     }
+
+    private boolean matchesID(String input){
+        if(input.matches("^[0-9]*$")){
+            return Integer.parseInt(input)==this.getId();
+        }else return false;
+    }
+
 
     public static Tournament readTournament(ResultSet resultSet) throws SQLException {
 
@@ -68,7 +74,7 @@ public class Tournament extends Event {
      *
      */
     @Deprecated
-    public ArrayList<Deelname> getParticipations() {
+    public ArrayList<Participant> getParticipations() {
         return participations;
     }
 

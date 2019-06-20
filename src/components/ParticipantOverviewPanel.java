@@ -1,59 +1,40 @@
 package components;
 
-import backend.PlayerProvider;
 import backend.TournamentProvider;
+import components.panels.OverviewPanel;
 import models.*;
-import models.Event;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Optional;
 
-public class ParticipantOverviewPanel extends JPanel {
+public class ParticipantOverviewPanel extends OverviewPanel {
 
 
-    private JTextField searchField = new JTextField();
-    private PlayerProvider playerProvider;
     private TournamentProvider tournamentProvider;
+    private Tournament focusedToernooi;
+    boolean isSearchPerformed = false;
+    private TablePanel tablePanel;
 
-    private TablePanel comp;
-    private ArrayList<Event> events = new ArrayList<>();
 
-    private JPanel searchPanel = new JPanel();
+    public ParticipantOverviewPanel() throws SQLException {
 
-    public ParticipantOverviewPanel() {
-        this.playerProvider = new PlayerProvider();
         this.tournamentProvider = new TournamentProvider();
 
-        BoxLayout boxLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
-        this.setLayout(boxLayout);
 
-        BoxLayout boxLayout1 = new BoxLayout(searchPanel, BoxLayout.X_AXIS);
-        searchPanel.setLayout(boxLayout1);
+        createButtons();
 
-        JLabel label = new JLabel("Deelname Overzicht");
-        label.setFont(new Font("Helvetica", Font.BOLD, 30));
-
-        this.add(label);
-
-        initSearchField();
-        initButtons();
-        initEventList();
-        this.add(searchPanel);
-
-        comp = new TablePanel(fetchDataModel());
-
-        this.add(comp, BorderLayout.CENTER);
+        tablePanel = new TablePanel(fetchDataModel());
+        this.add(tablePanel, BorderLayout.CENTER);
 
 
     }
 
     private DefaultTableModel fetchDataModel() {
         DefaultTableModel res = new DefaultTableModel();
-        String[] columns = {"id", "Naam", "Geslacht", "Geboortedatum", "Adres", "Postcode", "Woonplaats", "Telefoon", "Email", "Rating", "Betaald"};
+        String[] columns = {"ID", "Naam", "Betaald", "Postcode"};
         for (String column : columns) {
             res.addColumn(column);
         }
@@ -61,47 +42,59 @@ public class ParticipantOverviewPanel extends JPanel {
         return res;
     }
 
-    private void initEventList() {
-        try {
-            ArrayList<Tournament> toAdd = tournamentProvider.getTournaments();
-            this.events.addAll(toAdd);
-        } catch (SQLException sqle) {
-            sqle.printStackTrace();
-        }
-    }
-
-    private void initSearchField() {
-
-        searchField.setMaximumSize(new Dimension(500, 30));
-        searchPanel.add(searchField);
-    }
-
-    private void initButtons() {
-
+    @Override
+    protected void createButtons() {
         JButton searchButton = new JButton("zoek toernooi");
-        searchButton.addActionListener(e -> searchForEventAndFillTable());
 
-        searchPanel.add(searchButton);
+        searchButton.addActionListener(e -> {
+            try {
+                searchForEventAndFillTable();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        });
+        this.addButtonToPanel(searchButton);
+
+        JButton filterButton = new JButton("Openstaande Betalingen");
+        filterButton.addActionListener(e -> {
+            if (isSearchPerformed = true) {
+
+                //TODO
+            } else {
+                JOptionPane.showMessageDialog(this, "Er is nog geen toernooi ingevoerd om op te zoeken");
+            }
+        });
+
+        this.addButtonToPanel(filterButton);
 
     }
 
 
-    private void searchForEventAndFillTable() {
-        String search = searchField.getText();
-        Optional<Event> optionalEvent = events
+    private void searchForEventAndFillTable() throws SQLException {
+        DefaultTableModel defaultTableModel = fetchDataModel();
+
+        String input = JOptionPane.showInputDialog(this, "Voer de code van het toernooi");
+
+        Optional<Tournament> optionalToernooi = tournamentProvider.getTournaments()
                 .stream()
-                .filter(event -> event.isMatchForSearch(search)
+                .filter(event -> event.isMatchForSearch(input)
                 )
                 .findAny();
 
-        System.out.println("bestaat ie wel? " + optionalEvent.isPresent());
 
-        if (optionalEvent.isPresent()){
-            DefaultTableModel tableModel1 = fetchDataModel();
-            optionalEvent.get().getParticipants().forEach(p->tableModel1.addRow(p.getTableFormatData()));
-        }
+        if (optionalToernooi.isPresent()) {
+            isSearchPerformed = true;
+            Tournament toernooi = optionalToernooi.get();
+            focusedToernooi = toernooi;
+            toernooi.getParticipants().forEach(deelname ->
+                    defaultTableModel.addRow(deelname.getTableFormatData())
 
-        else {
+            );
+
+            tablePanel.setModel(defaultTableModel);
+
+
+        } else {
             JOptionPane.showMessageDialog(this, "Het systeem kon geen toernooi/masterclass vinden met de ingevulde gegevens");
         }
     }
