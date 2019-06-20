@@ -54,7 +54,7 @@ public class Tournament extends Event {
     }
 
 
-    public static Tournament readTournament(ResultSet resultSet) throws SQLException {
+    public static Tournament readTournamentData(ResultSet resultSet) throws SQLException {
 
         int index = 0;
 
@@ -85,6 +85,10 @@ public class Tournament extends Event {
     @Deprecated
     public ArrayList<Participant> getParticipations() {
         return participations;
+    }
+
+    public String createDateTime(Date date, Time time) {
+        return date + " " + time;
     }
 
     public String getEntryRestriction() {

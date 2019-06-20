@@ -15,7 +15,7 @@ public class AddParticipantDialog extends BasicDialog {
     private ArrayList<Event> events = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
 
-    private JTextField toernooiCodeField = new JTextField();
+    private JTextField tournamentCodeField = new JTextField();
     private JTextField playerNameField = new JTextField();
     private JTextField postcode = new JTextField();
     private JLabel[] fieldLabels = {new JLabel("Event code"), new JLabel("Naam speler"), new JLabel("Postcode")};
@@ -57,12 +57,12 @@ public class AddParticipantDialog extends BasicDialog {
 
 
     private JTextField[] getAllTextFields() {
-        return new JTextField[]{toernooiCodeField, playerNameField, postcode};
+        return new JTextField[]{tournamentCodeField, playerNameField, postcode};
     }
 
     @Override
     public void handleConfirm() {
-        String inputForEvent = toernooiCodeField.getText();
+        String inputForEvent = tournamentCodeField.getText();
         String inputForPLayer = playerNameField.getText();
         String inputForZIP = postcode.getText();
 

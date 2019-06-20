@@ -61,7 +61,14 @@ public class ParticipantOverviewPanel extends OverviewPanel {
             if (isSearchPerformed = true) {
 
                 PaymentTableDialog paymentTableDialog = new PaymentTableDialog(focusedTournament);
-                if(paymentTableDialog.hasChangedSomething()){
+                if (paymentTableDialog.hasChangedSomething()) {
+
+
+                    try {
+                        tournamentProvider.updatePaymentStatusParticipants(paymentTableDialog.getPaidParticipations());
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
                     refreshTable();
                 }
 
@@ -96,8 +103,6 @@ public class ParticipantOverviewPanel extends OverviewPanel {
                 refreshTable();
 
 
-
-
             } else {
                 JOptionPane.showMessageDialog(this, "Het systeem kon geen toernooi/masterclass vinden met de ingevulde gegevens");
             }
@@ -105,7 +110,7 @@ public class ParticipantOverviewPanel extends OverviewPanel {
     }
 
     private void refreshTable() {
-        DefaultTableModel defaultTableModel=fetchDataModel();
+        DefaultTableModel defaultTableModel = fetchDataModel();
         try {
             tournamentProvider.participants(focusedTournament).forEach(deelname ->
                     defaultTableModel.addRow(deelname.getTableFormatData())

@@ -166,9 +166,9 @@ public class PlayerProvider extends DatabaseProvider {
     }
 
     /**
-     * Returns the player with the given id from the database
+     * Returns a {@link Player} with the given id from the database
      * @param id The id to search for in the database
-     * @return A Player object
+     * @return A {@link Player} object
      * @throws SQLException When connection or query fails
      */
     public Player getPlayerById(int id) throws SQLException {
