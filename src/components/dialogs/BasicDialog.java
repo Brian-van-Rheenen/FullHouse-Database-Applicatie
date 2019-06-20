@@ -17,6 +17,7 @@ public abstract class BasicDialog extends JDialog {
         this.setLocationRelativeTo(null);
 
         setLayoutAndBorder();
+        this.setModal(true);
         this.setResizable(false);
 
         this.setSize(new Dimension(500, 800));
@@ -57,16 +58,21 @@ public abstract class BasicDialog extends JDialog {
         submit.addActionListener(event -> handleConfirm());
         cancel.addActionListener(e -> this.dispose());
 
+        JPanel buttonPanel = createButtonPanel();
+        buttonPanel.add(submit);
+        buttonPanel.add(cancel);
+
+        this.getContentPane().add(buttonPanel);
+    }
+
+    public JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
         GridLayout gridLayout = new GridLayout(1, 2);
         gridLayout.setVgap(10);
         gridLayout.setHgap(10);
 
         buttonPanel.setLayout(gridLayout);
-        buttonPanel.add(submit);
-        buttonPanel.add(cancel);
-
-        this.getContentPane().add(buttonPanel);
+        return buttonPanel;
     }
 
     /**

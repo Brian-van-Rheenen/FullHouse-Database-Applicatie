@@ -25,6 +25,10 @@ public class Participant {
         return new Object[]{player.getId(), player.getName(),hasPaidString, player.getAddress().getZipCode()};
     }
 
+    public void setHasPaid(boolean input){
+        hasPaid=input;
+    }
+
     public boolean isHasPaid() {
         return hasPaid;
     }

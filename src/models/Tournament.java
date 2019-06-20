@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Tournament extends Event {
 
@@ -40,6 +41,11 @@ public class Tournament extends Event {
         if(input.matches("^[0-9]*$")){
             return Integer.parseInt(input)==this.getId();
         }else return false;
+    }
+
+    public void registerPaidParticipation(int idParticipant){
+        Optional <Participant> optionalParticipant = participations.stream().filter(p->p.getPlayer().getId()==idParticipant).findAny();
+        optionalParticipant.ifPresent(participant -> participant.setHasPaid(true));
     }
 
 

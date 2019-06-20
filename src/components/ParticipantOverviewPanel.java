@@ -1,6 +1,7 @@
 package components;
 
 import backend.TournamentProvider;
+import components.dialogs.reports.PaymentTableDialog;
 import components.panels.OverviewPanel;
 import models.*;
 
@@ -14,12 +15,12 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
 
     private TournamentProvider tournamentProvider;
-    private Tournament focusedToernooi;
+    private Tournament focusedTournament;
     boolean isSearchPerformed = false;
     private TablePanel tablePanel;
 
 
-    public ParticipantOverviewPanel() throws SQLException {
+    public ParticipantOverviewPanel() {
 
         this.tournamentProvider = new TournamentProvider();
 
@@ -59,7 +60,8 @@ public class ParticipantOverviewPanel extends OverviewPanel {
         filterButton.addActionListener(e -> {
             if (isSearchPerformed = true) {
 
-                //TODO
+                PaymentTableDialog paymentTableDialog = new PaymentTableDialog(focusedTournament);
+
             } else {
                 JOptionPane.showMessageDialog(this, "Er is nog geen toernooi ingevoerd om op te zoeken");
             }
@@ -75,27 +77,30 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
         String input = JOptionPane.showInputDialog(this, "Voer de code van het toernooi");
 
-        Optional<Tournament> optionalToernooi = tournamentProvider.getTournaments()
-                .stream()
-                .filter(event -> event.isMatchForSearch(input)
-                )
-                .findAny();
+        if (input != null) {
+
+            Optional<Tournament> optionalToernooi = tournamentProvider.getTournaments()
+                    .stream()
+                    .filter(event -> event.isMatchForSearch(input)
+                    )
+                    .findAny();
 
 
-        if (optionalToernooi.isPresent()) {
-            isSearchPerformed = true;
-            Tournament toernooi = optionalToernooi.get();
-            focusedToernooi = toernooi;
-            toernooi.getParticipants().forEach(deelname ->
-                    defaultTableModel.addRow(deelname.getTableFormatData())
+            if (optionalToernooi.isPresent()) {
+                isSearchPerformed = true;
+                Tournament toernooi = optionalToernooi.get();
+                focusedTournament = toernooi;
+                toernooi.getParticipants().forEach(deelname ->
+                        defaultTableModel.addRow(deelname.getTableFormatData())
 
-            );
+                );
 
-            tablePanel.setModel(defaultTableModel);
+                tablePanel.setModel(defaultTableModel);
 
 
-        } else {
-            JOptionPane.showMessageDialog(this, "Het systeem kon geen toernooi/masterclass vinden met de ingevulde gegevens");
+            } else {
+                JOptionPane.showMessageDialog(this, "Het systeem kon geen toernooi/masterclass vinden met de ingevulde gegevens");
+            }
         }
     }
 }
