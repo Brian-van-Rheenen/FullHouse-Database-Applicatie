@@ -6,9 +6,9 @@ import models.Player;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class PlayerProvider {
+public class PlayerProvider extends DatabaseProvider {
 
-    private Connection databaseConnection;
+    // region Queries
 
     private static final String Q_ALLPLAYERS =
             "SELECT speler_id, a.adres_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating, deleted\n" +
@@ -63,9 +63,7 @@ public class PlayerProvider {
             "\n" +
             "COMMIT;";
 
-    public PlayerProvider() {
-        getDBconnection();
-    }
+    // endregion Queries
 
     /**
      * Retrieve all players from the database.
@@ -91,7 +89,7 @@ public class PlayerProvider {
      */
     @SuppressWarnings("Duplicates")
     public Player addPlayer(Player player) throws SQLException {
-        PreparedStatement addPlayerStatement = databaseConnection
+        PreparedStatement addPlayerStatement = getDatabaseConnection()
                 .prepareStatement(Q_ADDPLAYER, Statement.RETURN_GENERATED_KEYS);
 
         Address address = player.getAddress();
@@ -116,19 +114,14 @@ public class PlayerProvider {
 
         addPlayerStatement.executeUpdate();
 
-        // Update the player with the generated id
-        ResultSet set = databaseConnection.createStatement().executeQuery("SELECT LAST_INSERT_ID()");
-        if(set.next()) {
-            // Set the Id for the player
-            player.setId(set.getInt(1));
-        }
-
+        // Query the last inserted id and update the player
+        player.setId(getLastInsertId());
         return player;
     }
 
     @SuppressWarnings("Duplicates")
     public void updatePlayer(Player updated) throws SQLException {
-        PreparedStatement updatePlayerStatement = databaseConnection
+        PreparedStatement updatePlayerStatement = getDatabaseConnection()
                 .prepareStatement(Q_UPDATEPLAYER);
 
         Address updatedAddress = updated.getAddress();
@@ -165,7 +158,9 @@ public class PlayerProvider {
      * @throws SQLException when the deletion has failed
      */
     public void deletePlayer(int id) throws SQLException {
-        PreparedStatement pst = databaseConnection.prepareStatement(Q_DELETEPLAYER);
+        PreparedStatement pst = getDatabaseConnection()
+                .prepareStatement(Q_DELETEPLAYER);
+
         pst.setString(1, Integer.toString(id));
         DatabaseConnection.executeQuery(pst);
     }
@@ -177,7 +172,7 @@ public class PlayerProvider {
      * @throws SQLException When connection or query fails
      */
     public Player getPlayerById(int id) throws SQLException {
-        PreparedStatement playerStatement = databaseConnection
+        PreparedStatement playerStatement = getDatabaseConnection()
                 .prepareStatement(Q_SELECTPLAYER);
 
         playerStatement.setInt(1, id);
@@ -185,9 +180,5 @@ public class PlayerProvider {
         ResultSet set = playerStatement.executeQuery();
         set.next();
         return Player.readPlayerData(set);
-    }
-
-    private void getDBconnection() {
-        databaseConnection = DatabaseConnection.getConnection();
     }
 }
