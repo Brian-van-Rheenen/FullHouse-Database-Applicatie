@@ -141,7 +141,7 @@ public class AddMasterclassDialog extends BasicDialog {
         int minimumRating = Integer.parseInt(minimumRatingField.getText());
         String mentor = (String) mentorField.getSelectedItem();
 
-        return new Masterclass(0, location, capacity, startDate, startTime, endDate, endTime, minimumRating, entranceFee, mentor);
+        return new Masterclass(0, location, capacity, startDate, startTime, endDate, endTime, entranceFee, minimumRating,  mentor);
     }
 
     private Masterclass fetchUpdatesForMasterclass(Masterclass masterclass) {
