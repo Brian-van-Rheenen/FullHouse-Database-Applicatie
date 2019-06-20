@@ -5,9 +5,9 @@ import models.Masterclass;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class MasterclassProvider {
+public class MasterclassProvider extends DatabaseProvider {
 
-    private Connection databaseConnection;
+    //region Queries
 
     private static final String Q_ALLMASTERCLASSES =
             "SELECT m.idMasterclass AS ID,\n" +
@@ -59,14 +59,12 @@ public class MasterclassProvider {
     private static final String Q_ALLFAMOUSPLAYERS =
             "SELECT naam FROM bekende_speler;";
 
-    public MasterclassProvider() {
-        getDBconnection();
-    }
+    //endregion Queries
 
     /**
-     * Retrieve all players from the database.
+     * Retrieve all {@link Masterclass} from the database.
      * @return an ArrayList with all players.
-     * @throws SQLException
+     * @throws SQLException when the query fails
      */
     public ArrayList<Masterclass> allMasterclasses() throws SQLException {
         ResultSet rs = DatabaseConnection.executeQueryAndGetData(Q_ALLMASTERCLASSES);
@@ -80,14 +78,14 @@ public class MasterclassProvider {
     }
 
     /**
-     * Add a new masterclass to the database.
+     * Add a new {@link Masterclass} to the database.
      * @param masterclass the masterclass object to add.
      * @return Masterclass object with an updated id
-     * @throws SQLException
+     * @throws SQLException when the query fails
      */
     @SuppressWarnings("Duplicates")
     public Masterclass addMasterclass(Masterclass masterclass) throws SQLException {
-        PreparedStatement addMasterclassStatement = databaseConnection
+        PreparedStatement addMasterclassStatement = getDatabaseConnection()
                 .prepareStatement(Q_ADDMASTERCLASS, Statement.RETURN_GENERATED_KEYS);
 
         addMasterclassStatement.setString(1, masterclass.getCity());
@@ -100,19 +98,15 @@ public class MasterclassProvider {
 
         addMasterclassStatement.executeUpdate();
 
-        // Update the masterclass with the generated id
-        ResultSet set = databaseConnection.createStatement().executeQuery("SELECT LAST_INSERT_ID()");
-        if(set.next()) {
-            // Set the Id for the masterclass
-            masterclass.setId(set.getInt(1));
-        }
+        // Update the masterclass with the last insert id
+        masterclass.setId(getLastInsertId());
 
         return masterclass;
     }
 
     @SuppressWarnings("Duplicates")
     public void updateMasterclass(Masterclass updated) throws SQLException {
-        PreparedStatement updateMasterclassStatement = databaseConnection
+        PreparedStatement updateMasterclassStatement = getDatabaseConnection()
                 .prepareStatement(Q_UPDATEMASTERCLASS);
 
         updateMasterclassStatement.setString(1, updated.getCity());
@@ -132,7 +126,7 @@ public class MasterclassProvider {
     }
 
     public ResultSet filterPlayersByRating(int rating) throws SQLException {
-        PreparedStatement pst = databaseConnection.prepareStatement(Q_FILTERPLAYERSBYRATING);
+        PreparedStatement pst = getDatabaseConnection().prepareStatement(Q_FILTERPLAYERSBYRATING);
         pst.setInt(1, rating);
 
         return pst.executeQuery();
@@ -160,9 +154,5 @@ public class MasterclassProvider {
         }
 
         return res;
-    }
-
-    private void getDBconnection() {
-        databaseConnection = DatabaseConnection.getConnection();
     }
 }

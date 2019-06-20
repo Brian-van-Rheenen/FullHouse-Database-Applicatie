@@ -8,9 +8,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class TournamentProvider {
+public class TournamentProvider extends DatabaseProvider {
 
-    private Connection databaseConnection;
+    //region Queries
 
     private final String Q_ALLTOURNAMENTS =
             "SELECT t.idToernooi                                     AS ID,\n" +
@@ -74,9 +74,7 @@ public class TournamentProvider {
     private static final String Q_ALLLOCATIONS =
             "SELECT stad FROM locatie;";
 
-    public TournamentProvider() {
-        getDBconnection();
-    }
+    //endregion Queries
 
     public ArrayList<Tournament> getTournaments() throws SQLException {
         ArrayList<Tournament> tournaments = new ArrayList<>();
@@ -91,7 +89,7 @@ public class TournamentProvider {
     }
 
     private ResultSet queryParticipants() throws SQLException {
-        return databaseConnection.prepareStatement(Q_PARTCIPANTS).executeQuery();
+        return getDatabaseConnection().prepareStatement(Q_PARTCIPANTS).executeQuery();
     }
 
     private void addParticipants(ArrayList<Tournament> tournaments) throws SQLException {
@@ -117,7 +115,7 @@ public class TournamentProvider {
      */
     @SuppressWarnings("Duplicates")
     public Tournament addTournament(Tournament tournament) throws SQLException {
-        PreparedStatement addTournamentStatement = databaseConnection
+        PreparedStatement addTournamentStatement = getDatabaseConnection()
                 .prepareStatement(Q_ADDTOURNAMENT, Statement.RETURN_GENERATED_KEYS);
 
         int index = 0;
@@ -146,7 +144,7 @@ public class TournamentProvider {
         addTournamentStatement.executeUpdate();
 
         // Update the tournament with the generated id
-        ResultSet set = databaseConnection.createStatement().executeQuery("SELECT LAST_INSERT_ID()");
+        ResultSet set = getDatabaseConnection().createStatement().executeQuery("SELECT LAST_INSERT_ID()");
         if(set.next()) {
             // Set the ID for the tournament
             tournament.setId(set.getInt(1));
@@ -157,7 +155,7 @@ public class TournamentProvider {
 
     @SuppressWarnings("Duplicates")
     public void updateTournament(Tournament updated) throws SQLException {
-        PreparedStatement updateTournamentStatement = databaseConnection
+        PreparedStatement updateTournamentStatement = getDatabaseConnection()
                 .prepareStatement(Q_UPDATETOURNAMENT);
 
         int index = 0;
@@ -199,9 +197,5 @@ public class TournamentProvider {
         }
 
         return res;
-    }
-
-    private void getDBconnection() {
-        databaseConnection = DatabaseConnection.getConnection();
     }
 }
