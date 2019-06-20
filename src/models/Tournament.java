@@ -5,8 +5,8 @@ import backend.SqlDateConverter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Tournament extends Event {
 
@@ -82,12 +82,24 @@ public class Tournament extends Event {
         return entryRestriction;
     }
 
-    public Date getFinalSubmitDate() {
+    public void setEntryRestriction(String entryRestriction) {
+        this.entryRestriction = entryRestriction;
+    }
+
+    public java.sql.Date getFinalSubmitDate() {
         return finalSubmitDate;
+    }
+
+    public void setFinalSubmitDate(java.sql.Date finalSubmitDate) {
+        this.finalSubmitDate = finalSubmitDate;
     }
 
     public String getTheme() {
         return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
 
