@@ -61,6 +61,9 @@ public class ParticipantOverviewPanel extends OverviewPanel {
             if (isSearchPerformed = true) {
 
                 PaymentTableDialog paymentTableDialog = new PaymentTableDialog(focusedTournament);
+                if(paymentTableDialog.hasChangedSomething()){
+                    refreshTable();
+                }
 
             } else {
                 JOptionPane.showMessageDialog(this, "Er is nog geen toernooi ingevoerd om op te zoeken");
@@ -73,9 +76,9 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
 
     private void searchForEventAndFillTable() throws SQLException {
-        DefaultTableModel defaultTableModel = fetchDataModel();
 
-        String input = JOptionPane.showInputDialog(this, "Voer de code van het toernooi");
+
+        String input = JOptionPane.showInputDialog(this, "Voer de code van het toernooi in");
 
         if (input != null) {
 
@@ -90,17 +93,27 @@ public class ParticipantOverviewPanel extends OverviewPanel {
                 isSearchPerformed = true;
                 Tournament toernooi = optionalToernooi.get();
                 focusedTournament = toernooi;
-                toernooi.getParticipants().forEach(deelname ->
-                        defaultTableModel.addRow(deelname.getTableFormatData())
+                refreshTable();
 
-                );
 
-                tablePanel.setModel(defaultTableModel);
 
 
             } else {
                 JOptionPane.showMessageDialog(this, "Het systeem kon geen toernooi/masterclass vinden met de ingevulde gegevens");
             }
         }
+    }
+
+    private void refreshTable() {
+        DefaultTableModel defaultTableModel=fetchDataModel();
+        try {
+            tournamentProvider.participants(focusedTournament).forEach(deelname ->
+                    defaultTableModel.addRow(deelname.getTableFormatData())
+
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        tablePanel.setModel(defaultTableModel);
     }
 }

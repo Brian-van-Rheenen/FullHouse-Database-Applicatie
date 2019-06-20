@@ -5,6 +5,7 @@ import models.Player;
 import models.Tournament;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -37,7 +38,9 @@ public class TournamentProvider {
                     "FROM toernooi_deelname " +
                     "INNER JOIN speler on toernooi_deelname.speler=speler_id " +
                     "INNER JOIN toernooi on toernooiCode=idToernooi "   +
-                    "INNER JOIN adres a on speler.adres_id = a.adres_id;";
+                    "INNER JOIN adres a on speler.adres_id = a.adres_id where toernooiCode=?;";
+
+    private static final String UPDATE_PAYMENT="update toernooi_deelname set betaald=1 where speler=?";
 
     public TournamentProvider() {
         getDBconnection();
@@ -72,6 +75,30 @@ public class TournamentProvider {
                 tournament.getParticipants().add(new Participant(player, paid));
             }else throw new IllegalStateException();
         }
+    }
+
+
+
+    public void updatePaymentStatusParticipants(ArrayList <Participant> paidParticipations) throws SQLException{
+        for (Participant p : paidParticipations) {
+            PreparedStatement preparedStatement = databaseConnection.prepareStatement(UPDATE_PAYMENT);
+            preparedStatement.setInt(1, p.getPlayer().getId());
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public ArrayList <Participant> participants(Tournament tournament) throws SQLException{
+        ArrayList <Participant> res = new ArrayList<>();
+        PreparedStatement preparedStatement = databaseConnection.prepareStatement(Q_PARTCIPANTS);
+        preparedStatement.setInt(tournament.getId(), 1);
+        ResultSet rs=preparedStatement.executeQuery();
+        while(rs.next()){
+            Player player = Player.readPlayerData(rs);
+            int tournamentID=rs.getInt(14);
+            boolean paid = rs.getBoolean(15);
+            res.add(new Participant(player, paid));
+        }
+        return res;
     }
 
     private void getDBconnection() {

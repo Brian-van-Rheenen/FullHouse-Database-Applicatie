@@ -25,6 +25,10 @@ public class TablePanel extends JPanel {
         this.add(tableWithScroll, BorderLayout.CENTER);
     }
 
+    public JTable getTable() {
+        return table;
+    }
+
     /**
      * Invokes {@link JTable#getColumnCount()}
      * @return the result of {@link JTable#getColumnCount()}

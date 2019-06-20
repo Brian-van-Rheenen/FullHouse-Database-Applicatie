@@ -37,15 +37,20 @@ public class Tournament extends Event {
         return b;
     }
 
-    private boolean matchesID(String input){
-        if(input.matches("^[0-9]*$")){
-            return Integer.parseInt(input)==this.getId();
-        }else return false;
+    private boolean matchesID(String input) {
+        if (input.matches("^[0-9]*$")) {
+            return Integer.parseInt(input) == this.getId();
+        } else return false;
     }
 
-    public void registerPaidParticipation(int idParticipant){
-        Optional <Participant> optionalParticipant = participations.stream().filter(p->p.getPlayer().getId()==idParticipant).findAny();
-        optionalParticipant.ifPresent(participant -> participant.setHasPaid(true));
+    public void registerPaidParticipation(int idParticipant) {
+        Optional<Participant> optionalParticipant = participations.stream().filter(p -> p.getPlayer().getId() == idParticipant).findAny();
+
+        if(optionalParticipant.isPresent()){
+            Participant participant=optionalParticipant.get();
+            participant.setHasPaid(true);
+            System.out.println("participant has paid " + participant.getPlayer().getName());
+        }else System.out.println("found nothing");
     }
 
 
@@ -64,7 +69,7 @@ public class Tournament extends Event {
 
         String theme = resultSet.getString(++index);
         String finalSubmitDate = resultSet.getString(++index);
-        String entryRestriction= resultSet.getString(++index);
+        String entryRestriction = resultSet.getString(++index);
 
         return new Tournament(id, city, capacity, startDate, startTime, endDate, endTime, entranceFee, theme, finalSubmitDate, entryRestriction);
     }
@@ -75,9 +80,7 @@ public class Tournament extends Event {
     }
 
     /**
-     * @deprecated
-     * Dit is niet de bedoeling! Gebruik de Tournamentprovider a.u.b.
-     *
+     * @deprecated Dit is niet de bedoeling! Gebruik de Tournamentprovider a.u.b.
      */
     @Deprecated
     public ArrayList<Participant> getParticipations() {

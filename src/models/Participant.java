@@ -29,7 +29,7 @@ public class Participant {
         hasPaid=input;
     }
 
-    public boolean isHasPaid() {
+    public boolean hasPaid() {
         return hasPaid;
     }
 }

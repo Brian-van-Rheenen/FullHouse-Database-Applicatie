@@ -10,20 +10,22 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Optional;
 
 public class PaymentTableDialog extends BasicDialog {
 
     private Tournament toernooi;
 
     private TablePanel tablePanel;
-    private ArrayList<Integer> playerIDs = new ArrayList<>();
+    private ArrayList<Participant> notPaidParticipations = new ArrayList<>();
+    private ArrayList<Participant> paidParticipations = new ArrayList<>();
     private boolean changedSomething = false;
 
 
     public PaymentTableDialog(Tournament tournament) {
         super(true);
         this.toernooi = tournament;
+        notPaidParticipations.addAll(tournament.getParticipants());
 
         tablePanel = new TablePanel(createTableModel());
         this.add(tablePanel);
@@ -40,14 +42,28 @@ public class PaymentTableDialog extends BasicDialog {
 
         markAsPaid.addActionListener(e -> {
 
+            if (!tablePanel.getTable().getSelectionModel().isSelectionEmpty()) {
+                int id = (Integer) tablePanel.getModel().getValueAt(tablePanel.getSelectedRow(), 0);
 
-            int id =  (Integer) tablePanel.getModel().getValueAt(tablePanel.getSelectedRow(), 0);
-            toernooi.registerPaidParticipation(id);
-            playerIDs.add(id);
-            tablePanel.setModel(createTableModel());
-            changedSomething = true;
+                Optional<Participant> optionalParticipant = toernooi.getParticipants()
+                        .stream()
+                        .filter(participant -> participant.getPlayer().getId() == id).findAny();
+
+                if (optionalParticipant.isPresent()) {
+                    Participant participant = optionalParticipant.get();
+
+                    participant.setHasPaid(true);
+
+                    notPaidParticipations.remove(participant);
+                    paidParticipations.add(participant);
+
+                    tablePanel.setModel(createTableModel());
+                    changedSomething = true;
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "U heeft nog geen deelname geselecteerd");
+            }
         });
-
         safeChanges.addActionListener(e -> this.dispose());
 
         JPanel panel = this.createButtonPanel();
@@ -57,6 +73,9 @@ public class PaymentTableDialog extends BasicDialog {
 
     }
 
+    public ArrayList<Participant> getPaidParticipations() {
+        return paidParticipations;
+    }
 
     public boolean hasChangedSomething() {
         return changedSomething;
@@ -71,7 +90,7 @@ public class PaymentTableDialog extends BasicDialog {
 
 
         for (Participant deelname : toernooi.getParticipants()) {
-            if (!deelname.isHasPaid()) {
+            if (!deelname.hasPaid()) {
                 Player player = deelname.getPlayer();
 
                 Object[] data = new Object[]{player.getId(), player.getName(), player.getTelephoneNR(), player.getAddress().getZipCode()};
@@ -88,7 +107,7 @@ public class PaymentTableDialog extends BasicDialog {
     }
 
 
-    public ArrayList<Integer> getPlayerIDs() {
-        return playerIDs;
+    public ArrayList<Participant> getNotPaidParticipations() {
+        return notPaidParticipations;
     }
 }
