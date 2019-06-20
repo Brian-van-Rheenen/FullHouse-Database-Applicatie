@@ -16,7 +16,13 @@ public class Deelname {
 
     public Object [] getTableFormatData(){
         System.out.println(player.getName());
-        return new Object[]{player.convertToTableData(), betaald};
+
+        String betaaldString="Nee";
+        if(betaald){
+            betaaldString="Ja";
+        }
+
+        return new Object[]{player.getId(), player.getName(),betaaldString, player.getAddress().getZipCode()};
     }
 
     public boolean isBetaald() {
