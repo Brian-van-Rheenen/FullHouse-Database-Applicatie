@@ -17,7 +17,8 @@ public class DatabaseConnection {
     public static Connection getConnection() {
         if (connection != null) return connection;
 
-        return initConnection();
+        connection = initConnection();
+        return connection;
     }
 
     /**
