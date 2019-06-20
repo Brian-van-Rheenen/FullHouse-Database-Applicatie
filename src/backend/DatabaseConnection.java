@@ -57,10 +57,10 @@ public class DatabaseConnection {
      * Execute a prepared statement and return data.
      * @param query a query to execute
      * @return ResultSet with the data from the query
-     * @throws SQLException
+     * @throws SQLException failed to connect or execute the query
      */
     public static ResultSet executeQueryAndGetData(String query) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(query);
         return preparedStatement.executeQuery();
     }
 
