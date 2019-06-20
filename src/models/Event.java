@@ -1,17 +1,17 @@
 package models;
 
+import backend.SqlDateConverter;
+
 import java.sql.Date;
 import java.sql.Time;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public abstract class Event {
 
+public abstract class Event {
     private int id;
     private String city;
+    private int capacity;
     private Date startDate;
     private Time startTime;
     private Date endDate;
@@ -19,18 +19,19 @@ public abstract class Event {
     private int entranceFee;
     private ArrayList<Deelname> participants = new ArrayList<>();
 
-    public Event(int id, String city, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
+    public Event(int id, String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
         this.id = id;
+        this.capacity = capacity;
         this.city = city;
-        this.startDate = convertStringToSqlDate(startDate);
+        this.startDate = SqlDateConverter.convertStringToSqlDate(startDate);
         this.startTime = startTime;
-        this.endDate = convertStringToSqlDate(endDate);
+        this.endDate = SqlDateConverter.convertStringToSqlDate(endDate);
         this.endTime = endTime;
         this.entranceFee = entranceFee;
     }
 
-    public Event(String city, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
-        this(-1, city, startDate, startTime, endDate, endTime, entranceFee);
+    public Event(String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
+        this(-1, city, capacity, startDate, startTime, endDate, endTime, entranceFee);
     }
 
     public abstract boolean isMatchForSearch(String search);
@@ -43,19 +44,6 @@ public abstract class Event {
 
     public ArrayList<Deelname> getParticipants() {
         return participants;
-    }
-
-    public java.sql.Date convertStringToSqlDate(String dateString) {
-        DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-
-        java.util.Date date = null;
-        try {
-            date = format.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return new java.sql.Date(date.getTime());
     }
 
     @Override
@@ -90,6 +78,14 @@ public abstract class Event {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
     public Date getStartDate() {

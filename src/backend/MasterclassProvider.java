@@ -13,8 +13,9 @@ public class MasterclassProvider {
     private DatabaseConnection databaseConnection;
 
     private static final String Q_ALLMASTERCLASSES =
-            "SELECT m.idMasterclass, l.stad AS Locatie,\n" +
-            "       event.capaciteit as Capaciteit,\n"+
+            "SELECT m.idMasterclass AS ID,\n" +
+            "l.stad AS Locatie,\n" +
+            "       event.capaciteit as Capaciteit,\n" +
             "       DATE_FORMAT(begintijd,  '%d-%m-%Y') AS BeginDatum,\n" +
             "       TIME_FORMAT(begintijd, '%H:%i')     AS Begintijd,\n" +
             "       DATE_FORMAT(eindtijd,  '%d-%m-%Y')  AS EindDatum,\n" +

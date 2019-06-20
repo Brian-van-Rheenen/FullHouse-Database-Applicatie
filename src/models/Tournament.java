@@ -1,5 +1,7 @@
 package models;
 
+import backend.SqlDateConverter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -9,25 +11,55 @@ import java.util.Date;
 public class Tournament extends Event {
 
     private ArrayList<Deelname> participations = new ArrayList<>();
-    private String themanaam;
-    private String entranceCheck;
+    private String theme;
+    private Date finalSubmitDate;
+    private String entryRestriction;
 
-    public Tournament(int id, String stad, String startDate, Time startTime, String endDate, Time endTime, int fee , String themanaam, String entranceCheck) {
-        super(id, stad, startDate, startTime, endDate, endTime, fee);
-        this.themanaam = themanaam;
-        this.entranceCheck = entranceCheck;
+    public Tournament(int id, String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee, String theme, String finalSubmitDate, String entryRestriction) {
+        super(id, city, capacity, startDate, startTime, endDate, endTime, entranceFee);
+
+        this.theme = theme;
+        this.finalSubmitDate = SqlDateConverter.convertStringToSqlDate(finalSubmitDate);
+        this.entryRestriction = entryRestriction;
     }
 
-    public Tournament(String stad, String startDate, Time startTime, String endDate, Time endTime, int entranceFee, String themanaam, String entranceCheck) {
-        super(stad, startDate, startTime, endDate, endTime, entranceFee);
-        this.themanaam = themanaam;
-        this.entranceCheck = entranceCheck;
+    public Tournament(String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee, String theme, String finalSubmitDate, String entryRestriction) {
+        super(city, capacity, startDate, startTime, endDate, endTime, entranceFee);
+
+        this.theme = theme;
+        this.finalSubmitDate = SqlDateConverter.convertStringToSqlDate(finalSubmitDate);
+        this.entryRestriction = entryRestriction;
     }
 
     public boolean isMatchForSearch(String search) {
-        boolean b = this.isOnSameDate(search) || this.themanaam.equalsIgnoreCase(search);
+        boolean b = this.isOnSameDate(search) || this.theme.equalsIgnoreCase(search);
         System.out.println("boolean " + b);
         return b;
+    }
+
+    public static Tournament readTournament(ResultSet resultSet) throws SQLException {
+
+        int index = 0;
+
+        int id = resultSet.getInt(++index);
+        String city = resultSet.getString(++index);
+        int capacity = resultSet.getInt(++index);
+        String startDate = resultSet.getString(++index);
+        Time startTime = resultSet.getTime(++index);
+        String endDate = resultSet.getString(++index);
+        Time endTime = resultSet.getTime(++index);
+        int entranceFee = resultSet.getInt(++index);
+
+        String theme = resultSet.getString(++index);
+        String finalSubmitDate = resultSet.getString(++index);
+        String entryRestriction= resultSet.getString(++index);
+
+        return new Tournament(id, city, capacity, startDate, startTime, endDate, endTime, entranceFee, theme, finalSubmitDate, entryRestriction);
+    }
+
+    @Override
+    public Object[] convertToTableData() {
+        return new Object[]{theme, super.getBasicFieldsEvent(), entryRestriction};
     }
 
     /**
@@ -40,33 +72,16 @@ public class Tournament extends Event {
         return participations;
     }
 
-    public static Tournament readTournament(ResultSet resultSet) throws SQLException {
-
-        String stad = resultSet.getString(1);
-        String startDate = resultSet.getString(2);
-        Time startTime = resultSet.getTime(3);
-        String endDate = resultSet.getString(4);
-        Time endTime = resultSet.getTime(5);
-        Date maxSubmitDate = resultSet.getDate(6);
-        String thema = resultSet.getString(7);
-
-        int inschrijfgeld = resultSet.getInt(8);
-        String entrance= resultSet.getString(9);
-
-        return new Tournament(stad,startDate,startTime, endDate, endTime, inschrijfgeld,thema, entrance);
+    public String getEntryRestriction() {
+        return entryRestriction;
     }
 
-    @Override
-    public Object[] convertToTableData() {
-        return new Object[]{themanaam, super.getBasicFieldsEvent(), entranceCheck};
+    public Date getFinalSubmitDate() {
+        return finalSubmitDate;
     }
 
-    public String getEntranceCheck() {
-        return entranceCheck;
-    }
-
-    public String getThemanaam() {
-        return themanaam;
+    public String getTheme() {
+        return theme;
     }
 
 

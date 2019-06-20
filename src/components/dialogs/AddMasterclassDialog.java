@@ -1,6 +1,7 @@
 package components.dialogs;
 
 import backend.MasterclassProvider;
+import backend.SqlDateConverter;
 import models.Masterclass;
 
 import javax.swing.*;
@@ -147,10 +148,10 @@ public class AddMasterclassDialog extends BasicDialog {
 
         masterclass.setCity((String) locationField.getSelectedItem());
         masterclass.setCapacity(Integer.parseInt(capacityField.getText()));
-        masterclass.setStartDate(masterclass.convertStringToSqlDate(startDateField.getText()));
+        masterclass.setStartDate(SqlDateConverter.convertStringToSqlDate(startDateField.getText()));
 
         masterclass.setStartTime(java.sql.Time.valueOf(startTimeField.getText()));
-        masterclass.setEndDate(masterclass.convertStringToSqlDate(endDateField.getText()));
+        masterclass.setEndDate(SqlDateConverter.convertStringToSqlDate(endDateField.getText()));
         masterclass.setEndTime(java.sql.Time.valueOf(endTimeField.getText()));
         masterclass.setEntranceFee(Integer.parseInt(entranceFeeField.getText()));
 

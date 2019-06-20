@@ -10,33 +10,40 @@ import java.util.Objects;
 
 public class Masterclass extends Event {
 
-    private int id;
-    private int capacity;
     private int minimumRating;
     private String mentor;
 
-    public Masterclass(int id, String city, int capacity, String StartDate, Time StartTime, String endDate, Time endTime, int minimumRating, int entranceFee, String mentor) {
-        super(id, city, StartDate, StartTime, endDate, endTime, entranceFee);
+    public Masterclass(int id, String city, int capacity, String StartDate, Time StartTime, String endDate, Time endTime, int entranceFee, int minimumRating,  String mentor) {
+        super(id, city, capacity, StartDate, StartTime, endDate, endTime, entranceFee);
 
-        this.id = id;
-        this.capacity = capacity;
+        this.minimumRating = minimumRating;
+        this.mentor = mentor;
+    }
+
+    public Masterclass(String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee, int minimumRating, String mentor) {
+        super(city, capacity, startDate, startTime, endDate, endTime, entranceFee);
+
         this.minimumRating = minimumRating;
         this.mentor = mentor;
     }
 
     public static Masterclass readMasterclassData(ResultSet rs) throws SQLException {
-        int id = rs.getInt(1);
-        String city = rs.getString(2);
-        int capacity = rs.getInt(3);
-        String StartDate = rs.getString(4);
-        Time StartTime = rs.getTime(5);
-        String endDate = rs.getString(6);
-        Time endTime = rs.getTime(7);
-        int minimumRating = rs.getInt(8);
-        int entranceFee = rs.getInt(9);
-        String mentor = rs.getString(10);
 
-        return new Masterclass(id, city, capacity, StartDate, StartTime, endDate, endTime, minimumRating, entranceFee, mentor);
+        int index = 0;
+
+        int id = rs.getInt(++index);
+        String city = rs.getString(++index);
+        int capacity = rs.getInt(++index);
+        String StartDate = rs.getString(++index);
+        Time StartTime = rs.getTime(++index);
+        String endDate = rs.getString(++index);
+        Time endTime = rs.getTime(++index);
+        int entranceFee = rs.getInt(++index);
+
+        int minimumRating = rs.getInt(++index);
+        String mentor = rs.getString(++index);
+
+        return new Masterclass(id, city, capacity, StartDate, StartTime, endDate, endTime, entranceFee, minimumRating,  mentor);
     }
 
     /**
@@ -51,7 +58,7 @@ public class Masterclass extends Event {
     }
 
     public Object[] convertToTableData(){
-        Object[] res = {id, getCity(), capacity, convertSqlDateToString(getStartDate()) + " " + getStartTime(), convertSqlDateToString(getEndDate()) + " " + getEndTime(), minimumRating, getEntranceFee(), mentor};
+        Object[] res = {getId(), getCity(), getCapacity(), convertSqlDateToString(getStartDate()) + " " + getStartTime(), convertSqlDateToString(getEndDate()) + " " + getEndTime(), minimumRating, getEntranceFee(), mentor};
         return res;
     }
 
@@ -82,14 +89,6 @@ public class Masterclass extends Event {
     @Override
     public int hashCode() {
         return Objects.hash(getCity(), getStartDate(), getStartTime(), getEndDate(), getEndTime(), minimumRating, getEntranceFee(), mentor);
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 
     public int getMinimumRating() {
