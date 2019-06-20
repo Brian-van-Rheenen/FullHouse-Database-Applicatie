@@ -1,10 +1,9 @@
 package backend;
 
-import models.Deelname;
+import models.Participant;
 import models.Player;
 import models.Tournament;
 
-import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.Optional;
 public class TournamentProvider {
 
     private DatabaseConnection databaseConnection;
-    private ArrayList<Tournament> tournaments=new ArrayList<>();
 
     private final String Q_ALLTOURNAMENTS =
             "SELECT t.idToernooi                                     AS ID,\n" +
@@ -45,16 +43,28 @@ public class TournamentProvider {
 
 
     public TournamentProvider() {
+        getDBconnection();
+    }
+
+    private void getDBconnection() {
         try {
             databaseConnection = new DatabaseConnection();
-            initTournamentList();
         }catch (SQLException sqle){
             sqle.printStackTrace();
         }
     }
 
-    public ArrayList<Tournament> getTournaments()  {
-       return tournaments;
+    public ArrayList<Tournament> getTournaments() throws SQLException {
+
+        ArrayList <Tournament> tournaments = new ArrayList<>();
+        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLTOURNAMENTS);
+        while(rs.next()){
+            tournaments.add(Tournament.readTournament(rs));
+        }
+
+        addParticipants(tournaments);
+
+        return tournaments;
     }
 
     private ResultSet queryParticipants() throws SQLException{
@@ -62,7 +72,7 @@ public class TournamentProvider {
 
     }
 
-    private void addParticipants() throws SQLException{
+    private void addParticipants(ArrayList <Tournament> tournaments) throws SQLException{
 
 
         ResultSet   rs = queryParticipants();
@@ -70,26 +80,16 @@ public class TournamentProvider {
         while(rs.next()){
             Player player = Player.readPlayerData(rs);
             int tournamentID=rs.getInt(14);
-            boolean betaald = rs.getBoolean(15);
+            boolean paid = rs.getBoolean(15);
             Optional <Tournament> optionalTournament=tournaments.stream().filter(t->t.getId()==tournamentID).findAny();
             if(optionalTournament.isPresent()){
                 Tournament tournament=optionalTournament.get();
-                tournament.getParticipants().add(new Deelname(player, betaald));
+                tournament.getParticipants().add(new Participant(player, paid));
             }else throw new IllegalStateException();
         }
 
     }
 
-    private void initTournamentList()throws SQLException{
-
-        ResultSet rs = databaseConnection.executeQueryAndGetData(Q_ALLTOURNAMENTS);
-        while(rs.next()){
-            tournaments.add(Tournament.readTournament(rs));
-        }
-
-        addParticipants();
-
-    }
 
 
 }

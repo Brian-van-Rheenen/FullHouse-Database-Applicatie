@@ -1,7 +1,7 @@
 package components.dialogs;
 
 
-import models.Deelname;
+import models.Participant;
 import models.Event;
 import models.Player;
 
@@ -80,7 +80,7 @@ public class AddParticipantDialog extends BasicDialog {
         } else {
             Player player = optionalPlayer.get();
 
-            optionalEvent.get().getParticipants().add(new Deelname(player, false));
+            optionalEvent.get().getParticipants().add(new Participant(player, false));
         }
 
     }

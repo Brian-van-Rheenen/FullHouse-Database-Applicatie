@@ -1,6 +1,5 @@
 package components;
 
-import backend.DatabaseConnection;
 import backend.TournamentProvider;
 import components.panels.OverviewPanel;
 import models.*;
@@ -16,7 +15,7 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
     private TournamentProvider tournamentProvider;
     private Tournament focusedToernooi;
-    boolean gezocht = false;
+    boolean isSearchPerformed = false;
     private TablePanel tablePanel;
 
 
@@ -47,12 +46,18 @@ public class ParticipantOverviewPanel extends OverviewPanel {
     protected void createButtons() {
         JButton searchButton = new JButton("zoek toernooi");
 
-        searchButton.addActionListener(e -> searchForEventAndFillTable());
+        searchButton.addActionListener(e -> {
+            try {
+                searchForEventAndFillTable();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        });
         this.addButtonToPanel(searchButton);
 
         JButton filterButton = new JButton("Openstaande Betalingen");
         filterButton.addActionListener(e -> {
-            if (gezocht = true) {
+            if (isSearchPerformed = true) {
 
                 //TODO
             } else {
@@ -65,7 +70,7 @@ public class ParticipantOverviewPanel extends OverviewPanel {
     }
 
 
-    private void searchForEventAndFillTable() {
+    private void searchForEventAndFillTable() throws SQLException {
         DefaultTableModel defaultTableModel = fetchDataModel();
 
         String input = JOptionPane.showInputDialog(this, "Voer de code van het toernooi");
@@ -78,7 +83,7 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
 
         if (optionalToernooi.isPresent()) {
-            gezocht = true;
+            isSearchPerformed = true;
             Tournament toernooi = optionalToernooi.get();
             focusedToernooi = toernooi;
             toernooi.getParticipants().forEach(deelname ->

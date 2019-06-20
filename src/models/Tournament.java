@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class Tournament extends Event {
 
-    private ArrayList<Deelname> participations = new ArrayList<>();
+    private ArrayList<Participant> participations = new ArrayList<>();
     private String theme;
     private Date finalSubmitDate;
     private String entryRestriction;
@@ -74,7 +74,7 @@ public class Tournament extends Event {
      *
      */
     @Deprecated
-    public ArrayList<Deelname> getParticipations() {
+    public ArrayList<Participant> getParticipations() {
         return participations;
     }
 

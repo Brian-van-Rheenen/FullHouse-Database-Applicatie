@@ -17,7 +17,7 @@ public abstract class Event {
     private Date endDate;
     private Time endTime;
     private int entranceFee;
-    private ArrayList<Deelname> participants = new ArrayList<>();
+    private ArrayList<Participant> participants = new ArrayList<>();
 
     public Event(int id, String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
         this.id = id;
@@ -42,7 +42,7 @@ public abstract class Event {
         return new Object[]{city, startDate, startTime, endDate, endTime, entranceFee};
     }
 
-    public ArrayList<Deelname> getParticipants() {
+    public ArrayList<Participant> getParticipants() {
         return participants;
     }
 
