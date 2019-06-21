@@ -43,6 +43,10 @@ public abstract class Event {
         return new Object[]{city, startDate, startTime, endDate, endTime, entranceFee};
     }
 
+    public boolean hasParticipant(Participant participant){
+        return  participants.stream().anyMatch(p->p.getPlayer().getId()==participant.getPlayer().getId());
+    }
+
 
 
     public ArrayList<Participant> getParticipants() {

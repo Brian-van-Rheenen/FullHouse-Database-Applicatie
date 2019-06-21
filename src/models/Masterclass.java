@@ -50,7 +50,7 @@ public class Masterclass extends Event {
 
     @Override
     public boolean isMatchForSearch(String search) {
-        return Integer.toString(getId()).equalsIgnoreCase(search);
+        return Integer.toString(getId()).trim().equalsIgnoreCase(search);
     }
 
     public Object[] convertToTableData(){

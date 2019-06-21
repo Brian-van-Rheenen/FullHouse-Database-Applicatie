@@ -12,8 +12,7 @@ import java.util.Optional;
 
 public class AddParticipantDialog extends BasicDialog {
 
-    private ArrayList<Event> events = new ArrayList<>();
-    private ArrayList<Player> players = new ArrayList<>();
+
 
     private JTextField tournamentCodeField = new JTextField();
     private JTextField playerCodeField = new JTextField();
@@ -31,6 +30,16 @@ public class AddParticipantDialog extends BasicDialog {
         this.setVisible(true);
     }
 
+    public String getInputForEvent(){
+        return tournamentCodeField.getText();
+    }
+
+    public String getInputForPlayer(){
+        return playerCodeField.getText();
+    }
+
+
+
     public void addAllFields() {
 
        super.addAllFields(fields, fieldLabels);
@@ -44,29 +53,8 @@ public class AddParticipantDialog extends BasicDialog {
 
     @Override
     public void handleConfirm() {
-        String inputForEvent = tournamentCodeField.getText();
-        String inputForPLayer = playerCodeField.getText();
 
-
-        Optional<Event> optionalEvent = events
-                .stream()
-                .filter(toernooi -> toernooi.isMatchForSearch(inputForEvent)).findAny();
-
-        Optional<Player> optionalPlayer = players
-                .stream()
-                .filter(player -> Integer.toString(player.getId()).equals(inputForPLayer)).findAny();
-
-        if (!optionalEvent.isPresent()) {
-            JOptionPane.showMessageDialog(this, "Het systeem kon de masterclass/toernooi niet vinden");
-        } else if (!optionalPlayer.isPresent()) {
-            JOptionPane.showMessageDialog(this, "Het systeem kon geen speler vinden met deze code");
-
-        } else {
-            Player player = optionalPlayer.get();
-
-            optionalEvent.get().getParticipants().add(new Participant(player, false));
-        }
-
+        this.dispose();
     }
 
 
