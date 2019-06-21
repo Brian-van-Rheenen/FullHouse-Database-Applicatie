@@ -3,7 +3,6 @@ package models;
 import backend.SqlDateConverter;
 
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Objects;
