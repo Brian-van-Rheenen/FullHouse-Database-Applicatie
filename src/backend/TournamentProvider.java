@@ -207,9 +207,22 @@ public class TournamentProvider extends DatabaseProvider {
         // Set the Event to update
         updateTournamentStatement.setInt(++index, updated.getId());
 
-        updateTournamentStatement.setString(++index, updated.getTheme());
+        if (updated.getTheme().trim().isEmpty()) {
+            updateTournamentStatement.setString(++index, "Regulier");
+            updated.setTheme("Regulier");
+        } else {
+            updateTournamentStatement.setString(++index, updated.getTheme());
+        }
+
         updateTournamentStatement.setDate(++index, updated.getFinalSubmitDate());
-        updateTournamentStatement.setString(++index, updated.getEntryRestriction());
+
+        if (updated.getTheme().trim().isEmpty()) {
+            updateTournamentStatement.setString(++index, "Geen beperking");
+            updated.setEntryRestriction("Geen beperking");
+        } else {
+            updateTournamentStatement.setString(++index, updated.getEntryRestriction());
+        }
+
         // Set the Masterclass to update
         updateTournamentStatement.setInt(++index, updated.getId());
 
