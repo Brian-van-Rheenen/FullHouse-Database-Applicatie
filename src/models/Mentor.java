@@ -26,6 +26,13 @@ public class Mentor {
         this(-1, name, phoneNumber, email, false);
     }
 
+    /**
+     * Attempt to parse a valid {@link Mentor} from the {@link ResultSet}
+     *
+     * @param set the ResultSet to parse
+     * @return A {@link Mentor} with Id set
+     * @throws SQLException When failing to properly parse the {@link Mentor}
+     */
     public static Mentor fromResultSet(ResultSet set) throws SQLException {
 
         int index = 0;
