@@ -76,9 +76,43 @@ public class AddMentorDialog extends BasicDialog {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(this, "Er is een fout opgetreden");
                 }
+            } else {
+                // Update
+                try {
+                    // Fetch updates from the screen
+                    Mentor updatedMentor = fetchUpdatesForMentor(updatingMentor);
+                    provider.updateMentor(updatedMentor);
+
+                    // Update the model
+                    int index = mentors.indexOf(updatedMentor);
+                    if(index == -1) {
+                        // Could not find the model, something went wrong
+                        // Recover by refreshing the entire list
+                        mentors.clear();
+                        mentors.addAll(provider.getAllMentors());
+                    } else {
+                        // Only update the player in the list
+                        mentors.set(index, updatedMentor);
+                    }
+
+                    // Close the screen
+                    this.dispose();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Er zijn foute gegevens ingevoerd!");
+                }
             }
 
         }
+    }
+
+    private Mentor fetchUpdatesForMentor(Mentor updatingMentor) {
+
+        updatingMentor.setName(nameField.getText());
+        updatingMentor.setPhoneNumber(phoneNumberField.getText());
+        updatingMentor.setEmail(emailField.getText());
+
+        return updatingMentor;
     }
 
     private Mentor createNewMentor() {
