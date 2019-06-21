@@ -63,7 +63,7 @@ public class ReportTableDialog extends JDialog{
 
             this.setTitle(title);
             this.setLocationRelativeTo(null);
-            this.setModal(true);
+            this.setModalityType(ModalityType.APPLICATION_MODAL);
             this.setVisible(true);
         }
         catch (SQLException sql) {

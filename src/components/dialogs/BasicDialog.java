@@ -17,7 +17,7 @@ public abstract class BasicDialog extends JDialog {
         this.setLocationRelativeTo(null);
 
         setLayoutAndBorder();
-        this.setModal(true);
+        this.setModalityType(ModalityType.APPLICATION_MODAL);
         this.setResizable(false);
 
         this.setSize(new Dimension(500, 800));
