@@ -1,21 +1,23 @@
 package components;
 
 import backend.MentorProvider;
+import components.dialogs.AddMentorDialog;
 import components.panels.OverviewPanel;
 import components.representation.GenericTableModel;
 import components.representation.RepresentationBuilder;
 import components.representation.Representor;
 import models.Mentor;
 
+import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
 public class MentorOverviewPanel extends OverviewPanel {
 
-    MentorProvider provider;
-    Representor<Mentor> representor;
-    GenericTableModel<Mentor> model;
-    TablePanel tablePanel;
+    private MentorProvider provider;
+    private Representor<Mentor> representor;
+    private GenericTableModel<Mentor> model;
+    private TablePanel tablePanel;
 
     public MentorOverviewPanel() {
         provider = new MentorProvider();
@@ -44,6 +46,10 @@ public class MentorOverviewPanel extends OverviewPanel {
 
     @Override
     protected void createButtons() {
+        JButton addButton = new JButton("Toevoegen");
+        addButton.setPreferredSize(new Dimension(150, 200));
+        addButton.addActionListener(e -> new AddMentorDialog(model));
 
+        addButtonToPanel(addButton);
     }
 }
