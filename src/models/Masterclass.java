@@ -46,15 +46,11 @@ public class Masterclass extends Event {
         return new Masterclass(id, city, capacity, StartDate, StartTime, endDate, endTime, entranceFee, minimumRating,  mentor);
     }
 
-    /**
-     * This method is not used in Masterclass, but the parent requires this method to be implemented.
-     * If, for some reason, someone calls this method, throw an unsupported operation exception.
-     * @param search String to be matched
-     * @throws UnsupportedOperationException
-     */
+
+
     @Override
     public boolean isMatchForSearch(String search) {
-        throw new UnsupportedOperationException();
+        return Integer.toString(getId()).equalsIgnoreCase(search);
     }
 
     public Object[] convertToTableData(){

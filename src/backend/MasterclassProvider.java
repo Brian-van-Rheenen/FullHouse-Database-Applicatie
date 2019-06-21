@@ -1,6 +1,7 @@
 package backend;
 
 import models.Masterclass;
+import models.Participant;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 public class MasterclassProvider extends DatabaseProvider {
 
     //region Queries
+
+
 
     private static final String Q_ALLMASTERCLASSES =
             "SELECT m.idMasterclass AS ID,\n" +
@@ -102,6 +105,16 @@ public class MasterclassProvider extends DatabaseProvider {
         masterclass.setId(getLastInsertId());
 
         return masterclass;
+    }
+
+    public ArrayList <Participant> addParticpants(Masterclass masterclass){
+
+        ArrayList <Participant> res = new ArrayList<>();
+
+
+
+
+        return res;
     }
 
     @SuppressWarnings("Duplicates")

@@ -1,33 +1,40 @@
 package components;
 
+import backend.MasterclassProvider;
+import backend.ParticipantProvider;
 import backend.TournamentProvider;
+import components.dialogs.AddParticipantDialog;
 import components.dialogs.reports.PaymentTableDialog;
 import components.panels.OverviewPanel;
-import models.*;
+import models.Event;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class ParticipantOverviewPanel extends OverviewPanel {
 
 
     private TournamentProvider tournamentProvider;
-    private Tournament focusedTournament;
+    private MasterclassProvider masterclassProvider;
+    private Event focusedEvent;
     boolean isSearchPerformed = false;
     private TablePanel tablePanel;
-
+    private ParticipantProvider participantProvider;
 
     public ParticipantOverviewPanel() {
 
         this.tournamentProvider = new TournamentProvider();
-
+        this.participantProvider = new ParticipantProvider();
+        this.masterclassProvider = new MasterclassProvider();
 
         createButtons();
 
         tablePanel = new TablePanel(fetchDataModel());
+
         this.add(tablePanel, BorderLayout.CENTER);
 
 
@@ -40,85 +47,125 @@ public class ParticipantOverviewPanel extends OverviewPanel {
             res.addColumn(column);
         }
 
+
         return res;
     }
 
     @Override
     protected void createButtons() {
-        JButton searchButton = new JButton("zoek toernooi");
+        JButton searchButton = new JButton("Zoek toernooi");
 
         searchButton.addActionListener(e -> {
-            try {
-                searchForEventAndFillTable();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+
+            searchForEventAndFillTable();
+
         });
         this.addButtonToPanel(searchButton);
 
-        JButton filterButton = new JButton("Openstaande Betalingen");
-        filterButton.addActionListener(e -> {
-            if (isSearchPerformed = true) {
+        JButton filterButton = new JButton("Nog niet betaald");
+        filterButton.addActionListener(e ->
+                showPaymentOverview()
+        );
 
-                PaymentTableDialog paymentTableDialog = new PaymentTableDialog(focusedTournament);
-                if (paymentTableDialog.hasChangedSomething()) {
+        JButton addParticipantButton = new JButton("Nieuwe deelname");
+        addParticipantButton.addActionListener(a -> {
+            AddParticipantDialog addParticpant = new AddParticipantDialog(false);
 
-
-                    try {
-                        tournamentProvider.updatePaymentStatusParticipants(paymentTableDialog.getPaidParticipations());
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
-                    refreshTable();
-                }
-
-            } else {
-                JOptionPane.showMessageDialog(this, "Er is nog geen toernooi ingevoerd om op te zoeken");
-            }
         });
 
         this.addButtonToPanel(filterButton);
 
     }
 
+    private void showPaymentOverview() {
+        try {
+            if (isSearchPerformed = true) {
 
-    private void searchForEventAndFillTable() throws SQLException {
+                PaymentTableDialog paymentTableDialog = new PaymentTableDialog(participantProvider.getPartcipants(focusedEvent));
+                if (paymentTableDialog.hasChangedSomething()) {
 
+                    submitPaidParticipations(paymentTableDialog);
 
-        String input = JOptionPane.showInputDialog(this, "Voer de code van het toernooi in");
-
-        if (input != null) {
-
-            Optional<Tournament> optionalToernooi = tournamentProvider.getTournaments()
-                    .stream()
-                    .filter(event -> event.isMatchForSearch(input)
-                    )
-                    .findAny();
-
-
-            if (optionalToernooi.isPresent()) {
-                isSearchPerformed = true;
-                Tournament toernooi = optionalToernooi.get();
-                focusedTournament = toernooi;
-                refreshTable();
-
+                    refreshAndFillTable();
+                }
 
             } else {
-                JOptionPane.showMessageDialog(this, "Het systeem kon geen toernooi/masterclass vinden met de ingevulde gegevens");
+                JOptionPane.showMessageDialog(this, "Er is nog geen toernooi ingevoerd om op te zoeken");
             }
-        }
-    }
-
-    private void refreshTable() {
-        DefaultTableModel defaultTableModel = fetchDataModel();
-        try {
-            tournamentProvider.participants(focusedTournament).forEach(deelname ->
-                    defaultTableModel.addRow(deelname.getTableFormatData())
-
-            );
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        tablePanel.setModel(defaultTableModel);
+    }
+
+    private void submitPaidParticipations(PaymentTableDialog paymentTableDialog) {
+        try {
+            participantProvider.updatePaymentStatusParticipants(paymentTableDialog.getPaidParticipations(), focusedEvent);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ArrayList<Event> getAllEvents() throws SQLException {
+        ArrayList<Event> events = new ArrayList<>();
+
+        events.addAll(tournamentProvider.getTournaments());
+
+        events.addAll(masterclassProvider.allMasterclasses());
+
+
+        events.forEach(e -> System.out.println(e.getId()));
+        return events;
+
+    }
+
+
+    private void searchForEventAndFillTable() {
+
+
+        String input = JOptionPane.showInputDialog(this, "Voer de code van het event in");
+
+        try {
+            ArrayList<Event> events = getAllEvents();
+
+            if (input != null) {
+
+                Optional<Event> optionalEvent = events
+                        .stream()
+                        .filter(event -> event.isMatchForSearch(input)
+                        )
+                        .findAny();
+
+
+                if (optionalEvent.isPresent()) {
+                    System.out.println("gevondem");
+
+                    isSearchPerformed = true;
+
+                    focusedEvent = optionalEvent.get();
+                    refreshAndFillTable();
+
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "Het systeem kon geen event vinden met de ingevulde data");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void refreshAndFillTable() {
+        try {
+            DefaultTableModel defaultTableModel = fetchDataModel();
+
+            participantProvider.getPartcipants(focusedEvent).forEach(deelname ->
+                    defaultTableModel.addRow(deelname.getTableFormatData())
+
+            );
+
+            tablePanel.setModel(defaultTableModel);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

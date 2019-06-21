@@ -2,9 +2,9 @@ package components.dialogs.reports;
 
 import components.TablePanel;
 import components.dialogs.BasicDialog;
+import models.Event;
 import models.Participant;
 import models.Player;
-import models.Tournament;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,18 +14,16 @@ import java.util.Optional;
 
 public class PaymentTableDialog extends BasicDialog {
 
-    private Tournament toernooi;
-
     private TablePanel tablePanel;
-    private ArrayList<Participant> notPaidParticipations = new ArrayList<>();
+    private ArrayList<Participant> notPaidParticipations;
     private ArrayList<Participant> paidParticipations = new ArrayList<>();
     private boolean changedSomething = false;
 
 
-    public PaymentTableDialog(Tournament tournament) {
+    public PaymentTableDialog(ArrayList <Participant> notPaidParticipations) {
         super(true);
-        this.toernooi = tournament;
-        notPaidParticipations.addAll(tournament.getParticipants());
+        this.notPaidParticipations=notPaidParticipations;
+
 
         tablePanel = new TablePanel(createTableModel());
         this.add(tablePanel);
@@ -45,7 +43,7 @@ public class PaymentTableDialog extends BasicDialog {
             if (!tablePanel.getTable().getSelectionModel().isSelectionEmpty()) {
                 int id = (Integer) tablePanel.getModel().getValueAt(tablePanel.getSelectedRow(), 0);
 
-                Optional<Participant> optionalParticipant = toernooi.getParticipants()
+                Optional<Participant> optionalParticipant = notPaidParticipations
                         .stream()
                         .filter(participant -> participant.getPlayer().getId() == id).findAny();
 
@@ -89,9 +87,9 @@ public class PaymentTableDialog extends BasicDialog {
         Arrays.stream(coloumnNames).forEach(defaultTableModel::addColumn);
 
 
-        for (Participant deelname : toernooi.getParticipants()) {
-            if (!deelname.hasPaid()) {
-                Player player = deelname.getPlayer();
+        for (Participant participant :notPaidParticipations) {
+            if (!participant.hasPaid()) {
+                Player player = participant.getPlayer();
 
                 Object[] data = new Object[]{player.getId(), player.getName(), player.getTelephoneNR(), player.getAddress().getZipCode()};
                 defaultTableModel.addRow(data);
@@ -106,8 +104,4 @@ public class PaymentTableDialog extends BasicDialog {
 
     }
 
-
-    public ArrayList<Participant> getNotPaidParticipations() {
-        return notPaidParticipations;
-    }
 }

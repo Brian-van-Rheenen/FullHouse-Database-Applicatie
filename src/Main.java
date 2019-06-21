@@ -1,3 +1,5 @@
+import components.dialogs.AddParticipantDialog;
+
 /**
  * Een database applicatie voor het fictieve bedrijf FullHouse.
  *
@@ -8,6 +10,7 @@
 
 public class Main {
     public static void main(String[] args) {
+
         new Application();
     }
 }

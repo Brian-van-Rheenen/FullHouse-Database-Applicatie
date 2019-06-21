@@ -14,8 +14,6 @@ import java.util.Optional;
 
 public class TournamentProvider extends DatabaseProvider {
 
-    DatabaseConnection databaseConnection;
-
     //region Queries
 
     private final String Q_ALLTOURNAMENTS =
@@ -124,27 +122,9 @@ public class TournamentProvider extends DatabaseProvider {
     }
 
 
-    public void updatePaymentStatusParticipants(ArrayList<Participant> paidParticipations) throws SQLException {
-        for (Participant p : paidParticipations) {
-            PreparedStatement preparedStatement = getDatabaseConnection().prepareStatement(UPDATE_PAYMENT);
-            preparedStatement.setInt(1, p.getPlayer().getId());
-            preparedStatement.executeUpdate();
-        }
-    }
 
-    public ArrayList<Participant> participants(Tournament tournament) throws SQLException {
-        ArrayList<Participant> res = new ArrayList<>();
-        PreparedStatement preparedStatement = getDatabaseConnection().prepareStatement(Q_PARTCIPANTS_TOURNAMENT);
-        preparedStatement.setInt(1, tournament.getId());
-        ResultSet rs = preparedStatement.executeQuery();
-        while (rs.next()) {
-            Player player = Player.readPlayerData(rs);
-            int tournamentID = rs.getInt(14);
-            boolean paid = rs.getBoolean(15);
-            res.add(new Participant(player, paid));
-        }
-        return res;
-    }
+
+
 
 
     /**

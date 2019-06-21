@@ -3,6 +3,7 @@ package models;
 import backend.SqlDateConverter;
 
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -41,6 +42,8 @@ public abstract class Event {
     public Object[] getBasicFieldsEvent() {
         return new Object[]{city, startDate, startTime, endDate, endTime, entranceFee};
     }
+
+
 
     public ArrayList<Participant> getParticipants() {
         return participants;
