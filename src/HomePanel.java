@@ -6,7 +6,6 @@ import components.TournamentOverviewPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.sql.SQLException;
 
 
 /**
@@ -15,7 +14,7 @@ import java.sql.SQLException;
  */
 public class HomePanel extends JPanel {
 
-    public HomePanel() throws SQLException {
+    public HomePanel() {
         super(new GridLayout(1, 1));
 
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -36,10 +35,14 @@ public class HomePanel extends JPanel {
                 "Lijst van masterclasses");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
+        JComponent wellKnownPlayers = createPanel("Bekende speler panel");
+        tabbedPane.addTab("Bekende spelers", null, wellKnownPlayers,
+                "Lijst van bekende spelers");
+        tabbedPane.setMnemonicAt(2, KeyEvent.VK_4);
 
         tabbedPane.addTab("Deelnames", null, new ParticipantOverviewPanel(),
                 "Overzicht van deelnames");
-        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+        tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
 
         add(tabbedPane);
 

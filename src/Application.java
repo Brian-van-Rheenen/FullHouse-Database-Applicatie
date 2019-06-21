@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.sql.SQLException;
 
 public class Application {
 
@@ -19,11 +18,7 @@ public class Application {
             window.setTitle("FullHouse Database Applicatie");
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            try {
-                window.add(new HomePanel(), BorderLayout.CENTER);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            window.add(new HomePanel(), BorderLayout.CENTER);
             window.setVisible(true);
         });
     }
