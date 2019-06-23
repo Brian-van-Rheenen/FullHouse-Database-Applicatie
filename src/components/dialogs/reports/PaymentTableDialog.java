@@ -82,7 +82,12 @@ public class PaymentTableDialog extends BasicDialog {
     }
 
     private DefaultTableModel createTableModel() {
-        DefaultTableModel defaultTableModel = new DefaultTableModel();
+        DefaultTableModel defaultTableModel = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
 
         Object[] coloumnNames = {"ID", "Naam", "Telefoonnummer", "Postcode"};
@@ -93,7 +98,8 @@ public class PaymentTableDialog extends BasicDialog {
             if (!participant.hasPaid()) {
                 Player player = participant.getPlayer();
 
-                Object[] data = new Object[]{player.getId(), player.getName(), player.getTelephoneNR(), player.getAddress().getZipCode()};
+                Object[] data = new Object[]{player.getId(), player.getName(), player.getTelephoneNR()
+                        , player.getAddress().getZipCode()};
                 defaultTableModel.addRow(data);
             }
         }

@@ -44,7 +44,7 @@ public class ParticipantProvider extends DatabaseProvider {
         return  preparedStatement.execute();
     }
 
-    public ArrayList<Participant> addParticipants(Event event) throws SQLException {
+    public void addParticipants(Event event) throws SQLException {
 
         ArrayList <Participant> participants = new ArrayList<>();
 
@@ -59,8 +59,6 @@ public class ParticipantProvider extends DatabaseProvider {
 
         event.getParticipants().clear();
         event.getParticipants().addAll(participants);
-
-        return participants;
 
     }
 

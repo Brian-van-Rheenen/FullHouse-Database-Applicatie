@@ -44,7 +44,7 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
     @Override
     protected void createButtons() {
-        JButton searchButton = new JButton("Zoek toernooi");
+        JButton searchButton = new JButton("Zoek Event");
 
         searchButton.addActionListener(e -> {
 
@@ -143,7 +143,6 @@ public class ParticipantOverviewPanel extends OverviewPanel {
         events.addAll(masterclassProvider.allMasterclasses());
 
 
-        events.forEach(e -> System.out.println(e.getId()));
         return events;
     }
 
@@ -159,7 +158,6 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
 
                 if (optionalEvent.isPresent()) {
-                    System.out.println("gevondem");
 
                     isSearchPerformed = true;
 
@@ -167,7 +165,6 @@ public class ParticipantOverviewPanel extends OverviewPanel {
                     participantProvider.addParticipants(focusedEvent);
 
                     refreshAndFillTable();
-
 
                 } else {
                     JOptionPane.showMessageDialog(this, "Het systeem kon geen event vinden met de ingevulde data.");
@@ -201,7 +198,7 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
     private DefaultTableModel fetchDataModel() {
         DefaultTableModel res = new DefaultTableModel();
-        String[] columns = {"ID", "Naam", "Betaald", "Postcode"};
+        String[] columns = {"ID", "Naam", "Betaald", "Postcode", "Rating"};
         
         for (String column : columns) {
             res.addColumn(column);

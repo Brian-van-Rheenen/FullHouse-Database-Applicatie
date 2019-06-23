@@ -38,7 +38,7 @@ public class Tournament extends Event {
     }
 
     private boolean matchesID(String input) {
-        if (input.matches("^[0-9]*$")) {
+        if (!input.isEmpty() &&input.matches("^[0-9]*$")) {
             return Integer.parseInt(input) == this.getId();
         } else return false;
     }

@@ -15,14 +15,13 @@ public class Participant {
     }
 
     public Object [] getTableFormatData(){
-        System.out.println(player.getName());
 
         String hasPaidString="Nee";
         if(hasPaid){
             hasPaidString="Ja";
         }
 
-        return new Object[]{player.getId(), player.getName(),hasPaidString, player.getAddress().getZipCode()};
+        return new Object[]{player.getId(), player.getName(),hasPaidString, player.getAddress().getZipCode(), player.getRating()};
     }
 
     public void setHasPaid(boolean input){
