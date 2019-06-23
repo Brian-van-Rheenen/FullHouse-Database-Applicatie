@@ -135,31 +135,14 @@ public class AddPlayerDialog extends BasicDialog {
         Gender gender = (Gender) genderBox.getSelectedItem();
         String email = emailTextField.getText();
 
-        Date dateOfBirth = new Date();
-
-        try {
-            dateOfBirth = new SimpleDateFormat("dd-MM-yyyy").parse(dob.getText());
-        } catch (ParseException e) {
-            new ExceptionDialog("Het is niet gelukt om het volgende te parsen: " + dob.getText());
-        }
-
         String city = this.cityField.getText();
-        return new Player(new Address(city, street, houseNr, zip), name, gender, dateOfBirth, telephone, email, 0);
+        return new Player(new Address(city, street, houseNr, zip), name, gender, convertStringToJavaDate(dob.getText()), telephone, email, 0);
     }
 
     private Player fetchUpdatesForPlayer(Player player) {
-
-        Date dateOfBirth = new Date();
-
-        try {
-            dateOfBirth = new SimpleDateFormat("dd-MM-yyyy").parse(dob.getText());
-        } catch (ParseException e) {
-            new ExceptionDialog("Het is niet gelukt om het volgende te parsen: " + dob.getText());
-        }
-
         player.setName(nameField.getText());
         player.setGender((Gender) genderBox.getSelectedItem());
-        player.setDob(Player.convertJavaDateToSqlDate(dateOfBirth));
+        player.setDob(Player.convertJavaDateToSqlDate(convertStringToJavaDate(dob.getText())));
 
         player.getAddress().setCity(cityField.getText());
         player.getAddress().setStreet(streetField.getText());
@@ -202,5 +185,17 @@ public class AddPlayerDialog extends BasicDialog {
                 "Emailadres"};
 
         super.addAllFields(fields, fieldnames);
+    }
+
+    public Date convertStringToJavaDate(String date) {
+        Date dateOfBirth = new Date();
+
+        try {
+            dateOfBirth = new SimpleDateFormat("dd-MM-yyyy").parse(dob.getText());
+        } catch (ParseException e) {
+            new ExceptionDialog("Het is niet gelukt om het volgende te parsen: " + dob.getText());
+        }
+
+        return dateOfBirth;
     }
 }
