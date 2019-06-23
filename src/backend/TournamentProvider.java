@@ -90,7 +90,7 @@ public class TournamentProvider extends DatabaseProvider {
         ArrayList<Tournament> tournaments = new ArrayList<>();
         ResultSet rs = DatabaseConnection.executeQueryAndGetData(Q_ALLTOURNAMENTS);
         while (rs.next()) {
-            tournaments.add(Tournament.readTournamentData(rs));
+            tournaments.add(Tournament.fromResultSet(rs));
         }
 
         addParticipants(tournaments);
@@ -205,7 +205,7 @@ public class TournamentProvider extends DatabaseProvider {
         ArrayList<Tournament> res = new ArrayList<>();
 
         while (rs.next()) {
-            res.add(Tournament.readTournamentData(rs));
+            res.add(Tournament.fromResultSet(rs));
         }
 
         return res;

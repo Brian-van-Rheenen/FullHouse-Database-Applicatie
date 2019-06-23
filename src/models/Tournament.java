@@ -60,8 +60,13 @@ public class Tournament extends Event {
         }else System.out.println("found nothing");
     }
 
-
-    public static Tournament readTournamentData(ResultSet resultSet) throws SQLException {
+    /**
+     * Parse a {@link Tournament} from the given {@link ResultSet}
+     * @param resultSet the ResultSet to parse
+     * @return a Fully constructed {@link Tournament}
+     * @throws SQLException failed to parse the {@link ResultSet} to an {@link Tournament}
+     */
+    public static Tournament fromResultSet(ResultSet resultSet) throws SQLException {
 
         int index = 0;
 
