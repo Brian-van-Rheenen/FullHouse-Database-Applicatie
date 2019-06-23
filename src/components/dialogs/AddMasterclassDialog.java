@@ -2,6 +2,7 @@ package components.dialogs;
 
 import backend.MasterclassProvider;
 import backend.SqlDateConverter;
+import components.dialogs.exceptions.ExceptionDialog;
 import models.Masterclass;
 
 import javax.swing.*;
@@ -90,7 +91,6 @@ public class AddMasterclassDialog extends BasicDialog {
         }
 
         if (!this.isForChange()) {
-
             try {
                 // Attempt to add to the database, get the updated masterclass with id back
                 Masterclass newMasterclass = provider.addMasterclass(createNewMasterclass());
@@ -99,8 +99,7 @@ public class AddMasterclassDialog extends BasicDialog {
                 JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
                 this.dispose();
             } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Er is een fout opgetreden");
+                new ExceptionDialog("Er is een fout opgetreden en het is niet gelukt om de Masterclass toe te voegen.");
             }
         } else {
             // Update the masterclass in the database
@@ -124,8 +123,7 @@ public class AddMasterclassDialog extends BasicDialog {
                 // Close the screen
                 this.dispose();
             } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Er zijn foute gegevens ingevoerd!");
+                new ExceptionDialog("Er is een fout opgetreden en het is niet gelukt om de Masterclass aan te passen.");
             }
         }
     }
@@ -192,7 +190,7 @@ public class AddMasterclassDialog extends BasicDialog {
             ArrayList<String> locationsList = provider.getAllLocations();
             return locationsList.toArray(new String[locationsList.size()]);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het ophalen van alle locaties.\nProbeer het opnieuw.");
         }
 
         return null;
@@ -203,7 +201,7 @@ public class AddMasterclassDialog extends BasicDialog {
             ArrayList<String> famousPlayersList = provider.getAllFamousPlayers();
             return famousPlayersList.toArray(new String[famousPlayersList.size()]);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het ophalen van alle bekende spelers.\nProbeer het opnieuw.");
         }
 
         return null;

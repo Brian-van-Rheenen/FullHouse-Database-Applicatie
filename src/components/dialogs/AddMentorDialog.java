@@ -1,6 +1,7 @@
 package components.dialogs;
 
 import backend.MentorProvider;
+import components.dialogs.exceptions.ExceptionDialog;
 import models.Mentor;
 
 import javax.swing.*;
@@ -64,7 +65,6 @@ public class AddMentorDialog extends BasicDialog {
 
             if(!isForChange()) {
                 // Create
-
                 try {
                     // Attempt to add to the database, get the updated mentor with id back
                     Mentor newMentor = provider.addMentor(createNewMentor());
@@ -73,8 +73,7 @@ public class AddMentorDialog extends BasicDialog {
                     JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
                     this.dispose();
                 } catch (SQLException e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Er is een fout opgetreden");
+                    new ExceptionDialog("Er is een fout opgetreden en het is niet gelukt om de mentor toe te voegen.");
                 }
             } else {
                 // Update
@@ -98,8 +97,7 @@ public class AddMentorDialog extends BasicDialog {
                     // Close the screen
                     this.dispose();
                 } catch (SQLException e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Er zijn foute gegevens ingevoerd!");
+                    new ExceptionDialog("Er is een fout opgetreden en het is niet gelukt om de mentor aan te passen.");
                 }
             }
 

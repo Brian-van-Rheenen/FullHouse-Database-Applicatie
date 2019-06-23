@@ -46,8 +46,6 @@ public abstract class Event {
         return  participants.stream().anyMatch(p->p.getPlayer().getId()==participant.getPlayer().getId());
     }
 
-
-
     public ArrayList<Participant> getParticipants() {
         return participants;
     }

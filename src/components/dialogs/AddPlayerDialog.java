@@ -1,6 +1,7 @@
 package components.dialogs;
 
 import backend.PlayerProvider;
+import components.dialogs.exceptions.ExceptionDialog;
 import models.Address;
 import models.Gender;
 import models.Player;
@@ -87,7 +88,6 @@ public class AddPlayerDialog extends BasicDialog {
 
         if (!this.isForChange()) {
             // Create
-
             try {
                 // Attempt to add to the database, get the updated player with id back
                 Player newPlayer = provider.addPlayer(createNewPlayer());
@@ -96,8 +96,7 @@ public class AddPlayerDialog extends BasicDialog {
                 JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
                 this.dispose();
             } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Er is een fout opgetreden");
+                new ExceptionDialog("Er is een fout opgetreden en het is niet gelukt om de speler toe te voegen.");
             }
         } else {
             // Update the player in the database
@@ -121,8 +120,7 @@ public class AddPlayerDialog extends BasicDialog {
                 // Close the screen
                 this.dispose();
             } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Er zijn foute gegevens ingevoerd!");
+                new ExceptionDialog("Er is een fout opgetreden en het is niet gelukt om de speler aan te passen.");
             }
         }
     }
@@ -142,7 +140,7 @@ public class AddPlayerDialog extends BasicDialog {
         try {
             dateOfBirth = new SimpleDateFormat("dd-MM-yyyy").parse(dob.getText());
         } catch (ParseException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Het is niet gelukt om het volgende te parsen: " + dob.getText());
         }
 
         String city = this.cityField.getText();
@@ -156,7 +154,7 @@ public class AddPlayerDialog extends BasicDialog {
         try {
             dateOfBirth = new SimpleDateFormat("dd-MM-yyyy").parse(dob.getText());
         } catch (ParseException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Het is niet gelukt om het volgende te parsen: " + dob.getText());
         }
 
         player.setName(nameField.getText());

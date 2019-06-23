@@ -1,5 +1,7 @@
 package components.dialogs.reports;
 
+import components.dialogs.exceptions.ExceptionDialog;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -67,8 +69,7 @@ public class ReportTableDialog extends JDialog{
             this.setVisible(true);
         }
         catch (SQLException sql) {
-            // handle SQL error
-            sql.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het ophalen van de gefiltreerde spelers.\nProbeer het opnieuw.");
         }
     }
 }

@@ -4,6 +4,7 @@ import backend.PlayerProvider;
 import components.dialogs.AddPlayerDialog;
 import components.dialogs.DeleteDialog;
 import components.dialogs.NoSelectionDialog;
+import components.dialogs.exceptions.ExceptionDialog;
 import components.panels.OverviewPanel;
 import components.representation.GenericTableModel;
 import components.representation.RepresentationBuilder;
@@ -56,7 +57,8 @@ public class PlayerOverviewPanel extends OverviewPanel {
             // Fill the table with SQL data
             model = new GenericTableModel<>(playerProvider.allPlayers(), playerRepresentor);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het ophalen van alle spelers.");
+
             // Failed to download, replace it with an empty list
             model = new GenericTableModel<>(playerRepresentor);
         }
@@ -115,13 +117,7 @@ public class PlayerOverviewPanel extends OverviewPanel {
                             model.remove(playerIndex);
                             tablePanel.clearSelection();
                         } catch (SQLException exception) {
-                            exception.printStackTrace();
-                            JOptionPane.showMessageDialog(
-                                    this,
-                                    "Er is iets fout gegaan met het verwijderen van de speler. Probeer het opnieuw.",
-                                    "Foutmelding",
-                                    JOptionPane.ERROR_MESSAGE
-                            );
+                            new ExceptionDialog("Er is een fout opgetreden bij het verwijderen van de speler.\nProbeer het opnieuw.");
                         }
                     }
                 } else {

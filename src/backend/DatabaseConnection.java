@@ -1,5 +1,7 @@
 package backend;
 
+import components.dialogs.exceptions.ExceptionDialog;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,10 +46,14 @@ public class DatabaseConnection {
                 connection = DriverManager.getConnection(connectionString, prop);
             }
             catch (SQLException sql) {
-                sql.printStackTrace();
+                // If the connection fails, show an error message and stop the program.
+                new ExceptionDialog("De database gegevens zijn niet correct of de server van de database is offline.\nProbeer het opnieuw.");
+                System.exit(1);
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            // If the system cannot find the database properties file, show an error message and stop the program.
+            new ExceptionDialog("Het systeem kan het bestand met de database gegevens niet vinden.\n\nControleer of het pad en de bestandsnaam juist zijn opgegeven.");
+            System.exit(1);
         }
 
         return connection;

@@ -2,6 +2,7 @@ package components.dialogs;
 
 import backend.SqlDateConverter;
 import backend.TournamentProvider;
+import components.dialogs.exceptions.ExceptionDialog;
 import components.representation.GenericTableModel;
 import models.Masterclass;
 import models.Tournament;
@@ -87,7 +88,6 @@ public class AddTournamentDialog extends BasicDialog {
         }
 
         if (!this.isForChange()) {
-
             try {
                 // Attempt to add to the database, get the updated tournament with id back
                 Tournament newTournament = provider.addTournament(createNewTournament());
@@ -96,8 +96,7 @@ public class AddTournamentDialog extends BasicDialog {
                 JOptionPane.showMessageDialog(this, "De gegevens zijn opgeslagen.");
                 this.dispose();
             } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Er is een fout opgetreden");
+                new ExceptionDialog("Er is een fout opgetreden en het is niet gelukt om het toernooi toe te voegen.");
             }
         } else {
             // Update the tournament in the database
@@ -121,8 +120,7 @@ public class AddTournamentDialog extends BasicDialog {
                 // Close the screen
                 this.dispose();
             } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Er zijn foute gegevens ingevoerd!");
+                new ExceptionDialog("Er is een fout opgetreden en het is niet gelukt om het toernooi aan te passen.");
             }
         }
 
@@ -210,7 +208,7 @@ public class AddTournamentDialog extends BasicDialog {
             ArrayList<String> locationsList = provider.getAllLocations();
             return locationsList.toArray(new String[locationsList.size()]);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het ophalen van alle locaties.\nProbeer het opnieuw.");
         }
 
         return null;

@@ -2,6 +2,7 @@ package components;
 
 import backend.MentorProvider;
 import components.dialogs.*;
+import components.dialogs.exceptions.ExceptionDialog;
 import components.panels.OverviewPanel;
 import components.representation.*;
 import models.Mentor;
@@ -38,7 +39,8 @@ public class MentorOverviewPanel extends OverviewPanel {
         try {
             model = new GenericTableModel<>(provider.getAllMentors(), representor);
         } catch (SQLException exception) {
-            exception.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het ophalen van alle bekende spelers.");
+
             model = new GenericTableModel<>(representor);
         }
     }
@@ -76,7 +78,7 @@ public class MentorOverviewPanel extends OverviewPanel {
         deleteButton.setPreferredSize(new Dimension(150, 200));
         deleteButton.addActionListener(e -> {
             if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
-                new NoSelectionDialog("persoon");
+                new NoSelectionDialog("bekende speler");
             } else {
                 int mentorId = (Integer) model.getValueAt(tablePanel.getSelectedRow(), 0);
                 Optional<Mentor> possibleMentor = findPlayerInList(mentorId);
@@ -95,13 +97,7 @@ public class MentorOverviewPanel extends OverviewPanel {
                             model.set(mentorIndex, provider.getMentorById(mentorId));
                             tablePanel.clearSelection();
                         } catch (SQLException exception) {
-                            exception.printStackTrace();
-                            JOptionPane.showMessageDialog(
-                                    this,
-                                    "Er is iets fout gegaan met het verwijderen van de bekende speler. Probeer het opnieuw.",
-                                    "Foutmelding",
-                                    JOptionPane.ERROR_MESSAGE
-                            );
+                            new ExceptionDialog("Er is een fout opgetreden bij het verwijderen van de bekende speler.\nProbeer het opnieuw.");
                         }
                     }
                 } else {

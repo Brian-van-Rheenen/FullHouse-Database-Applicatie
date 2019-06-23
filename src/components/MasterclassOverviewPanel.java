@@ -3,6 +3,7 @@ package components;
 import backend.MasterclassProvider;
 import components.dialogs.AddMasterclassDialog;
 import components.dialogs.NoSelectionDialog;
+import components.dialogs.exceptions.ExceptionDialog;
 import components.dialogs.reports.MasterclassFilterPlayerDialog;
 import components.panels.OverviewPanel;
 import components.representation.GenericTableModel;
@@ -54,7 +55,8 @@ public class MasterclassOverviewPanel extends OverviewPanel {
             // Fill the table with SQL data
             model = new GenericTableModel<>(masterclassProvider.allMasterclasses(), masterclassRepresentor);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het ophalen van alle masterclasses.");
+
             // Failed to download, replace it with an empty list
             model = new GenericTableModel<>(masterclassRepresentor);
         }

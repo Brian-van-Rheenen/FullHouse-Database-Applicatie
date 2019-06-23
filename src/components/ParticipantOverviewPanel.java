@@ -5,6 +5,7 @@ import backend.ParticipantProvider;
 import backend.PlayerProvider;
 import backend.TournamentProvider;
 import components.dialogs.AddParticipantDialog;
+import components.dialogs.exceptions.ExceptionDialog;
 import components.dialogs.reports.PaymentTableDialog;
 import components.panels.OverviewPanel;
 import models.Event;
@@ -20,7 +21,6 @@ import java.util.Optional;
 
 public class ParticipantOverviewPanel extends OverviewPanel {
 
-
     private TournamentProvider tournamentProvider;
     private MasterclassProvider masterclassProvider;
     private PlayerProvider playerProvider;
@@ -30,7 +30,6 @@ public class ParticipantOverviewPanel extends OverviewPanel {
     private ParticipantProvider participantProvider;
 
     public ParticipantOverviewPanel() {
-
         this.tournamentProvider = new TournamentProvider();
         this.participantProvider = new ParticipantProvider();
         this.masterclassProvider = new MasterclassProvider();
@@ -41,8 +40,6 @@ public class ParticipantOverviewPanel extends OverviewPanel {
         tablePanel = new TablePanel(fetchDataModel());
 
         this.add(tablePanel, BorderLayout.CENTER);
-
-
     }
 
     @Override
@@ -71,7 +68,6 @@ public class ParticipantOverviewPanel extends OverviewPanel {
         this.addButtonToPanel(addParticipantButton);
 
         this.addButtonToPanel(filterButton);
-
     }
 
     private void checkAndSubmitNewParticipant() {
@@ -79,7 +75,6 @@ public class ParticipantOverviewPanel extends OverviewPanel {
             AddParticipantDialog addParticipantDialog = new AddParticipantDialog(false);
 
             Optional<Event> optionalEvent = searchEvents(addParticipantDialog.getInputForEvent(), getAllEvents());
-
 
             Optional<Player> optionalPlayer = playerProvider
                     .allPlayers()
@@ -105,7 +100,7 @@ public class ParticipantOverviewPanel extends OverviewPanel {
             }else JOptionPane.showMessageDialog(this, "Het systeem kon geen speler/event vinden met deze code");
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het toevoegen van de deelnemer.\nProbeer het opnieuw.");
         }
     }
 
@@ -118,28 +113,25 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
 
     private void showPaymentOverview() {
+        if (focusedEvent!=null) {
+            PaymentTableDialog paymentTableDialog = new PaymentTableDialog(notPaidList());
+            if (paymentTableDialog.hasChangedSomething()) {
 
-            if (focusedEvent!=null) {
+                submitPaidParticipations(paymentTableDialog);
 
-                PaymentTableDialog paymentTableDialog = new PaymentTableDialog(notPaidList());
-                if (paymentTableDialog.hasChangedSomething()) {
-
-                    submitPaidParticipations(paymentTableDialog);
-
-                    refreshAndFillTable();
-                }
-
-            } else {
-                JOptionPane.showMessageDialog(this, "Er is nog geen toernooi ingevoerd om op te zoeken");
+                refreshAndFillTable();
             }
 
+        } else {
+            JOptionPane.showMessageDialog(this, "Er is nog geen toernooi ingevoerd om op te zoeken");
+        }
     }
 
     private void submitPaidParticipations(PaymentTableDialog paymentTableDialog) {
         try {
             participantProvider.updatePaymentStatusParticipants(paymentTableDialog.getPaidParticipations(), focusedEvent);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het aanpassen van de status van betaling.\nProbeer het opnieuw.");
         }
     }
 
@@ -153,13 +145,9 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
         events.forEach(e -> System.out.println(e.getId()));
         return events;
-
     }
 
-
     private void searchForEventAndFillTable() {
-
-
         String input = JOptionPane.showInputDialog(this, "Voer de code van het event in");
 
         try {
@@ -182,11 +170,11 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
 
                 } else {
-                    JOptionPane.showMessageDialog(this, "Het systeem kon geen event vinden met de ingevulde data");
+                    JOptionPane.showMessageDialog(this, "Het systeem kon geen event vinden met de ingevulde data.");
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het opzoeken van het event.\nProbeer het opnieuw.");
         }
     }
 
@@ -201,25 +189,23 @@ public class ParticipantOverviewPanel extends OverviewPanel {
     }
 
     private void refreshAndFillTable() {
+        DefaultTableModel defaultTableModel = fetchDataModel();
 
-            DefaultTableModel defaultTableModel = fetchDataModel();
+        focusedEvent.getParticipants().forEach(deelname ->
+                defaultTableModel.addRow(deelname.getTableFormatData())
 
-            focusedEvent.getParticipants().forEach(deelname ->
-                    defaultTableModel.addRow(deelname.getTableFormatData())
+        );
 
-            );
-
-            tablePanel.setModel(defaultTableModel);
-
+        tablePanel.setModel(defaultTableModel);
     }
 
     private DefaultTableModel fetchDataModel() {
         DefaultTableModel res = new DefaultTableModel();
         String[] columns = {"ID", "Naam", "Betaald", "Postcode"};
+        
         for (String column : columns) {
             res.addColumn(column);
         }
-
 
         return res;
     }

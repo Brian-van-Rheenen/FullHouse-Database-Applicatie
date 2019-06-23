@@ -4,6 +4,7 @@ import backend.TournamentProvider;
 import components.dialogs.AddMasterclassDialog;
 import components.dialogs.AddTournamentDialog;
 import components.dialogs.NoSelectionDialog;
+import components.dialogs.exceptions.ExceptionDialog;
 import components.panels.OverviewPanel;
 import components.representation.GenericTableModel;
 import components.representation.RepresentationBuilder;
@@ -54,7 +55,8 @@ public class TournamentOverviewPanel extends OverviewPanel {
             // Fill the table with SQL data
             model = new GenericTableModel<>(tournamentProvider.getTournaments(), tournamentRepresentor);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new ExceptionDialog("Er is een fout opgetreden bij het ophalen van alle toernooien.\nProbeer het opnieuw.");
+
             // Failed to download, replace it with an empty list
             model = new GenericTableModel<>(tournamentRepresentor);
         }
