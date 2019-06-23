@@ -1,17 +1,13 @@
 package components;
 
+import backend.SqlDateConverter;
 import backend.TournamentProvider;
-import components.dialogs.AddMasterclassDialog;
 import components.dialogs.AddTournamentDialog;
 import components.dialogs.NoSelectionDialog;
 import components.dialogs.exceptions.ExceptionDialog;
 import components.panels.OverviewPanel;
-import components.representation.GenericTableModel;
-import components.representation.RepresentationBuilder;
-import components.representation.Representor;
-import models.Masterclass;
+import components.representation.*;
 import models.Tournament;
-import backend.SqlDateConverter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,7 +30,8 @@ public class TournamentOverviewPanel extends OverviewPanel {
                 .addColumn("Capaciteit"              , Tournament::getCapacity)
                 .addColumn("Begintijd"               , tournament -> SqlDateConverter.convertSqlDateToString(tournament.getStartDate()) + " " + tournament.getStartTime())
                 .addColumn("Eindtijd"                , tournament -> SqlDateConverter.convertSqlDateToString(tournament.getEndDate()) + " " + tournament.getEndTime())
-                .addColumn("Kosten"                  , Tournament::getEntranceFee)
+                .addColumn("Entreekosten"            , Tournament::getEntranceFee)
+                .addColumn("Totale inleggeld"        , Tournament::getTotalDeposit)
                 .addColumn("Thema"                   , Tournament::getTheme)
                 .addColumn("Uiterste inschrijfdatum" , Tournament::getFinalSubmitDate)
                 .addColumn("Toegangsbeperking"       , Tournament::getEntryRestriction)
@@ -55,6 +52,7 @@ public class TournamentOverviewPanel extends OverviewPanel {
             // Fill the table with SQL data
             model = new GenericTableModel<>(tournamentProvider.getTournaments(), tournamentRepresentor);
         } catch (SQLException e) {
+            e.printStackTrace();
             new ExceptionDialog("Er is een fout opgetreden bij het ophalen van alle toernooien.\nProbeer het opnieuw.");
 
             // Failed to download, replace it with an empty list

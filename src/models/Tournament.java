@@ -2,10 +2,7 @@ package models;
 
 import backend.SqlDateConverter;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Date;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -13,21 +10,31 @@ public class Tournament extends Event {
 
     private ArrayList<Participant> participations = new ArrayList<>();
     private String theme;
+    private int totalDeposit;
     private Date finalSubmitDate;
     private String entryRestriction;
 
-    public Tournament(int id, String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee, String theme, String finalSubmitDate, String entryRestriction) {
+    /**
+     * Constructor for constructing a database entry
+     */
+    private Tournament(int id, String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee, String theme, int totalDeposit, String finalSubmitDate, String entryRestriction) {
         super(id, city, capacity, startDate, startTime, endDate, endTime, entranceFee);
 
         this.theme = theme;
+        this.totalDeposit = totalDeposit;
         this.finalSubmitDate = SqlDateConverter.convertStringToSqlDate(finalSubmitDate);
         this.entryRestriction = entryRestriction;
     }
 
+    /**
+     * Create a new Tournament
+     */
     public Tournament(String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee, String theme, String finalSubmitDate, String entryRestriction) {
         super(city, capacity, startDate, startTime, endDate, endTime, entranceFee);
 
         this.theme = theme;
+        // A new tournament has no deposits
+        this.totalDeposit = 0;
         this.finalSubmitDate = SqlDateConverter.convertStringToSqlDate(finalSubmitDate);
         this.entryRestriction = entryRestriction;
     }
@@ -67,11 +74,12 @@ public class Tournament extends Event {
         Time endTime = resultSet.getTime(++index);
         int entranceFee = resultSet.getInt(++index);
 
-        String theme = resultSet.getString(++index);
-        String finalSubmitDate = resultSet.getString(++index);
+        String theme            = resultSet.getString(++index);
+        int totalDeposit        = resultSet.getInt(++index);
+        String finalSubmitDate  = resultSet.getString(++index);
         String entryRestriction = resultSet.getString(++index);
 
-        return new Tournament(id, city, capacity, startDate, startTime, endDate, endTime, entranceFee, theme, finalSubmitDate, entryRestriction);
+        return new Tournament(id, city, capacity, startDate, startTime, endDate, endTime, entranceFee, theme, totalDeposit, finalSubmitDate, entryRestriction);
     }
 
     @Override
@@ -115,5 +123,7 @@ public class Tournament extends Event {
         this.theme = theme;
     }
 
-
+    public int getTotalDeposit() {
+        return totalDeposit;
+    }
 }

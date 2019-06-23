@@ -1,14 +1,8 @@
 package backend;
 
-import models.Participant;
-import models.Player;
-import models.Tournament;
+import models.*;
 
 import java.sql.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -17,21 +11,23 @@ public class TournamentProvider extends DatabaseProvider {
     //region Queries
 
     private final String Q_ALLTOURNAMENTS =
-            "SELECT t.idToernooi                                     AS ID,\n" +
-                    "       l.stad                                           AS Locatie,\n" +
-                    "        e.capaciteit AS Capaciteit,\n" +
-                    "       DATE_FORMAT(begintijd, '%d-%m-%Y')               AS Begindatum,\n" +
-                    "       TIME_FORMAT(begintijd, '%H:%i')                  AS Begintijd,\n" +
-                    "       DATE_FORMAT(eindtijd, '%d-%m-%Y')                AS Einddatum,\n" +
-                    "       TIME_FORMAT(eindtijd, '%H:%i')                   AS Eindtijd,\n" +
-                    "       e.inschrijfgeld                                  AS Kosten,\n" +
-                    "       t.thema                                          AS Thema,\n" +
-                    "       DATE_FORMAT(uiterste_inschrijfdatum, '%d-%m-%Y') AS 'Uiterste inschrijfdatum',\n" +
-                    "       t.toegang_beperking                              AS Toegangsbeperking\n" +
+            "        SELECT t.idToernooi                                       AS ID,\n" +
+                    "       l.stad                                             AS Locatie,\n" +
+                    "       e.capaciteit                                       AS Capaciteit,\n" +
+                    "       DATE_FORMAT(e.begintijd, '%d-%m-%Y')               AS Begindatum,\n" +
+                    "       TIME_FORMAT(e.begintijd, '%H:%i')                  AS Begintijd,\n" +
+                    "       DATE_FORMAT(e.eindtijd, '%d-%m-%Y')                AS Einddatum,\n" +
+                    "       TIME_FORMAT(e.eindtijd, '%H:%i')                   AS Eindtijd,\n" +
+                    "       e.inschrijfgeld                                    AS Kosten,\n" +
+                    "       t.thema                                            AS Thema,\n" +
+                    "       (COUNT(td.speler) * e.inschrijfgeld)               AS Totaal_inschrijfgeld,\n" +
+                    "       DATE_FORMAT(t.uiterste_inschrijfdatum, '%d-%m-%Y') AS 'Uiterste inschrijfdatum',\n" +
+                    "       toegang_beperking                                  AS Toegangsbeperking\n" +
                     "FROM event e\n" +
                     "         INNER JOIN locatie l on e.locatie = l.idLocatie\n" +
                     "         INNER JOIN toernooi t ON idEvent = t.idToernooi\n" +
-                    "ORDER BY t.idToernooi;";
+                    "         LEFT JOIN toernooi_deelname td on t.idToernooi = td.toernooiCode\n" +
+                    "GROUP BY t.idToernooi;";
 
     private static final String Q_PARTCIPANTS =
             "SELECT speler_id, a.adres_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer," +
@@ -121,14 +117,9 @@ public class TournamentProvider extends DatabaseProvider {
         }
     }
 
-
-
-
-
-
-
     /**
      * Add a new tournament to the database.
+     *
      * @param tournament the tournament object to add.
      * @return Tournament object with an updated id
      * @throws SQLException

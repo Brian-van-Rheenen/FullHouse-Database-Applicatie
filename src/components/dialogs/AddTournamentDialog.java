@@ -3,8 +3,6 @@ package components.dialogs;
 import backend.SqlDateConverter;
 import backend.TournamentProvider;
 import components.dialogs.exceptions.ExceptionDialog;
-import components.representation.GenericTableModel;
-import models.Masterclass;
 import models.Tournament;
 
 import javax.swing.*;
@@ -138,7 +136,7 @@ public class AddTournamentDialog extends BasicDialog {
         String finalSubmitDate = finalSubmitDateField.getText();
         String entryRestriction = entryRestrictionField.getText();
 
-        return new Tournament(0, location, capacity, startDate, startTime, endDate, endTime, entranceFee, theme, finalSubmitDate, entryRestriction);
+        return new Tournament(location, capacity, startDate, startTime, endDate, endTime, entranceFee, theme, finalSubmitDate, entryRestriction);
     }
 
     private Tournament fetchUpdatesForTournament(Tournament tournament) {
