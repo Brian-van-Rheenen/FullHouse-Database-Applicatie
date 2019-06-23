@@ -11,6 +11,9 @@ import java.awt.*;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -175,6 +178,12 @@ public class AddPlayerDialog extends BasicDialog {
 
         JTextField[] textFields = new JTextField[]{nameField, streetField, houseNrField, zipCodeField, cityField, dob, telephoneNR, emailTextField};
 
+        LocalDate dateOfBirth = convertStringToJavaDate(dob.getText()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        int age = Period.between(dateOfBirth, LocalDate.now()).getYears();
+
+        if (age < 18) return false;
+
         return super.validateInput(playerDataTypes, textFields);
     }
 
@@ -191,9 +200,9 @@ public class AddPlayerDialog extends BasicDialog {
         Date dateOfBirth = new Date();
 
         try {
-            dateOfBirth = new SimpleDateFormat("dd-MM-yyyy").parse(dob.getText());
+            dateOfBirth = new SimpleDateFormat("dd-MM-yyyy").parse(date);
         } catch (ParseException e) {
-            new ExceptionDialog("Het is niet gelukt om het volgende te parsen: " + dob.getText());
+            new ExceptionDialog("Het is niet gelukt om het volgende te parsen: " + date);
         }
 
         return dateOfBirth;
