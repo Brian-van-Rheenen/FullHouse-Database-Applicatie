@@ -14,6 +14,7 @@ public class PlayerProvider extends DatabaseProvider {
             "SELECT speler_id, a.adres_id, naam, geslacht, gebdatum, a.straatnaam, a.huisnummer, a.postcode, a.woonplaats, telefoon, email, rating, deleted\n" +
             "FROM speler\n" +
             "INNER JOIN adres a on speler.adres_id = a.adres_id\n" +
+            "WHERE speler.deleted = FALSE\n" +
             "ORDER BY speler.speler_id;";
 
     private static final String Q_DELETEPLAYER =

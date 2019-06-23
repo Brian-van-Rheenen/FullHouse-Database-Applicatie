@@ -112,7 +112,7 @@ public class PlayerOverviewPanel extends OverviewPanel {
                         // Remove data from the model
                         try {
                             playerProvider.deletePlayer(playerId);
-                            model.set(playerIndex, playerProvider.getPlayerById(playerId));
+                            model.remove(playerIndex);
                             tablePanel.clearSelection();
                         } catch (SQLException exception) {
                             exception.printStackTrace();
