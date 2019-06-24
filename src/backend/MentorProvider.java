@@ -16,6 +16,7 @@ public class MentorProvider extends DatabaseProvider {
                     "       bs.mail,\n" +
                     "       bs.deleted\n" +
                     "FROM bekende_speler bs\n" +
+                    "WHERE bs.deleted = FALSE\n" +
                     "ORDER BY bs.idBekend;";
 
     private static final String Q_CREATEMENTOR =
