@@ -4,6 +4,7 @@ import backend.SqlDateConverter;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -28,6 +29,11 @@ public abstract class Event {
         this.endDate = SqlDateConverter.convertStringToSqlDate(endDate);
         this.endTime = endTime;
         this.entranceFee = entranceFee;
+    }
+
+
+    public boolean checkEventDate(){
+        return false;
     }
 
     public Event(String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
