@@ -81,6 +81,26 @@ public class TournamentProvider extends DatabaseProvider {
                     "WHERE idToernooi = ?;\n" +
                     "COMMIT;";
 
+    private static final String Q_ROUNDSPERTOURNAMENT =
+                    "SELECT r.idRonde\n" +
+                    "FROM toernooi t\n" +
+                    "         LEFT JOIN ronde r on t.idToernooi = r.toernooi\n" +
+                    "WHERE r.toernooi = ?\n" +
+                    "ORDER BY r.idRonde ASC;";
+
+    private static final String Q_TABLELAYOUTPERROUND =
+                    "SELECT tf.idTafel,\n" +
+                    "       s.naam,\n" +
+                    "       s.rating\n" +
+                    "FROM tafel_indeling ti\n" +
+                    "         JOIN tafel tf ON ti.tafel = tf.idTafel\n" +
+                    "         JOIN ronde r on ti.ronde = r.idRonde\n" +
+                    "         JOIN toernooi t ON r.toernooi = t.idToernooi\n" +
+                    "        JOIN speler s on ti.deelnemer = s.speler_id\n" +
+                    "WHERE t.idToernooi = ?\n" +
+                    "  AND ti.ronde = ?\n" +
+                    "ORDER BY tf.idTafel, s.rating;";
+
     private static final String Q_ALLLOCATIONS =
             "SELECT stad FROM locatie;";
 
@@ -218,6 +238,24 @@ public class TournamentProvider extends DatabaseProvider {
 
         while (rs.next()) {
             res.add(rs.getString(1));
+        }
+
+        return res;
+    }
+
+    public ArrayList<Round> getRounds(Tournament tournament) throws SQLException {
+        PreparedStatement getRounds = getDatabaseConnection()
+                .prepareStatement(Q_ROUNDSPERTOURNAMENT);
+
+        int index = 0;
+        getRounds.setInt(++index, tournament.getId());
+
+        ResultSet rs = getRounds.executeQuery();
+
+        ArrayList<Round> res = new ArrayList<>();
+
+        while (rs.next()) {
+            res.add(Round.fromResultSet(rs, tournament));
         }
 
         return res;
