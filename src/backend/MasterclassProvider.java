@@ -60,7 +60,7 @@ public class MasterclassProvider extends DatabaseProvider {
             "SELECT stad FROM locatie;";
 
     private static final String Q_ALLFAMOUSPLAYERS =
-            "SELECT naam FROM bekende_speler;";
+            "SELECT naam FROM bekende_speler WHERE deleted = FALSE;";
 
     //endregion Queries
 

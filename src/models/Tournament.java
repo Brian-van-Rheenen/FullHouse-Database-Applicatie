@@ -3,6 +3,7 @@ package models;
 import backend.SqlDateConverter;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -24,6 +25,13 @@ public class Tournament extends Event {
         this.totalDeposit = totalDeposit;
         this.finalSubmitDate = SqlDateConverter.convertStringToSqlDate(finalSubmitDate);
         this.entryRestriction = entryRestriction;
+    }
+
+    @Override
+    public boolean checkEventDate() {
+        LocalDate currentDate=LocalDate.now();
+        LocalDate eventDate = this.getFinalSubmitDate().toLocalDate();
+        return eventDate.isBefore(currentDate);
     }
 
     /**

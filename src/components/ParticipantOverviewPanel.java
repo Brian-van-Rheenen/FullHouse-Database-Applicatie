@@ -11,11 +11,13 @@ import components.panels.OverviewPanel;
 import models.Event;
 import models.Participant;
 import models.Player;
+import models.Tournament;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -91,7 +93,14 @@ public class ParticipantOverviewPanel extends OverviewPanel {
 
                 if(event.hasParticipant(participant)){
                     JOptionPane.showMessageDialog(this, "De speler is al opgegeven voor dit event");
-                }else{
+                }
+
+                if(event.checkEventDate()){
+                    JOptionPane.showMessageDialog(this, "U kunt zich niet opgeven voor dit toernooi");
+                    return;
+                }
+
+                else{
                     participantProvider.insertParticipant(participant,event);
                     event.getParticipants().add(participant);
                     refreshAndFillTable();
@@ -103,6 +112,8 @@ public class ParticipantOverviewPanel extends OverviewPanel {
             new ExceptionDialog("Er is een fout opgetreden bij het toevoegen van de deelnemer.\nProbeer het opnieuw.");
         }
     }
+
+
 
     private ArrayList <Participant> notPaidList(){
         ArrayList <Participant> res = new ArrayList<>();
