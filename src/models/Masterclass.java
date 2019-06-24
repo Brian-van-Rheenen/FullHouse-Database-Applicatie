@@ -20,12 +20,6 @@ public class Masterclass extends Event {
         this.mentor = mentor;
     }
 
-    public Masterclass(String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee, int minimumRating, String mentor) {
-        super(city, capacity, startDate, startTime, endDate, endTime, entranceFee);
-
-        this.minimumRating = minimumRating;
-        this.mentor = mentor;
-    }
 
     public static Masterclass readMasterclassData(ResultSet rs) throws SQLException {
 

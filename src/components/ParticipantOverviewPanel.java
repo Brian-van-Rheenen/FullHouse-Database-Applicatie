@@ -97,7 +97,7 @@ public class ParticipantOverviewPanel extends OverviewPanel {
                     refreshAndFillTable();
                 }
 
-            }else JOptionPane.showMessageDialog(this, "Het systeem kon geen speler/event vinden met deze code");
+            }else JOptionPane.showMessageDialog(this, "U heeft verkeerde gegevens ingevuld.\nVul alle velden in en probeer het opnieuw.");
 
         } catch (SQLException e) {
             new ExceptionDialog("Er is een fout opgetreden bij het toevoegen van de deelnemer.\nProbeer het opnieuw.");
@@ -123,7 +123,7 @@ public class ParticipantOverviewPanel extends OverviewPanel {
             }
 
         } else {
-            JOptionPane.showMessageDialog(this, "Er is nog geen toernooi ingevoerd om op te zoeken");
+            JOptionPane.showMessageDialog(this, "Er is nog geen event code ingevoerd om op te zoeken");
         }
     }
 

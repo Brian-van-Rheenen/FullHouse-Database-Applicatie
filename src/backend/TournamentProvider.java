@@ -88,6 +88,19 @@ public class TournamentProvider extends DatabaseProvider {
                     "WHERE r.toernooi = ?\n" +
                     "ORDER BY r.idRonde ASC;";
 
+    private static final String Q_UPCOMING_TOURNAMENT="SELECT CONCAT(t.thema, ' toernooi')                AS Toernooi,\n" +
+            "       l.stad                                      AS Locatie,\n" +
+            "       DATE_FORMAT(begintijd, '%d-%m-%Y om %H:%i') AS Datum,\n" +
+            "       COUNT(td.speler)                            AS Totaal_inschrijvingen,\n" +
+            "       COALESCE(SUM(betaald = TRUE), 0)            AS Voltooide_betalingen\n" +
+            "FROM toernooi t\n" +
+            "         LEFT JOIN toernooi_deelname td on t.idToernooi = td.toernooiCode\n" +
+            "         JOIN event e on t.idToernooi = e.idEvent\n" +
+            "         JOIN locatie l on e.locatie = l.idLocatie\n" +
+            "WHERE DATE(e.begintijd) >= CURDATE()\n" +
+            "GROUP BY t.idToernooi\n" +
+            "ORDER BY e.begintijd ASC;";
+
     private static final String Q_TABLELAYOUTPERROUND =
                     "SELECT tf.idTafel,\n" +
                     "       s.naam,\n" +
@@ -120,6 +133,16 @@ public class TournamentProvider extends DatabaseProvider {
 
     private ResultSet queryParticipants() throws SQLException {
         return getDatabaseConnection().prepareStatement(Q_PARTCIPANTS).executeQuery();
+    }
+
+    public ResultSet getUpcomingTournaments() {
+        try {
+            PreparedStatement preparedStatement = getDatabaseConnection().prepareStatement(Q_UPCOMING_TOURNAMENT);
+            return preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Could not query upcoming tournaments");
+        }
     }
 
     private void addParticipants(ArrayList<Tournament> tournaments) throws SQLException {

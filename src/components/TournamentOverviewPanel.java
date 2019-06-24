@@ -5,12 +5,14 @@ import backend.TournamentProvider;
 import components.dialogs.AddTournamentDialog;
 import components.dialogs.NoSelectionDialog;
 import components.dialogs.exceptions.ExceptionDialog;
+import components.dialogs.reports.ReportTableDialog;
 import components.panels.OverviewPanel;
 import components.representation.*;
 import models.Tournament;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -62,12 +64,57 @@ public class TournamentOverviewPanel extends OverviewPanel {
 
     @Override
     protected void createButtons() {
+        JButton addButton = createAddButton();
+
+        JButton editButton = createEditButton();
+
+        JButton upcomingButton = createUpcomingButton();
+
+        initSelectionListener(editButton);
+        addButtonToPanel(upcomingButton);
+        addButtonToPanel(addButton);
+        addButtonToPanel(editButton);
+    }
+
+    private JButton createUpcomingButton() {
+        JButton upcomingButton = new JButton("Aankomend");
+        upcomingButton.addActionListener(a->{
+
+          ResultSet upcomingTournaments = tournamentProvider.getUpcomingTournaments();
+                new ReportTableDialog("Aankomende toernooien", upcomingTournaments);
+
+        });
+        return upcomingButton;
+    }
+
+    private void initSelectionListener(JButton editButton) {
+        tablePanel.addSelectionListener((selectionEvent) -> {
+            // Selection is not jet finished. Ignore the event
+            if(selectionEvent.getValueIsAdjusting())
+                return;
+
+            int[] selectedRows = tablePanel.getSelectedRows();
+            if(selectedRows.length == 1) {
+                Tournament selectedTournament = model.get(selectedRows[0]);
+                editButton.setEnabled(true);
+                return;
+            }
+
+            // If we cannot find the masterclass or the selection count is not 1 disable the buttons
+            editButton.setEnabled(false);
+        });
+    }
+
+    private JButton createAddButton() {
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
         addButton.addActionListener(e -> {
             new AddTournamentDialog(model);
         });
+        return addButton;
+    }
 
+    private JButton createEditButton() {
         JButton editButton = new JButton("Wijzigen");
         editButton.setEnabled(false);
         editButton.addActionListener(e -> {
@@ -89,25 +136,7 @@ public class TournamentOverviewPanel extends OverviewPanel {
             }
         });
         editButton.setPreferredSize(new Dimension(150, 200));
-
-        tablePanel.addSelectionListener((selectionEvent) -> {
-            // Selection is not jet finished. Ignore the event
-            if(selectionEvent.getValueIsAdjusting())
-                return;
-
-            int[] selectedRows = tablePanel.getSelectedRows();
-            if(selectedRows.length == 1) {
-                Tournament selectedTournament = model.get(selectedRows[0]);
-                editButton.setEnabled(true);
-                return;
-            }
-
-            // If we cannot find the masterclass or the selection count is not 1 disable the buttons
-            editButton.setEnabled(false);
-        });
-
-        addButtonToPanel(addButton);
-        addButtonToPanel(editButton);
+        return editButton;
     }
 
     private Optional<Tournament> findTournamentInList(int tournamentID) {

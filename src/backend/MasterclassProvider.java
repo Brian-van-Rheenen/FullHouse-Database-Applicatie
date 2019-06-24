@@ -107,15 +107,6 @@ public class MasterclassProvider extends DatabaseProvider {
         return masterclass;
     }
 
-    public ArrayList <Participant> addParticpants(Masterclass masterclass){
-
-        ArrayList <Participant> res = new ArrayList<>();
-
-
-
-
-        return res;
-    }
 
     @SuppressWarnings("Duplicates")
     public void updateMasterclass(Masterclass updated) throws SQLException {
