@@ -2,6 +2,7 @@ package components.dialogs.reports;
 
 import backend.TournamentProvider;
 import components.TablePanel;
+import components.dialogs.exceptions.ExceptionDialog;
 import components.representation.*;
 import models.*;
 
@@ -25,7 +26,7 @@ public class TournamentRoundDialog extends JDialog {
             ex.printStackTrace();
             rounds = new ArrayList<>();
 
-            JOptionPane.showMessageDialog(this, "Er is iets foutgegaan tijdens het downloaden van gegevens", "Foutmelding",  JOptionPane.WARNING_MESSAGE);
+            new ExceptionDialog("Er is iets foutgegaan tijdens het downloaden van gegevens");
             // Close the panel
             this.dispose();
         }
@@ -66,6 +67,7 @@ public class TournamentRoundDialog extends JDialog {
                     roundDetails.setModel(new GenericTableModel<>(tables, tableRepresentor));
                 } catch (SQLException e) {
                     e.printStackTrace();
+                    new ExceptionDialog("Het is niet gelukt om de details van de ronde op te vragen");
                     roundDetails.setModel(new GenericTableModel<>(tableRepresentor));
                 }
             }
