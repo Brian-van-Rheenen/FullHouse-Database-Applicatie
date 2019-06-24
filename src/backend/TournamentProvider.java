@@ -283,4 +283,25 @@ public class TournamentProvider extends DatabaseProvider {
 
         return res;
     }
+
+    public ArrayList<DesignatedTable> getTableLayout(Tournament selectedTournament, Round selectedRound) throws SQLException{
+        PreparedStatement getTableLayout = getDatabaseConnection()
+                .prepareStatement(Q_TABLELAYOUTPERROUND);
+
+        int index = 0;
+
+        getTableLayout.setInt(++index, selectedTournament.getId());
+        getTableLayout.setInt(++index, selectedRound.getId());
+
+        ResultSet rs = getTableLayout.executeQuery();
+
+        ArrayList<DesignatedTable> res = new ArrayList<>();
+
+        while (rs.next()) {
+            res.add(DesignatedTable.fromResultSet(rs));
+        }
+
+        return res;
+    }
+
 }
