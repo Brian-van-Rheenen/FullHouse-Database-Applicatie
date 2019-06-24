@@ -66,9 +66,9 @@ public class AddMasterclassDialog extends BasicDialog {
         }
 
         capacityField.setText(Integer.toString(toChange.getCapacity()));
-        startDateField.setText(toChange.convertSqlDateToString(toChange.getStartDate()));
+        startDateField.setText(SqlDateConverter.convertSqlDateToString(toChange.getStartDate()));
         startTimeField.setText(toChange.getStartTime().toString());
-        endDateField.setText(toChange.convertSqlDateToString(toChange.getEndDate()));
+        endDateField.setText(SqlDateConverter.convertSqlDateToString(toChange.getEndDate()));
         endTimeField.setText(toChange.getEndTime().toString());
         entranceFeeField.setText(Integer.toString(toChange.getEntranceFee()));
         minimumRatingField.setText(Integer.toString(toChange.getMinimumRating()));

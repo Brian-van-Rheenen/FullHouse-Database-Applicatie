@@ -4,12 +4,14 @@ import backend.SqlDateConverter;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 
-
+/**
+ * Represents an event organized by FullHouse
+ */
 public abstract class Event {
+
     private int id;
     private String city;
     private int capacity;
@@ -20,7 +22,7 @@ public abstract class Event {
     private int entranceFee;
     private ArrayList<Participant> participants = new ArrayList<>();
 
-    public Event(int id, String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
+    protected Event(int id, String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
         this.id = id;
         this.capacity = capacity;
         this.city = city;
@@ -31,25 +33,22 @@ public abstract class Event {
         this.entranceFee = entranceFee;
     }
 
+    public Event(String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
+        this(-1, city, capacity, startDate, startTime, endDate, endTime, entranceFee);
+    }
 
     public boolean checkEventDate(){
         return false;
     }
 
-    public Event(String city, int capacity, String startDate, Time startTime, String endDate, Time endTime, int entranceFee) {
-        this(-1, city, capacity, startDate, startTime, endDate, endTime, entranceFee);
-    }
-
     public abstract boolean isMatchForSearch(String search);
 
-    public abstract Object[] convertToTableData();
-
-    public Object[] getBasicFieldsEvent() {
-        return new Object[]{city, startDate, startTime, endDate, endTime, entranceFee};
+    public boolean isOnSameDate(String dateString) {
+        return startDate.toString().equalsIgnoreCase(dateString);
     }
 
-    public boolean hasParticipant(Participant participant){
-        return  participants.stream().anyMatch(p->p.getPlayer().getId()==participant.getPlayer().getId());
+    public boolean hasParticipant(Participant participant) {
+        return participants.stream().anyMatch(p->p.getPlayer().getId() == participant.getPlayer().getId());
     }
 
     public ArrayList<Participant> getParticipants() {
@@ -63,10 +62,6 @@ public abstract class Event {
         Event event = (Event) o;
         return city.equals(event.city) &&
                 startDate.equals(event.startDate);
-    }
-
-    public boolean isOnSameDate(String dateString) {
-        return startDate.toString().equalsIgnoreCase(dateString);
     }
 
     @Override

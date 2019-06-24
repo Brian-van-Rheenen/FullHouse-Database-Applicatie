@@ -1,14 +1,13 @@
 package components;
 
 import backend.MasterclassProvider;
+import backend.SqlDateConverter;
 import components.dialogs.AddMasterclassDialog;
 import components.dialogs.NoSelectionDialog;
 import components.dialogs.exceptions.ExceptionDialog;
 import components.dialogs.reports.MasterclassFilterPlayerDialog;
 import components.panels.OverviewPanel;
-import components.representation.GenericTableModel;
-import components.representation.RepresentationBuilder;
-import components.representation.Representor;
+import components.representation.*;
 import models.Masterclass;
 
 import javax.swing.*;
@@ -33,8 +32,8 @@ public class MasterclassOverviewPanel extends OverviewPanel {
                 .addColumn("id"                  , Masterclass::getId)
                 .addColumn("Stad"                , Masterclass::getCity)
                 .addColumn("Capaciteit"          , Masterclass::getCapacity)
-                .addColumn("Begintijd"           , masterclass -> masterclass.convertSqlDateToString(masterclass.getStartDate()) + " " + masterclass.getStartTime())
-                .addColumn("Eindtijd"            , masterclass -> masterclass.convertSqlDateToString(masterclass.getEndDate()) + " " + masterclass.getEndTime())
+                .addColumn("Begintijd"           , masterclass -> SqlDateConverter.convertSqlDateToString(masterclass.getStartDate()) + " " + masterclass.getStartTime())
+                .addColumn("Eindtijd"            , masterclass -> SqlDateConverter.convertSqlDateToString(masterclass.getEndDate()) + " " + masterclass.getEndTime())
                 .addColumn("Kosten"              , Masterclass::getEntranceFee)
                 .addColumn("Minimale Rating"     , Masterclass::getMinimumRating)
                 .addColumn("Begeleider"          , Masterclass::getMentor)
@@ -102,7 +101,6 @@ public class MasterclassOverviewPanel extends OverviewPanel {
 
             int[] selectedRows = tablePanel.getSelectedRows();
             if(selectedRows.length == 1) {
-                Masterclass selectedMasterclass = model.get(selectedRows[0]);
                 editButton.setEnabled(true);
                 return;
             }

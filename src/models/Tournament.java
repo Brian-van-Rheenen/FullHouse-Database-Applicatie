@@ -4,12 +4,12 @@ import backend.SqlDateConverter;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Optional;
 
+/**
+ * Represents a Tournament organized by FullHouse
+ */
 public class Tournament extends Event {
 
-    private ArrayList<Participant> participations = new ArrayList<>();
     private String theme;
     private int totalDeposit;
     private Date finalSubmitDate;
@@ -27,13 +27,6 @@ public class Tournament extends Event {
         this.entryRestriction = entryRestriction;
     }
 
-    @Override
-    public boolean checkEventDate() {
-        LocalDate currentDate=LocalDate.now();
-        LocalDate eventDate = this.getFinalSubmitDate().toLocalDate();
-        return eventDate.isBefore(currentDate);
-    }
-
     /**
      * Create a new Tournament
      */
@@ -47,26 +40,6 @@ public class Tournament extends Event {
         this.entryRestriction = entryRestriction;
     }
 
-    public boolean isMatchForSearch(String search) {
-        return this.isOnSameDate(search) || this.theme.equalsIgnoreCase(search) || matchesID(search);
-    }
-
-    private boolean matchesID(String input) {
-        if (!input.isEmpty() &&input.matches("^[0-9]*$")) {
-            return Integer.parseInt(input) == this.getId();
-        } else return false;
-    }
-
-    public void registerPaidParticipation(int idParticipant) {
-        Optional<Participant> optionalParticipant = participations.stream().filter(p -> p.getPlayer().getId() == idParticipant).findAny();
-
-        if(optionalParticipant.isPresent()){
-            Participant participant=optionalParticipant.get();
-            participant.setHasPaid(true);
-            System.out.println("participant has paid " + participant.getPlayer().getName());
-        }else System.out.println("found nothing");
-    }
-
     /**
      * Parse a {@link Tournament} from the given {@link ResultSet}
      * @param resultSet the ResultSet to parse
@@ -77,14 +50,14 @@ public class Tournament extends Event {
 
         int index = 0;
 
-        int id = resultSet.getInt(++index);
-        String city = resultSet.getString(++index);
-        int capacity = resultSet.getInt(++index);
+        int id           = resultSet.getInt(++index);
+        String city      = resultSet.getString(++index);
+        int capacity     = resultSet.getInt(++index);
         String startDate = resultSet.getString(++index);
-        Time startTime = resultSet.getTime(++index);
-        String endDate = resultSet.getString(++index);
-        Time endTime = resultSet.getTime(++index);
-        int entranceFee = resultSet.getInt(++index);
+        Time startTime   = resultSet.getTime(++index);
+        String endDate   = resultSet.getString(++index);
+        Time endTime     = resultSet.getTime(++index);
+        int entranceFee  = resultSet.getInt(++index);
 
         String theme            = resultSet.getString(++index);
         int totalDeposit        = resultSet.getInt(++index);
@@ -94,17 +67,21 @@ public class Tournament extends Event {
         return new Tournament(id, city, capacity, startDate, startTime, endDate, endTime, entranceFee, theme, totalDeposit, finalSubmitDate, entryRestriction);
     }
 
-    @Override
-    public Object[] convertToTableData() {
-        return new Object[]{theme, super.getBasicFieldsEvent(), entryRestriction};
+    public boolean isMatchForSearch(String search) {
+        return this.isOnSameDate(search) || this.theme.equalsIgnoreCase(search) || matchesID(search);
     }
 
-    /**
-     * @deprecated Dit is niet de bedoeling! Gebruik de Tournamentprovider a.u.b.
-     */
-    @Deprecated
-    public ArrayList<Participant> getParticipations() {
-        return participations;
+    @Override
+    public boolean checkEventDate() {
+        LocalDate currentDate=LocalDate.now();
+        LocalDate eventDate = this.getFinalSubmitDate().toLocalDate();
+        return eventDate.isBefore(currentDate);
+    }
+
+    private boolean matchesID(String input) {
+        if (!input.isEmpty() &&input.matches("^[0-9]*$")) {
+            return Integer.parseInt(input) == this.getId();
+        } else return false;
     }
 
     public String createDateTime(Date date, Time time) {
