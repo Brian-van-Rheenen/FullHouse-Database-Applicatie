@@ -6,6 +6,7 @@ import components.dialogs.AddTournamentDialog;
 import components.dialogs.NoSelectionDialog;
 import components.dialogs.exceptions.ExceptionDialog;
 import components.dialogs.reports.ReportTableDialog;
+import components.dialogs.reports.TournamentRoundDialog;
 import components.panels.OverviewPanel;
 import components.representation.*;
 import models.Tournament;
@@ -65,15 +66,58 @@ public class TournamentOverviewPanel extends OverviewPanel {
     @Override
     protected void createButtons() {
         JButton addButton = createAddButton();
-
         JButton editButton = createEditButton();
-
         JButton upcomingButton = createUpcomingButton();
+        JButton roundsButton = createRoundsButton();
 
-        initSelectionListener(editButton);
+        tablePanel.addSelectionListener((selectionEvent) -> {
+            // Selection is not jet finished. Ignore the event
+            if(selectionEvent.getValueIsAdjusting())
+                return;
+
+            int[] selectedRows = tablePanel.getSelectedRows();
+            if(selectedRows.length == 1) {
+                editButton.setEnabled(true);
+                roundsButton.setEnabled(true);
+                return;
+            }
+
+            // If we cannot find the masterclass or the selection count is not 1 disable the buttons
+            editButton.setEnabled(false);
+            roundsButton.setEnabled(false);
+        });
+
         addButtonToPanel(addButton);
         addButtonToPanel(editButton);
         addButtonToPanel(upcomingButton);
+        addButtonToPanel(roundsButton);
+    }
+
+    private JButton createRoundsButton() {
+        JButton roundsButton = new JButton("Rondes");
+        roundsButton.setEnabled(false);
+        roundsButton.setPreferredSize(new Dimension(150, 200));
+        roundsButton.addActionListener((event) -> {
+
+            if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
+                new NoSelectionDialog("tournament");
+            } else {
+                int selectedRow = tablePanel.getSelectedRow();
+                Optional<Tournament> updatingTournament = findTournamentInList((Integer) model.getValueAt(selectedRow, 0));
+                if(!updatingTournament.isPresent()) {
+                    // This suggests that we missed an event (delete or edit) and are out of sync with the database
+                    // Refresh list with new data, although this should theoretically never happen
+                    refreshTournamentData();
+                    return;
+                }
+
+                // Show rounds for the tournament
+                new TournamentRoundDialog(updatingTournament.get());
+            }
+
+        });
+
+        return roundsButton;
     }
 
     private JButton createUpcomingButton() {
@@ -82,41 +126,21 @@ public class TournamentOverviewPanel extends OverviewPanel {
 
           ResultSet upcomingTournaments = tournamentProvider.getUpcomingTournaments();
                 new ReportTableDialog("Aankomende toernooien", upcomingTournaments);
-
         });
         return upcomingButton;
-    }
-
-    private void initSelectionListener(JButton editButton) {
-        tablePanel.addSelectionListener((selectionEvent) -> {
-            // Selection is not jet finished. Ignore the event
-            if(selectionEvent.getValueIsAdjusting())
-                return;
-
-            int[] selectedRows = tablePanel.getSelectedRows();
-            if(selectedRows.length == 1) {
-                Tournament selectedTournament = model.get(selectedRows[0]);
-                editButton.setEnabled(true);
-                return;
-            }
-
-            // If we cannot find the masterclass or the selection count is not 1 disable the buttons
-            editButton.setEnabled(false);
-        });
     }
 
     private JButton createAddButton() {
         JButton addButton = new JButton("Toevoegen");
         addButton.setPreferredSize(new Dimension(150, 200));
-        addButton.addActionListener(e -> {
-            new AddTournamentDialog(model);
-        });
+        addButton.addActionListener(e -> new AddTournamentDialog(model));
         return addButton;
     }
 
     private JButton createEditButton() {
         JButton editButton = new JButton("Wijzigen");
         editButton.setEnabled(false);
+        editButton.setPreferredSize(new Dimension(150, 200));
         editButton.addActionListener(e -> {
 
             if(tablePanel.getSelectedRows()  == null || tablePanel.getSelectedRows().length < 1) {
@@ -135,7 +159,7 @@ public class TournamentOverviewPanel extends OverviewPanel {
                 new AddTournamentDialog(model, updatingTournament.get());
             }
         });
-        editButton.setPreferredSize(new Dimension(150, 200));
+
         return editButton;
     }
 

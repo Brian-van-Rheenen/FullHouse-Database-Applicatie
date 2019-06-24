@@ -5,9 +5,9 @@ import java.sql.SQLException;
 
 public class DesignatedTable {
 
-    int tableId;
-    String playerName;
-    int playerRating;
+    private int tableId;
+    private String playerName;
+    private int playerRating;
 
     private DesignatedTable(int tableId, String playerName, int playerRating) {
         this.tableId = tableId;

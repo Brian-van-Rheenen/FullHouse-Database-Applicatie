@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class MasterclassFilterPlayerDialog extends InputDialog {
 
-    MasterclassProvider provider = new MasterclassProvider();
+    private MasterclassProvider provider = new MasterclassProvider();
 
     public MasterclassFilterPlayerDialog() {
         try {

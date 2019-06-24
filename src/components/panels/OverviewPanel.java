@@ -6,7 +6,7 @@ import java.awt.*;
 
 public abstract class OverviewPanel extends JPanel {
 
-    private JPanel leftMenuButtonPanel = new JPanel(new GridLayout(3, 1, 20, 20));
+    private JPanel leftMenuButtonPanel = new JPanel(new GridLayout(4, 1, 20, 20));
 
     public OverviewPanel() {
         super();
@@ -14,7 +14,7 @@ public abstract class OverviewPanel extends JPanel {
         JPanel leftMenuPanel = new JPanel(new GridBagLayout());
         leftMenuPanel.setBackground(Color.LIGHT_GRAY);
 
-        leftMenuButtonPanel.setPreferredSize(new Dimension(150, 200));
+        leftMenuButtonPanel.setPreferredSize(new Dimension(150, 300));
         leftMenuButtonPanel.setBackground(Color.LIGHT_GRAY);
 
         setLookAndFeel();

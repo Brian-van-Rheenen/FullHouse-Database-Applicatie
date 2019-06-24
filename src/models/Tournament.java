@@ -40,8 +40,7 @@ public class Tournament extends Event {
     }
 
     public boolean isMatchForSearch(String search) {
-        boolean b = this.isOnSameDate(search) || this.theme.equalsIgnoreCase(search) || matchesID(search);
-        return b;
+        return this.isOnSameDate(search) || this.theme.equalsIgnoreCase(search) || matchesID(search);
     }
 
     private boolean matchesID(String input) {
