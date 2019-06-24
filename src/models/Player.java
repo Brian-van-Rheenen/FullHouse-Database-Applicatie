@@ -24,7 +24,10 @@ public class Player {
 
     private boolean deleted;
 
-    public Player(int id, Address address, String name, Gender gender, java.util.Date dob, String telephoneNR, String email, int rating, boolean deleted) {
+    /**
+     * This constructor is only to be used while creating classes that represent database entries
+     */
+    private Player(int id, Address address, String name, Gender gender, java.util.Date dob, String telephoneNR, String email, int rating, boolean deleted) {
         this.id = id;
         this.name = name;
         this.gender = gender;
@@ -36,6 +39,9 @@ public class Player {
         this.deleted = deleted;
     }
 
+    /**
+     * Constructor for creating new players that are not yet in the database
+     */
     public Player(Address address, String name, Gender gender, java.util.Date dob, String telephoneNR, String email, int rating) {
         this(-1, address, name, gender, dob, telephoneNR, email, rating, false);
     }
@@ -50,18 +56,18 @@ public class Player {
     public static Player fromResultSet(ResultSet rs) throws SQLException {
 
         int index = 0;
-        int id = rs.getInt(++index);
-        int adresId = rs.getInt(++index);
-        String name = rs.getString(++index);
-        Gender gender = Gender.parse(rs.getString(++index));
-        Date dob = rs.getDate(++index);
-        String street = rs.getString(++index);
-        int houseNr = rs.getInt(++index);
-        String zip = rs.getString(++index);
-        String city = rs.getString(++index);
-        String tele = rs.getString(++index);
-        String mail = rs.getString(++index);
-        int rating = rs.getInt(++index);
+        int id          = rs.getInt(++index);
+        int adresId     = rs.getInt(++index);
+        String name     = rs.getString(++index);
+        Gender gender   = Gender.parse(rs.getString(++index));
+        Date dob        = rs.getDate(++index);
+        String street   = rs.getString(++index);
+        int houseNr     = rs.getInt(++index);
+        String zip      = rs.getString(++index);
+        String city     = rs.getString(++index);
+        String tele     = rs.getString(++index);
+        String mail     = rs.getString(++index);
+        int rating      = rs.getInt(++index);
         boolean deleted = rs.getBoolean(++index);
 
         return new Player(id, new Address(adresId, city, street, houseNr, zip), name, gender, dob, tele, mail, rating, deleted);
