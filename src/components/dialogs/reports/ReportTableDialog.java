@@ -23,6 +23,9 @@ public class ReportTableDialog extends JDialog{
     public ReportTableDialog(String title, ResultSet data) {
         try {
             JTable dataTable = new JTable();
+
+
+
             DefaultTableModel dtm = new DefaultTableModel(0, 0) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
