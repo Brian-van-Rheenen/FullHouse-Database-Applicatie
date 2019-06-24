@@ -81,18 +81,12 @@ public class TournamentProvider extends DatabaseProvider {
                     "WHERE idToernooi = ?;\n" +
                     "COMMIT;";
 
-    private static final String Q_ROUNDSPERTOURNAMENT =
-                    "SELECT r.idRonde\n" +
-                    "FROM toernooi t\n" +
-                    "         LEFT JOIN ronde r on t.idToernooi = r.toernooi\n" +
-                    "WHERE r.toernooi = ?\n" +
-                    "ORDER BY r.idRonde ASC;";
-
-    private static final String Q_UPCOMING_TOURNAMENT="SELECT CONCAT(t.thema, ' toernooi')                AS Toernooi,\n" +
-            "       l.stad                                      AS Locatie,\n" +
+    private static final String Q_UPCOMING_TOURNAMENT=
+            "SELECT CONCAT(t.thema, ' toernooi')                AS Toernooi,\n" +
+            "       CONCAT(l.stad)                              AS Locatie,\n" +
             "       DATE_FORMAT(begintijd, '%d-%m-%Y om %H:%i') AS Datum,\n" +
-            "       COUNT(td.speler)                            AS Totaal_inschrijvingen,\n" +
-            "       COALESCE(SUM(betaald = TRUE), 0)            AS Voltooide_betalingen\n" +
+            "       COUNT(td.speler)                            AS `Alle inschrijvingen`,\n" +
+            "       COALESCE(SUM(betaald = TRUE), 0)            AS `Voltooide betalingen`\n" +
             "FROM toernooi t\n" +
             "         LEFT JOIN toernooi_deelname td on t.idToernooi = td.toernooiCode\n" +
             "         JOIN event e on t.idToernooi = e.idEvent\n" +
@@ -100,6 +94,13 @@ public class TournamentProvider extends DatabaseProvider {
             "WHERE DATE(e.begintijd) >= CURDATE()\n" +
             "GROUP BY t.idToernooi\n" +
             "ORDER BY e.begintijd ASC;";
+
+    private static final String Q_ROUNDSPERTOURNAMENT =
+                    "SELECT r.idRonde\n" +
+                    "FROM toernooi t\n" +
+                    "         LEFT JOIN ronde r on t.idToernooi = r.toernooi\n" +
+                    "WHERE r.toernooi = ?\n" +
+                    "ORDER BY r.idRonde ASC;";
 
     private static final String Q_TABLELAYOUTPERROUND =
                     "SELECT tf.idTafel,\n" +

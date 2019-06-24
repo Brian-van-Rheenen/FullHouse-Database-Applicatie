@@ -53,8 +53,8 @@ public class ReportTableDialog extends JDialog{
 
             dataTable.setModel(dtm);
 
-            // Set the table's preferred scrollable viewport. Add 200 to the width to make the rows readable.
-            dataTable.setPreferredScrollableViewportSize(new Dimension(dataTable.getPreferredSize().width + 200, dataTable.getRowCount() * dataTable.getRowHeight()));
+            // Set the table's preferred scrollable viewport. Add 300 to the width to make the rows readable.
+            dataTable.setPreferredScrollableViewportSize(new Dimension(dataTable.getPreferredSize().width + 300, dataTable.getRowCount() * dataTable.getRowHeight()));
 
             JScrollPane sp = new JScrollPane(dataTable);
 

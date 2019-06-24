@@ -71,9 +71,9 @@ public class TournamentOverviewPanel extends OverviewPanel {
         JButton upcomingButton = createUpcomingButton();
 
         initSelectionListener(editButton);
-        addButtonToPanel(upcomingButton);
         addButtonToPanel(addButton);
         addButtonToPanel(editButton);
+        addButtonToPanel(upcomingButton);
     }
 
     private JButton createUpcomingButton() {
