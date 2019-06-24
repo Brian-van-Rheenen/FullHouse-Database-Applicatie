@@ -150,7 +150,7 @@ public class TournamentProvider extends DatabaseProvider {
         ResultSet rs = queryParticipants();
 
         while (rs.next()) {
-            Player player = Player.readPlayerData(rs);
+            Player player = Player.fromResultSet(rs);
             int tournamentID = rs.getInt(14);
             boolean paid = rs.getBoolean(15);
             Optional<Tournament> optionalTournament = tournaments.stream().filter(t -> t.getId() == tournamentID).findAny();

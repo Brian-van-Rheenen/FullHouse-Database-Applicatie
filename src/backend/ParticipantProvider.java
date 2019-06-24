@@ -2,9 +2,7 @@ package backend;
 
 import models.*;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ParticipantProvider extends DatabaseProvider {
@@ -54,7 +52,7 @@ public class ParticipantProvider extends DatabaseProvider {
         while(rs.next()){
             rs.getInt(14); //contains the idcode of the event (masterclass or tournament)
             boolean hasPaid = rs.getBoolean(15);
-            participants.add(new Participant(Player.readPlayerData(rs), hasPaid));
+            participants.add(new Participant(Player.fromResultSet(rs), hasPaid));
         }
 
         event.getParticipants().clear();

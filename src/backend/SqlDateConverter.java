@@ -1,9 +1,7 @@
 package backend;
 
 import java.sql.Date;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 
 public class SqlDateConverter {
 
@@ -22,6 +20,10 @@ public class SqlDateConverter {
             e.printStackTrace();
         }
 
+        return new java.sql.Date(date.getTime());
+    }
+
+    public static java.sql.Date convertJavaDateToSqlDate(java.util.Date date) {
         return new java.sql.Date(date.getTime());
     }
 }

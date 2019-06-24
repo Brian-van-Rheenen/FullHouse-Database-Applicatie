@@ -76,7 +76,7 @@ public class PlayerProvider extends DatabaseProvider {
         ArrayList<Player> res = new ArrayList<>();
 
         while (rs.next()) {
-            res.add(Player.readPlayerData(rs));
+            res.add(Player.fromResultSet(rs));
         }
 
         return res;
@@ -180,6 +180,6 @@ public class PlayerProvider extends DatabaseProvider {
 
         ResultSet set = playerStatement.executeQuery();
         set.next();
-        return Player.readPlayerData(set);
+        return Player.fromResultSet(set);
     }
 }

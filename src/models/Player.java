@@ -1,12 +1,13 @@
 package models;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import backend.SqlDateConverter;
+
+import java.sql.*;
 import java.util.Objects;
 
+/**
+ * Represents a person who has registered itself by FullHouse
+ */
 public class Player {
 
     private int id;
@@ -27,7 +28,7 @@ public class Player {
         this.id = id;
         this.name = name;
         this.gender = gender;
-        this.dob = convertJavaDateToSqlDate(dob);
+        this.dob = SqlDateConverter.convertJavaDateToSqlDate(dob);
         this.telephoneNR = telephoneNR;
         this.email = email;
         this.address = address;
@@ -39,46 +40,31 @@ public class Player {
         this(-1, address, name, gender, dob, telephoneNR, email, rating, false);
     }
 
-    public static Player readPlayerData(ResultSet rs) throws SQLException {
-        int id = rs.getInt(1);
-        int adresId = rs.getInt(2);
-        String name = rs.getString(3);
-        Gender gender = Gender.parse(rs.getString(4));
-        Date dob = rs.getDate(5);
-        String street = rs.getString(6);
-        int houseNr = rs.getInt(7);
-        String zip = rs.getString(8);
-        String city = rs.getString(9);
-        String tele = rs.getString(10);
-        String mail = rs.getString(11);
-        int rating = rs.getInt(12);
-        boolean deleted = rs.getBoolean(13);
+    /**
+     * Create a {@link Player} from a {@link ResultSet}
+     *
+     * @param rs the {@link ResultSet} to parse
+     * @return a fully constructed {@link Player}
+     * @throws SQLException failed to parse the player correctly
+     */
+    public static Player fromResultSet(ResultSet rs) throws SQLException {
+
+        int index = 0;
+        int id = rs.getInt(++index);
+        int adresId = rs.getInt(++index);
+        String name = rs.getString(++index);
+        Gender gender = Gender.parse(rs.getString(++index));
+        Date dob = rs.getDate(++index);
+        String street = rs.getString(++index);
+        int houseNr = rs.getInt(++index);
+        String zip = rs.getString(++index);
+        String city = rs.getString(++index);
+        String tele = rs.getString(++index);
+        String mail = rs.getString(++index);
+        int rating = rs.getInt(++index);
+        boolean deleted = rs.getBoolean(++index);
 
         return new Player(id, new Address(adresId, city, street, houseNr, zip), name, gender, dob, tele, mail, rating, deleted);
-    }
-
-    public Object[] convertToTableData(){
-        return new Object[] {
-                id,
-                name,
-                gender,
-                dob,
-                address.getStreet() + " " + address.getHouseNr(),
-                address.getZipCode(),
-                address.getCity(),
-                telephoneNR,
-                email,
-                rating
-        };
-    }
-
-    public static java.sql.Date convertJavaDateToSqlDate(java.util.Date date) {
-        return new java.sql.Date(date.getTime());
-    }
-
-    public String convertSqlDateToString(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        return dateFormat.format(date);
     }
 
     @Override

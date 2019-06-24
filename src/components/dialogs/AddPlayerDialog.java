@@ -1,19 +1,16 @@
 package components.dialogs;
 
 import backend.PlayerProvider;
+import backend.SqlDateConverter;
 import components.dialogs.exceptions.ExceptionDialog;
-import models.Address;
-import models.Gender;
-import models.Player;
+import models.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Date;
 import java.util.List;
 
@@ -71,7 +68,7 @@ public class AddPlayerDialog extends BasicDialog {
         model.setSelectedItem(toChange.getGender());
 
         emailTextField.setText(toChange.getEmail());
-        dob.setText(toChange.convertSqlDateToString(toChange.getDob()));
+        dob.setText(SqlDateConverter.convertSqlDateToString(toChange.getDob()));
 
         cityField.setText(toChange.getAddress().getCity());
         streetField.setText(toChange.getAddress().getStreet());
@@ -145,7 +142,7 @@ public class AddPlayerDialog extends BasicDialog {
     private Player fetchUpdatesForPlayer(Player player) {
         player.setName(nameField.getText());
         player.setGender((Gender) genderBox.getSelectedItem());
-        player.setDob(Player.convertJavaDateToSqlDate(convertStringToJavaDate(dob.getText())));
+        player.setDob(SqlDateConverter.convertJavaDateToSqlDate(convertStringToJavaDate(dob.getText())));
 
         player.getAddress().setCity(cityField.getText());
         player.getAddress().setStreet(streetField.getText());

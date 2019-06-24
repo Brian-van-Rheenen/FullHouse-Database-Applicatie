@@ -1,14 +1,11 @@
 package components;
 
 import backend.PlayerProvider;
-import components.dialogs.AddPlayerDialog;
-import components.dialogs.DeleteDialog;
-import components.dialogs.NoSelectionDialog;
+import backend.SqlDateConverter;
+import components.dialogs.*;
 import components.dialogs.exceptions.ExceptionDialog;
 import components.panels.OverviewPanel;
-import components.representation.GenericTableModel;
-import components.representation.RepresentationBuilder;
-import components.representation.Representor;
+import components.representation.*;
 import models.Player;
 
 import javax.swing.*;
@@ -33,7 +30,7 @@ public class PlayerOverviewPanel extends OverviewPanel {
             .addColumn("id"           , Player::getId)
             .addColumn("Naam"         , Player::getName)
             .addColumn("Geslacht"     , Player::getGender)
-            .addColumn("Geboortedatum", player -> player.convertSqlDateToString(player.getDob()))
+            .addColumn("Geboortedatum", player -> SqlDateConverter.convertSqlDateToString(player.getDob()))
             .addColumn("Adres"        , player -> String.format("%s %s", player.getAddress().getStreet(), player.getAddress().getHouseNr()))
             .addColumn("Postcode"     , player -> player.getAddress().getZipCode())
             .addColumn("Woonplaats"   , player -> player.getAddress().getCity())
