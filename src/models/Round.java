@@ -23,11 +23,7 @@ public class Round {
         int index = 0;
 
         int id = resultSet.getInt(++index);
-        int tournamentID = resultSet.getInt(++index);
-
-        if (tournamentID != tournament.getId())
-            throw new SQLException("The given tournament does not match the foreign key ID");
-
+        
         return new Round(id, tournament);
     }
 
